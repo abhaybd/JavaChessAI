@@ -80,51 +80,62 @@ public class Chess extends JPanel{
 				HumanPlayer human = new HumanPlayer(board, playerTeam, System.in);
 				ComputerPlayer opp = new ComputerPlayer(board, -playerTeam);
 				int team = 1;
-				while(true){
+				while(!Thread.interrupted()){
 					board.updatePieces();
 					List<Piece> beforeState = board.saveState();
+					boolean succeeded = true;
 					try{
-						try {
-							if(team == opp.getTeam()){
-								Move m = opp.getMove();
+						if(team == opp.getTeam()){
+							Move m = opp.getMove();
+							board.doMove(m);
+							Piece p = m.getPiece();
+							if(p instanceof Pawn && p.getSquare().getY() == ((p.getTeam() == Piece.white)?8:1)){
+								((Pawn)p).promote("Queen");
+							}
+							continue;
+						}
+						
+						if(team == playerTeam) {
+							Move m = human.getMove();
+							if(m.isCastle()) {
+								if(m.isKingSideCastle()) {
+									King k = board.getKing(team);
+									Piece p = board.checkSquare(new Square(7,k.getSquare().getY()));
+									if(!(p instanceof Rook)) throw new InvalidMoveException();
+									Rook r = (Rook)p;
+									if(!board.freePath(k.getSquare(),r.getSquare(),k.getTeam()) || r.hasMoved()) throw new InvalidMoveException();
+									k.move(new Square(6,k.getSquare().getY()));
+									r.move(new Square(5,r.getSquare().getY()));
+								} else if(m.isQueenSideCastle()) {
+									King k =board.getKing(team);
+									Piece p = board.checkSquare(new Square(0,k.getSquare().getY()));
+									if(!(p instanceof Rook)) throw new InvalidMoveException();
+									Rook r = (Rook)p;
+									if(!board.freePath(k.getSquare(),r.getSquare(),k.getTeam()) || r.hasMoved()) throw new InvalidMoveException();
+									k.move(new Square(2,k.getSquare().getY()));
+									r.move(new Square(3,r.getSquare().getY()));
+								}
+							} else {
 								board.doMove(m);
-								Piece p = m.getPiece();
-								if(p instanceof Pawn && p.getSquare().getY() == ((p.getTeam() == Piece.white)?8:1)){
-									((Pawn)p).promote("Queen");
-								}
-								continue;
+								moves.add(m);
 							}
-							
-							if(team == playerTeam) {
-								Move m = human.getMove();
-								if(m.isCastle()) {
-									if(m.isKingSideCastle()) {
-										King k = board.getKing(team);
-										Piece p = board.checkSquare(new Square(7,k.getSquare().getY()));
-										if(!(p instanceof Rook)) throw new InvalidMoveException();
-										Rook r = (Rook)p;
-										if(!board.freePath(k.getSquare(),r.getSquare(),k.getTeam()) || r.hasMoved()) throw new InvalidMoveException();
-										k.move(new Square(6,k.getSquare().getY()));
-										r.move(new Square(5,r.getSquare().getY()));
-									} else if(m.isQueenSideCastle()) {
-										King k =board.getKing(team);
-										Piece p = board.checkSquare(new Square(0,k.getSquare().getY()));
-										if(!(p instanceof Rook)) throw new InvalidMoveException();
-										Rook r = (Rook)p;
-										if(!board.freePath(k.getSquare(),r.getSquare(),k.getTeam()) || r.hasMoved()) throw new InvalidMoveException();
-										k.move(new Square(2,k.getSquare().getY()));
-										r.move(new Square(3,r.getSquare().getY()));
-									}
-								} else {
-									board.doMove(m);
-									moves.add(m);
-								}
-							}
-						} finally {
+						}
+					} catch(Exception e){
+						if(e instanceof InvalidMoveException) {
+							System.err.println("Invalid! Try again!");
+						} else {
+							e.printStackTrace();
+						}
+						board.restoreState(beforeState);
+						succeeded = false;
+					}  finally {
+						if(succeeded) {
 							team *= -1;
 							King k = board.getKing(team);
 							if(board.checkMate(k)) {
 								System.out.println("Checkmate!");
+								System.out.println(team==1?"0-1":"1-0");
+								board.updatePieces();
 								break;
 							}
 							else if(board.inCheck(k)){
@@ -132,21 +143,28 @@ public class Chess extends JPanel{
 							}
 						}
 					}
-					catch(Exception e){
-						if(e instanceof InvalidMoveException) {
-							System.err.println("Invalid! Try again!");
-							board.restoreState(beforeState);
-						} else {
-							e.printStackTrace();
-						}
-						continue;
-					}
 				}
+				printMoves();
 				input.close();
 			}
 		};
 		Thread t = new Thread(run);
 		t.start();
+	}
+	
+	private void printMoves() {
+		System.out.println();
+		for(int i = 0; i < moves.size(); i+=2) {
+			int moveNum = (i/2)+1;
+			String whiteMove = moves.get(i).toString();
+			if(i == moves.size()-1) {
+				System.out.println(String.format("%02d. %2$6s 1-0", moveNum, whiteMove));
+			} else if(i == moves.size()-2) {
+				System.out.println(String.format("%02d. %2$6s, %3$6s 0-1", moveNum, whiteMove, moves.get(i+1).toString()));
+			} else {
+				System.out.println(String.format("%02d. %2$6s, %3$6s", moveNum, whiteMove, moves.get(i+1).toString()));
+			}
+		}
 	}
 	
 	@Override
