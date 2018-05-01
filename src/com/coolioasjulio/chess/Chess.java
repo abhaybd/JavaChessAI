@@ -121,15 +121,15 @@ public class Chess extends JPanel{
 							}
 							moves.add(m);
 						}
-					} catch(Exception e){
-						if(e instanceof InvalidMoveException) {
-							System.err.println("Invalid! Try again!");
-						} else {
-							e.printStackTrace();
-						}
+					} catch(InvalidMoveException e){
+						System.err.println("Invalid! Try again!");
 						board.restoreState(beforeState);
 						succeeded = false;
-					}  finally {
+					}  catch(Exception e) {
+						e.printStackTrace();
+						board.restoreState(beforeState);
+						succeeded = false;
+					} finally {
 						if(succeeded) {
 							team *= -1;
 							King k = board.getKing(team);
