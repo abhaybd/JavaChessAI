@@ -6,10 +6,20 @@ public class Knight extends Piece {
 	public Knight(Square square, int team, Board board) {
 		super(square, team, board);
 	}
+	
 	public Knight(String square, int team, Board board) throws InvalidSquareException{
 		super(square, team, board);
 	}
-	public int getValue(){ return Piece.KNIGHT_VALUE; }
+
+	public double getRawValue() {
+		return Piece.KNIGHT_VALUE;
+	}	
+	
+	public double getVanillaValue() {
+		return Piece.VANILLA_KNIGHT_VALUE;
+	}
+	
+	
 	public Move[] getMoves(){
 		int team = super.getTeam();
 		Square square = super.getSquare();

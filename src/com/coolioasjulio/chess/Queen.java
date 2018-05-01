@@ -7,7 +7,13 @@ public class Queen extends Piece{
 		super(square, team, board);
 	}
 	
-	public int getValue(){ return Piece.QUEEN_VALUE; }
+	public double getRawValue() {
+		return Piece.QUEEN_VALUE;
+	}
+	
+	public double getVanillaValue() {
+		return Piece.VANILLA_QUEEN_VALUE;
+	}
 
 	@Override
 	public Move[] getMoves() {

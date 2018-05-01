@@ -11,8 +11,14 @@ public class King extends Piece{
 	public boolean hasMoved(){
 		return moved;
 	}
+
+	public double getRawValue() {
+		return Piece.KING_VALUE;
+	}
 	
-	public int getValue(){ return -1; }
+	public double getVanillaValue() {
+		return Piece.VANILLA_KING_VALUE;
+	}
 	
 	public boolean inCheck(){
 		for(Piece p:board.getPieces()){

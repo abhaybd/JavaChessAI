@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class Board{
 	public static final Color BROWN = new Color(107,54,54);
 	public static final Color TAN = new Color(203, 177, 154);
-	public static final double spaceScore = 0.3;
+	public static final double spaceScore = 0.2;
 	public ArrayList<Piece> pieces;
 	public ArrayList<Piece> finalPieces;
 	public Board(){
@@ -54,11 +54,11 @@ public class Board{
 		return null;
 	}
 	
-	public boolean checkMate(int team) throws InvalidMoveException {
-		return checkMate(getKing(team));
+	public boolean inCheckMate(int team) throws InvalidMoveException {
+		return inCheckMate(getKing(team));
 	}
 	
-	public boolean checkMate(King k) throws InvalidMoveException{
+	public boolean inCheckMate(King k) throws InvalidMoveException{
 		Move[] Kmoves = k.getMoves();
 		if(!inCheck(k)) return false;
 		Square Kbefore = k.getSquare();
@@ -141,9 +141,9 @@ public class Board{
 		return false;
 	}
 	
-	public int getMaterialScore(int team){
-		int material = 0;
-		for(Piece p:Collections.synchronizedList(getPieces())){
+	public double getMaterialScore(int team){
+		double material = 0;
+		for(Piece p:pieces){
 			if(p.getTeam() != team) continue;
 			material += p.getValue();
 		}
@@ -154,7 +154,7 @@ public class Board{
 		int space = 0;
 		double material = getMaterialScore(team) - lastMaterial;
 		double oppMaterial = getMaterialScore(-team) - lastOppMaterial;
-		for(Piece p:Collections.synchronizedList(getPieces())){
+		for(Piece p:pieces){
 			if(p.getTeam() != team) continue;
 			space += p.getMoves().length * spaceScore;
 		}
@@ -162,6 +162,8 @@ public class Board{
 	}
 	
 	public void doMove(Move m) {
+		if(m.isCastle()) throw new IllegalArgumentException("Must castle manually!");
+		
 		Piece p = this.checkSquare(m.getStart());
 		List<Square> endSquares = Arrays.asList(p.getMoves()).stream().map(Move::getEnd).collect(Collectors.toList());
 		if(m.getPiece().getBoard() != this || !endSquares.contains(m.getEnd())) {
@@ -207,8 +209,8 @@ public class Board{
 		for(int i = 0; i < 8; i++){
 			Square w = new Square(i,2);
 			Square b = new Square(i,7);
-			Pawn white = new Pawn(w, Piece.white, this);
-			Pawn black = new Pawn(b, Piece.black, this);
+			Pawn white = new Pawn(w, Piece.WHITE, this);
+			Pawn black = new Pawn(b, Piece.BLACK, this);
 			pieces.add(white);
 			pieces.add(black);
 		}
@@ -217,8 +219,8 @@ public class Board{
 		for(int i = 1; i < 8; i += 5){
 			Square w = new Square(i,1);
 			Square b = new Square(i,8);
-			Knight white = new Knight(w, Piece.white, this);
-			Knight black = new Knight(b, Piece.black, this);
+			Knight white = new Knight(w, Piece.WHITE, this);
+			Knight black = new Knight(b, Piece.BLACK, this);
 			pieces.add(white);
 			pieces.add(black);
 		}
@@ -227,8 +229,8 @@ public class Board{
 		for(int i = 0; i < 8; i += 7){
 			Square w = new Square(i,1);
 			Square b = new Square(i,8);
-			Rook white = new Rook(w, Piece.white, this);
-			Rook black = new Rook(b, Piece.black, this);
+			Rook white = new Rook(w, Piece.WHITE, this);
+			Rook black = new Rook(b, Piece.BLACK, this);
 			pieces.add(white);
 			pieces.add(black);
 		}
@@ -237,8 +239,8 @@ public class Board{
 		for(int i = 2; i < 8; i+=3){
 			Square w = new Square(i,1);
 			Square b = new Square(i,8);
-			Bishop white = new Bishop(w, Piece.white,this);
-			Bishop black = new Bishop(b, Piece.black, this);
+			Bishop white = new Bishop(w, Piece.WHITE,this);
+			Bishop black = new Bishop(b, Piece.BLACK, this);
 			pieces.add(white);
 			pieces.add(black);
 		}
@@ -246,16 +248,16 @@ public class Board{
 	void queens() throws InvalidSquareException{
 		Square w = new Square(3,1);
 		Square b = new Square(3,8);
-		Queen white = new Queen(w, Piece.white, this);
-		Queen black = new Queen(b, Piece.black, this);
+		Queen white = new Queen(w, Piece.WHITE, this);
+		Queen black = new Queen(b, Piece.BLACK, this);
 		pieces.add(white);
 		pieces.add(black);
 	}
 	void kings() throws InvalidSquareException{
 		Square w = new Square(4,1);
 		Square b = new Square(4,8);
-		King white = new King(w,Piece.white,this);
-		King black = new King(b,Piece.black,this);
+		King white = new King(w,Piece.WHITE,this);
+		King black = new King(b,Piece.BLACK,this);
 		pieces.add(white);
 		pieces.add(black);
 	}

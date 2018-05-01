@@ -76,7 +76,7 @@ public class Chess extends JPanel{
 				Scanner input = new Scanner(System.in);
 				System.out.println("What team do you want to be? w/b");
 				char t = input.nextLine().toLowerCase().charAt(0);
-				int playerTeam = (t=='b')?-1:1;
+				int playerTeam = (t=='b')?Piece.BLACK:Piece.WHITE;
 				HumanPlayer human = new HumanPlayer(board, playerTeam, System.in);
 				ComputerPlayer opp = new ComputerPlayer(board, -playerTeam);
 				int team = 1;
@@ -89,7 +89,7 @@ public class Chess extends JPanel{
 							Move m = opp.getMove();
 							board.doMove(m);
 							Piece p = m.getPiece();
-							if(p instanceof Pawn && p.getSquare().getY() == ((p.getTeam() == Piece.white)?8:1)){
+							if(p instanceof Pawn && p.getSquare().getY() == ((p.getTeam() == Piece.WHITE)?8:1)){
 								((Pawn)p).promote("Queen");
 							}
 							moves.add(m);
@@ -133,9 +133,9 @@ public class Chess extends JPanel{
 						if(succeeded) {
 							team *= -1;
 							King k = board.getKing(team);
-							if(board.checkMate(k)) {
+							if(board.inCheckMate(k)) {
 								System.out.println("Checkmate!");
-								System.out.println(team==1?"0-1":"1-0");
+								System.out.println(team==Piece.WHITE?"0-1":"1-0");
 								board.updatePieces();
 								break;
 							}
@@ -174,8 +174,6 @@ public class Chess extends JPanel{
 			drawBoard(g);
 			drawPieces(g);			
 		}
-		catch(Exception e){
-			
-		}
+		catch(Exception e){} // Fail silently
 	}
 }

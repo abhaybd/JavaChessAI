@@ -26,7 +26,7 @@ public class HumanPlayer implements Player {
 	public Move getMove() {
 		List<Piece> beforeState = board.saveState();
 		try {
-			System.out.println("It is " + ((team==Piece.white)?"white":"black") + "'s turn! Input move in long notation. Ex: Nb1-c3");
+			System.out.println("It is " + ((team==Piece.WHITE)?"white":"black") + "'s turn! Input move in long notation. Ex: Nb1-c3");
 			String response = input.nextLine();
 			Square start = null;
 			Square end = null;
@@ -65,7 +65,7 @@ public class HumanPlayer implements Player {
 			}
 			
 			King k = board.getKing(team);
-			if(board.inCheck(k)||board.checkMate(k)) {
+			if(board.inCheck(k)||board.inCheckMate(k)) {
 				throw new InvalidMoveException();
 			}
 			

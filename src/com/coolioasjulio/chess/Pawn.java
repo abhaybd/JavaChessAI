@@ -3,13 +3,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Pawn extends Piece{
+	
 	public Pawn(String square, int team, Board board) throws InvalidSquareException {
 		super(square,team, board);
 	}
+	
 	public Pawn(Square square, int team, Board board){
 		super(square, team, board);
 	}
-	public int getValue() { return Piece.PAWN_VALUE; }
+
 	ArrayList<Move> addMove(ArrayList<Move> moves, Square end, boolean capture){
 		try{
 			Piece p = board.checkSquare(end);
@@ -43,13 +45,13 @@ public class Pawn extends Piece{
 			board.getPieces().add(n);
 		}
 		else throw new InvalidMoveException();
-		board.getPieces().remove(this);
+		board.removePiece(this);
 	}
 	
 	@Override
 	public void move(Square move, Scanner in) throws InvalidMoveException{
 		super.move(move, in);
-		if((move.getY() == 1 && team == Piece.black) || (move.getY() == 8 && team == Piece.white)){
+		if((move.getY() == 1 && team == Piece.BLACK) || (move.getY() == 8 && team == Piece.WHITE)){
 			boolean done = false;
 			while(!done){
 				System.out.println("What would you like to promote your pawn to? queen, rook, bishop, or knight?");
@@ -66,11 +68,21 @@ public class Pawn extends Piece{
 			}
 		}
 	}
+
+	public double getRawValue() {
+		return Piece.PAWN_VALUE;
+	}
+	
+	public double getVanillaValue() {
+		return Piece.VANILLA_PAWN_VALUE;
+	}
+	
+	@Override
 	public Move[] getMoves(){
 		Square square = super.getSquare();
 		int team = super.getTeam();
 		int x = square.getX();
-		boolean extra = (team == Piece.white && square.getY() == 2) || (team == Piece.black && square.getY() == 7);
+		boolean extra = (team == Piece.WHITE && square.getY() == 2) || (team == Piece.BLACK && square.getY() == 7);
 		ArrayList<Move> moves = new ArrayList<Move>();
 		try{
 			moves = addMove(moves, new Square(x,square.getY()+team), false);
@@ -91,6 +103,7 @@ public class Pawn extends Piece{
 		}
 		return moves.toArray(new Move[0]);
 	}
+	
 	public String toString(){
 		return super.getSquare().toString();
 	}

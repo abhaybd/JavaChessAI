@@ -6,7 +6,7 @@ import java.util.List;
 public class ComputerPlayer implements Player {
 	private Board board;
 	private int team;
-	private int lastMaterialScore, lastOppMaterialScore;
+	private double lastMaterialScore, lastOppMaterialScore;
 	
 	/**
 	 * 
@@ -60,7 +60,7 @@ public class ComputerPlayer implements Player {
 		Piece piece = move.getPiece();
 		if(piece instanceof Pawn) return true;
 		if(move.doesCapture()) {
-			if(board.checkSquare(move.getEnd()).getValue() >= move.getPiece().getValue()) {
+			if(board.checkSquare(move.getEnd()).getVanillaValue() >= move.getPiece().getVanillaValue()) {
 				return true;
 			}
 		}
@@ -88,11 +88,11 @@ public class ComputerPlayer implements Player {
 				List<Piece> before = board.saveState();
 				double score = 0;
 				if(!safeMove(m)) {
-					score -= 4*m.getPiece().getValue();
+					score -= 4*m.getPiece().getVanillaValue();
 				}
 				board.doMove(m);
 				score += board.getScore(team, lastMaterialScore, lastOppMaterialScore);
-				if(board.checkMate(board.getKing(-team))) score += 99999;
+				if(board.inCheckMate(board.getKing(-team))) score += 99999;
 				boolean check = board.inCheck(board.getKing(team));
 				if(!check){
 					moves.put(score,m);

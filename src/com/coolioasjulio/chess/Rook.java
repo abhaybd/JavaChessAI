@@ -1,7 +1,8 @@
 package com.coolioasjulio.chess;
 import java.util.ArrayList;
 
-public class Rook extends Piece{
+public class Rook extends Piece {
+	
 	private boolean moved = false;
 	public Rook(Square square, int team, Board board) {
 		super(square, team, board);
@@ -11,13 +12,25 @@ public class Rook extends Piece{
 		return lower <= toCheck && toCheck <= upper;
 	}
 	
-	public int getValue(){ return Piece.ROOK_VALUE; }
-	public boolean hasMoved(){return moved;}
+	public boolean hasMoved() { 
+		return moved;
+	}
+
+	public double getRawValue() {
+		return Piece.ROOK_VALUE;
+	}
+	
+	public double getVanillaValue() {
+		return Piece.VANILLA_ROOK_VALUE;
+	}
+	
 	@Override
 	public void move(Square square) throws InvalidMoveException{
 		moved = true;
 		super.move(square);
 	}
+	
+	@Override
 	public Move[] getMoves(){
 		Square square = super.getSquare();
 		int team = super.getTeam();

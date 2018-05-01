@@ -2,16 +2,27 @@ package com.coolioasjulio.chess;
 import java.util.ArrayList;
 
 public class Bishop extends Piece {
+	
 	public Bishop(Square square, int team, Board board) {
 		super(square, team, board);
 	}
+	
 	public Bishop(String square, int team, Board board) throws InvalidSquareException{
 		super(square, team, board);
 	}
-	boolean between(int toCheck, int bottom, int upper){
+	
+	private boolean between(int toCheck, int bottom, int upper){
 		return bottom <= toCheck && toCheck <= upper;
 	}
-	public int getValue(){ return Piece.BISHOP_VALUE; }
+	
+	public double getRawValue() {
+		return Piece.BISHOP_VALUE;
+	}
+	
+	public double getVanillaValue() {
+		return Piece.VANILLA_BISHOP_VALUE;
+	}
+	
 	public Move[] getMoves(){
 		Square square = super.getSquare();
 		int team = super.getTeam();
