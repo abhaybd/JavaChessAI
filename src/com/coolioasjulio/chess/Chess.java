@@ -92,6 +92,7 @@ public class Chess extends JPanel{
 							if(p instanceof Pawn && p.getSquare().getY() == ((p.getTeam() == Piece.white)?8:1)){
 								((Pawn)p).promote("Queen");
 							}
+							moves.add(m);
 							continue;
 						}
 						
@@ -117,8 +118,8 @@ public class Chess extends JPanel{
 								}
 							} else {
 								board.doMove(m);
-								moves.add(m);
 							}
+							moves.add(m);
 						}
 					} catch(Exception e){
 						if(e instanceof InvalidMoveException) {
