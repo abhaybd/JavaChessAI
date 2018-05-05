@@ -19,4 +19,9 @@ public class MoveCandidate {
 	public Move getMove() {
 		return move;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s - %5.2f", move.toString(), score);
+	}
 }
