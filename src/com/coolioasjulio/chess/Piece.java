@@ -33,16 +33,6 @@ public abstract class Piece {
 	private static HashMap<String,Image> pieceImages = new HashMap<>();
 	private static HashMap<String,double[][]> pieceSquareTables = new HashMap<>();	
 	
-	public static void main(String[] args) {
-		System.out.println(new Pawn("e4", 1, null).getValue());
-		
-		double[][] table = loadPieceSquareTable("p.table");
-		Square s = Square.parseString("e4");
-		for(int i = 1; i < 9; i++) {
-			System.out.println(table[s.getX()][i-1]);
-		}
-	}
-	
 	public static String getType(Piece p){
 		if(p instanceof Pawn){
 			return "";
@@ -147,9 +137,10 @@ public abstract class Piece {
 		return img;
 	}
 	
-	Square square;
-	int team;
-	Board board;
+	protected Square square;
+	protected int team;
+	protected Board board;
+	protected boolean moved = false;
 	
 	public Piece(String square, int team, Board board) throws InvalidSquareException{
 		if(square.length() != 2 || Math.abs(team) != 1){
@@ -181,6 +172,7 @@ public abstract class Piece {
 	}
 	
 	public void move(Square move,Scanner in) throws InvalidMoveException{
+		moved = true;
 		Piece p = board.checkSquare(move);
 		if(p != null && p.team == team){
 			throw new InvalidMoveException();
@@ -202,6 +194,10 @@ public abstract class Piece {
 	 */
 	public double getValue() {
 		return Piece.getValue(this);
+	}
+	
+	public boolean hasMoved() {
+		return moved;
 	}
 	
 	public Image getImage() throws IOException {

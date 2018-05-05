@@ -19,14 +19,6 @@ public class Chess extends JPanel{
 		board.setup();
 		moves = new ArrayList<Move>();
 		this.setPreferredSize(new Dimension(800,800));
-		@SuppressWarnings("resource")
-		Scanner input = new Scanner(System.in);
-		System.out.println("What team do you want to be? w/b");
-		char t = input.nextLine().toLowerCase().charAt(0);
-		int playerTeam = (t=='b')?Piece.BLACK:Piece.WHITE;
-		Player human = new HumanPlayer(board, playerTeam, System.in);
-		Player opp = new BetterComputerPlayer(board, -playerTeam);
-		runGame(human, opp);
 	}
 
 	public static void main(String[] args){
@@ -47,10 +39,24 @@ public class Chess extends JPanel{
 				}
 			}
 		}).start();
+		
+		@SuppressWarnings("resource")
+		Scanner input = new Scanner(System.in);
+		System.out.println("What team do you want to be? w/b");
+		char t = input.nextLine().toLowerCase().charAt(0);
+		int playerTeam = (t=='b')?Piece.BLACK:Piece.WHITE;
+		Player human = new HumanPlayer(chess.getBoard(), playerTeam, System.in);
+		Player betterComputer = new BetterComputerPlayer(chess.getBoard(), -playerTeam);
+//		Player computer = new ComputerPlayer(chess.getBoard(), Piece.BLACK);
+		chess.runGame(human, betterComputer);
 	}
 	
 	private boolean isEven(int i){
 		return i % 2 == 0;
+	}
+	
+	public Board getBoard() {
+		return board;
 	}
 	
 	private void drawPieces(Graphics g) throws IOException {
@@ -76,7 +82,7 @@ public class Chess extends JPanel{
 		}
 	}
 	
-	private void runGame(final Player player1, final Player player2){
+	public void runGame(final Player player1, final Player player2){
 		Runnable run = new Runnable(){
 			@Override
 			public void run() {
@@ -85,31 +91,14 @@ public class Chess extends JPanel{
 					board.updatePieces();
 					List<Piece> beforeState = board.saveState();
 					try{
+						Thread.sleep(100);
 						Player toMove = team==player1.getTeam()?player1:player2;
 						Move m = toMove.getMove();
 						board.restoreState(beforeState);
-						if(m.isCastle()) {
-							if(m.isKingSideCastle()) {
-								King k = board.getKing(team);
-								Piece p = board.checkSquare(new Square(7,k.getSquare().getY()));
-								if(!(p instanceof Rook)) throw new InvalidMoveException();
-								Rook r = (Rook)p;
-								if(!board.freePath(k.getSquare(),r.getSquare(),k.getTeam()) || r.hasMoved()) throw new InvalidMoveException();
-								k.move(new Square(6,k.getSquare().getY()));
-								r.move(new Square(5,r.getSquare().getY()));
-							} else if(m.isQueenSideCastle()) {
-								King k = board.getKing(team);
-								Piece p = board.checkSquare(new Square(0,k.getSquare().getY()));
-								if(!(p instanceof Rook)) throw new InvalidMoveException();
-								Rook r = (Rook)p;
-								if(!board.freePath(k.getSquare(),r.getSquare(),k.getTeam()) || r.hasMoved()) throw new InvalidMoveException();
-								k.move(new Square(2,k.getSquare().getY()));
-								r.move(new Square(3,r.getSquare().getY()));
-							}
-						} else {
-							board.doMove(m);
-						}
+						
+						board.doMove(m);
 						moves.add(m);
+						
 						team *= -1;
 						if(board.inCheckMate(team)) {
 							System.out.println("Checkmate!");

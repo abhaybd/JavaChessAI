@@ -3,17 +3,12 @@ import java.util.ArrayList;
 
 public class Rook extends Piece {
 	
-	private boolean moved = false;
 	public Rook(Square square, int team, Board board) {
 		super(square, team, board);
 	}
 	
-	boolean between(int toCheck, int lower, int upper){
+	private boolean between(int toCheck, int lower, int upper){
 		return lower <= toCheck && toCheck <= upper;
-	}
-	
-	public boolean hasMoved() { 
-		return moved;
 	}
 
 	public double getRawValue() {
@@ -22,12 +17,6 @@ public class Rook extends Piece {
 	
 	public double getVanillaValue() {
 		return Piece.VANILLA_ROOK_VALUE;
-	}
-	
-	@Override
-	public void move(Square square) throws InvalidMoveException{
-		moved = true;
-		super.move(square);
 	}
 	
 	@Override

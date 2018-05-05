@@ -67,6 +67,26 @@ public class Board{
 		return null;
 	}
 	
+	public boolean canKingSideCastle(King k) {
+		if(k.hasMoved() || inCheck(k)) return false;
+		Board board = k.getBoard();
+		Piece p = board.checkSquare(new Square(7,k.getSquare().getY()));
+		if(!(p instanceof Rook) || p.getTeam() != k.getTeam()) return false;
+		Rook r = (Rook)p;
+		if(r.hasMoved() || !freePath(k.getSquare(), r.getSquare(), k.getTeam())) return false;
+		return true;
+	}
+	
+	public boolean canQueenSideCastle(King k) {
+		if(k.hasMoved() || inCheck(k)) return false;
+		Board board = k.getBoard();
+		Piece p = board.checkSquare(new Square(0,k.getSquare().getY()));
+		if(!(p instanceof Rook) || p.getTeam() != k.getTeam()) return false;
+		Rook r = (Rook)p;
+		if(r.hasMoved() || !freePath(k.getSquare(), r.getSquare(), k.getTeam())) return false;
+		return true;
+	}
+	
 	public boolean inStaleMate(int team) {
 		if(inCheck(team)) return false;
 		Move[] moves = getMoves(team);
@@ -146,17 +166,30 @@ public class Board{
 	}
 	
 	public void doMove(Move m) {
-		if(m.isCastle()) throw new IllegalArgumentException("Must castle manually!");
-		
-		Piece p = this.checkSquare(m.getStart());
-		List<Square> endSquares = Arrays.asList(p.getMoves()).stream().map(Move::getEnd).collect(Collectors.toList());
-		if(m.getPiece().getBoard() != this || !endSquares.contains(m.getEnd())) {
-			throw new IllegalArgumentException("Invalid move!");
+		if(m.isCastle()) {
+			King k = getKing(m.getTeam());
+			if(m.isKingSideCastle() && canKingSideCastle(k)) {
+				Rook r = (Rook)checkSquare(new Square(7,k.getSquare().getY()));
+				k.move(new Square(6,k.getSquare().getY()));
+				r.move(new Square(5,r.getSquare().getY()));
+			} else if(m.isQueenSideCastle() && canQueenSideCastle(k)) {
+				Rook r = (Rook)checkSquare(new Square(0,k.getSquare().getY()));
+				k.move(new Square(2,k.getSquare().getY()));
+				r.move(new Square(3,r.getSquare().getY()));
+			} else {
+				throw new InvalidMoveException();
+			}
+		} else {			
+			Piece p = this.checkSquare(m.getStart());
+			List<Square> endSquares = Arrays.asList(p.getMoves()).stream().map(Move::getEnd).collect(Collectors.toList());
+			if(m.getPiece().getBoard() != this || !endSquares.contains(m.getEnd())) {
+				throw new InvalidMoveException();
+			}
+			if(m.doesCapture()) {
+				removePiece(checkSquare(m.getEnd()));
+			}
+			p.move(m.getEnd());
 		}
-		if(m.doesCapture()) {
-			removePiece(checkSquare(m.getEnd()));
-		}
-		p.move(m.getEnd());
 	}
 	
 	public void updatePieces() {

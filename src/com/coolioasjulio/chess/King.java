@@ -2,14 +2,9 @@ package com.coolioasjulio.chess;
 import java.util.ArrayList;
 
 public class King extends Piece{
-	private boolean moved = false;
 
 	public King(Square square, int team, Board board) {
 		super(square, team, board);
-	}
-	
-	public boolean hasMoved(){
-		return moved;
 	}
 
 	public double getRawValue() {
@@ -18,22 +13,6 @@ public class King extends Piece{
 	
 	public double getVanillaValue() {
 		return Piece.VANILLA_KING_VALUE;
-	}
-	
-	public boolean inCheck(){
-		Move[] moves = board.getMoves(-team);
-		for(Move m:moves){
-			if(m.getEnd().equals(square)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public void move(Square move) throws InvalidMoveException{
-		moved = true;
-		super.move(move);
 	}
 
 	@Override
