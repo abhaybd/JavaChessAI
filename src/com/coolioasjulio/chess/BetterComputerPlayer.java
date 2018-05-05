@@ -38,7 +38,7 @@ public class BetterComputerPlayer implements Player {
 					}
 				}
 				board.restoreState(before);
-				if(System.currentTimeMillis() > expiredTime){
+				if(bestMove != null && System.currentTimeMillis() > expiredTime){
 					break;
 				}
 			}
@@ -61,7 +61,7 @@ public class BetterComputerPlayer implements Player {
 					
 				}
 				board.restoreState(before);
-				if(System.currentTimeMillis() > expiredTime) {
+				if(bestMove != null && System.currentTimeMillis() > expiredTime) {
 					break;
 				}
 			}
