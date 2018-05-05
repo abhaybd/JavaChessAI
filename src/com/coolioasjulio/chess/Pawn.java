@@ -47,10 +47,10 @@ public class Pawn extends Piece{
 				}
 				promotion = String.valueOf(promotion.charAt(0)).toUpperCase() + promotion.substring(1);
 				try {
-					Class.forName(promotion);
+					Class.forName("com.coolioasjulio.chess." + promotion);
 					promote(promotion);
 				} catch (ClassNotFoundException e) {
-					System.out.println("Invalid piece!");
+					System.err.println("Invalid piece for promotion: " + promotion);
 					continue;
 				}
 				done = true;

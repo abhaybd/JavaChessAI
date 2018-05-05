@@ -87,6 +87,7 @@ public class Chess extends JPanel{
 					try{
 						Player toMove = team==player1.getTeam()?player1:player2;
 						Move m = toMove.getMove();
+						board.restoreState(beforeState);
 						if(m.isCastle()) {
 							if(m.isKingSideCastle()) {
 								King k = board.getKing(team);

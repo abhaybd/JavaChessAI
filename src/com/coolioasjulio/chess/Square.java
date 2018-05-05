@@ -5,7 +5,7 @@ public class Square {
 	private String square;
 	private int x, y;
 	private int[] coords;
-	boolean between(int toCheck, int bottom, int upper){
+	private boolean between(int toCheck, int bottom, int upper){
 		return bottom <= toCheck && toCheck <= upper;
 	}
 	public Square(int x, int  y) throws InvalidSquareException{
