@@ -6,7 +6,6 @@ import java.util.List;
 public class ComputerPlayer implements Player {
 	private Board board;
 	private int team;
-	private double lastMaterialScore, lastOppMaterialScore;
 	
 	/**
 	 * 
@@ -16,8 +15,6 @@ public class ComputerPlayer implements Player {
 	public ComputerPlayer(Board board, int team){
 		this.board = board;
 		this.team = team;
-		this.lastMaterialScore = 0;
-		this.lastOppMaterialScore = 0;
 	}
 	
 	private int numAttackers(Move move) {
@@ -29,7 +26,7 @@ public class ComputerPlayer implements Player {
 			if(p.getTeam() == team) continue;
 			Move[] moves = p.getMoves();
 			for(Move m:moves) {
-				if(m.getEnd().equals(p.getSquare())) {
+				if(m.getEnd().equals(move.getEnd())) {
 					attackers++;
 				}
 			}
@@ -40,11 +37,11 @@ public class ComputerPlayer implements Player {
 	
 	private int numDefenders(Move move) {
 		List<Piece> before = board.saveState();
-		board.getPieces().remove(move.getPiece());
+		board.removePiece(move.getPiece());
 		int defenders = 0;
 		for(int i = 0; i < board.pieces.size(); i++) {
 			Piece p = board.pieces.get(i);
-			if(p.getTeam() != team || p == move.getPiece()) continue;
+			if(p.getTeam() != team) continue;
 			Move[] moves = p.getMoves();
 			for(Move m:moves) {
 				if(m.getEnd().equals(move.getEnd())) {
@@ -60,7 +57,7 @@ public class ComputerPlayer implements Player {
 		Piece piece = move.getPiece();
 		if(piece instanceof Pawn) return true;
 		if(move.doesCapture()) {
-			if(board.checkSquare(move.getEnd()).getVanillaValue() >= move.getPiece().getVanillaValue()) {
+			if(board.checkSquare(move.getEnd()).getValue() >= move.getPiece().getValue()) {
 				return true;
 			}
 		}
@@ -88,22 +85,21 @@ public class ComputerPlayer implements Player {
 				List<Piece> before = board.saveState();
 				double score = 0;
 				if(!safeMove(m)) {
-					score -= 4*m.getPiece().getVanillaValue();
+					score -= m.getPiece().getValue();
 				}
 				board.doMove(m);
-				score += board.getScore(team, lastMaterialScore, lastOppMaterialScore);
-				if(board.inCheckMate(board.getKing(-team))) score += 99999;
+				score += board.getScore(team);
+				if(board.inCheckMate(-team)) score += 99999;
 				boolean check = board.inCheck(board.getKing(team));
 				if(!check){
 					moves.put(score,m);
 				}
 				board.restoreState(before);
 			}
-			lastMaterialScore = board.getMaterialScore(team);
-			lastOppMaterialScore = board.getMaterialScore(-team);
 		}
 		double bestScore = moves.keySet().stream().reduce(Math::max).get();
 		Move bestMove = moves.get(bestScore);
+		System.out.println();
 		System.out.println(bestMove.toString() + " - Score: " + bestScore);
 		return bestMove;
 	}

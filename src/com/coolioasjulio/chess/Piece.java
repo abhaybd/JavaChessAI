@@ -1,4 +1,5 @@
 package com.coolioasjulio.chess;
+
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,6 +33,16 @@ public abstract class Piece {
 	private static HashMap<String,Image> pieceImages = new HashMap<>();
 	private static HashMap<String,double[][]> pieceSquareTables = new HashMap<>();	
 	
+	public static void main(String[] args) {
+		System.out.println(new Pawn("e4", 1, null).getValue());
+		
+		double[][] table = loadPieceSquareTable("p.table");
+		Square s = Square.parseString("e4");
+		for(int i = 1; i < 9; i++) {
+			System.out.println(table[s.getX()][i-1]);
+		}
+	}
+	
 	public static String getType(Piece p){
 		if(p instanceof Pawn){
 			return "";
@@ -51,21 +62,24 @@ public abstract class Piece {
 		if(p instanceof King){
 			return "K";
 		}
+		System.err.println("Unrecognized piece!");
 		return null;
 	}
 	
 	public static double getValue(Piece p) {
 		String name = p.getName();
+		if(p.getTeam() == Piece.WHITE) {
+			name = "w" + name;
+		} else if(p.getTeam() == Piece.BLACK) {
+			name = "b" + name;
+		}
 		
 		double[][] table;
 		if(pieceSquareTables.containsKey(name)) {
 			table = pieceSquareTables.get(name);
 		} else {
-			table = loadPieceSquareTable(name + ".table");
-			if(p.getTeam() == Piece.WHITE) {
-				name = "w" + name;
-			} else if(p.getTeam() == Piece.BLACK) {
-				name = "b" + name;
+			table = loadPieceSquareTable(name.substring(1) + ".table");
+			if(p.getTeam() == Piece.BLACK) {
 				table = flipTable(table);
 			}
 			pieceSquareTables.put(name, table);
@@ -102,12 +116,12 @@ public abstract class Piece {
 			if(tableList.size() != 8) throw new IllegalArgumentException("Invalid Piece-Square table file!");
 			
 			double[][] table = new double[tableList.get(0).length][tableList.size()];
-			for(int y = 0; y < table.length; y++) {
-				for(int x = 0; x < table[0].length; x++) {
+			for(int y = 0; y < tableList.size(); y++) {
+				for(int x = 0; x < table.length; x++) {
 					table[x][y] = tableList.get(y)[x];
 				}
 			}
-			return table;
+			return flipTable(table);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -162,12 +176,6 @@ public abstract class Piece {
 	 */
 	public abstract double getRawValue();
 	
-	/**
-	 * Chess value of the piece
-	 * @return
-	 */
-	public abstract double getVanillaValue();
-	
 	public void move(Square move) throws InvalidMoveException{
 		move(move,null);
 	}
@@ -210,6 +218,14 @@ public abstract class Piece {
 			name = "p";
 		}
 		return name;
+	}
+	
+	/**
+	 * Chess value of the piece
+	 * @return
+	 */
+	public double getVanillaValue() {
+		return -1;
 	}
 	
 	public Board getBoard() {

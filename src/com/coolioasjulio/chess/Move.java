@@ -5,25 +5,24 @@ import java.util.Objects;
 
 public class Move {
 	private Piece piece;
+	private int team;
 	private Square start, end;
 	private String type;
 	private boolean capture;
 	private boolean kingSideCastle;
 	private boolean queenSideCastle;
 	public Move(Piece piece, Square start, Square end){
-		this.piece = piece;
-		this.start = start;
-		this.end = end;
-		this.type = Piece.getType(piece);
+		this(piece, start, end, false);
 	}
 	
 	/**
 	 * Done use a regular Move object. In this case, if true, castle king side. Else, castle queen side.
 	 * @param kingSideCastle
 	 */
-	public Move(boolean kingSideCastle) {
+	public Move(int team, boolean kingSideCastle) {
 		this.kingSideCastle = kingSideCastle;
 		this.queenSideCastle = !kingSideCastle;
+		this.team = team;
 	}
 	
 	public Move(Piece piece, Square start, Square end, boolean capture){
@@ -32,6 +31,10 @@ public class Move {
 		this.end = end;
 		this.type = Piece.getType(piece);
 		this.capture = capture;
+	}
+	
+	public int getTeam() {
+		return team;
 	}
 	
 	public boolean isCastle() {
@@ -98,10 +101,11 @@ public class Move {
 	
 	@Override
 	public String toString(){
-		String action = "-";
-		if(capture){
-			action = "x";
-		}
-		return type + start.toString() + action + end.toString();
+		if(isKingSideCastle()) return "o-o";
+		else if(isQueenSideCastle()) return "o-o-o";
+		String action = capture?"x":"-";
+		String startSquare = start.toString();
+		String endSquare = end.toString();
+		return type + startSquare + action + endSquare;
 	}
 }

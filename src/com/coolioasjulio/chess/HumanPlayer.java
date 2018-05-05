@@ -34,9 +34,9 @@ public class HumanPlayer implements Player {
 			String type = "";
 			
 			if(response.equalsIgnoreCase("o-o")) {
-				return new Move(true);
+				return new Move(team, true);
 			} else if(response.equalsIgnoreCase("o-o-o")) {
-				return new Move(false);
+				return new Move(team, false);
 			} else if (response.length() == 5){
 				start = Square.parseString(response.substring(0,2));
 				end = Square.parseString(response.substring(3));
@@ -53,7 +53,7 @@ public class HumanPlayer implements Player {
 			if(action != 'x' && action != '-') throw new InvalidMoveException();
 			
 			Piece p = board.checkSquare(start);
-			if(!Piece.getType(p).equalsIgnoreCase(type) || p.team != team) throw new InvalidMoveException();
+			if(p==null || !Piece.getType(p).equalsIgnoreCase(type) || p.team != team) throw new InvalidMoveException();
 			
 			Move[] possibleMoves = p.getMoves();
 			Move move = new Move(p,start,end,action=='x');
@@ -64,8 +64,7 @@ public class HumanPlayer implements Player {
 				throw new InvalidMoveException();
 			}
 			
-			King k = board.getKing(team);
-			if(board.inCheck(k)||board.inCheckMate(k)) {
+			if(board.inCheck(team)||board.inCheckMate(team)) {
 				throw new InvalidMoveException();
 			}
 			

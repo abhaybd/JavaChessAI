@@ -1,5 +1,6 @@
 package com.coolioasjulio.chess;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Pawn extends Piece{
@@ -10,21 +11,6 @@ public class Pawn extends Piece{
 	
 	public Pawn(Square square, int team, Board board){
 		super(square, team, board);
-	}
-
-	ArrayList<Move> addMove(ArrayList<Move> moves, Square end, boolean capture){
-		try{
-			Piece p = board.checkSquare(end);
-			if(p == null && capture){
-				return moves;
-			}
-			if((p == null && !capture) || (capture && p != null && p.team != team)){
-				Move move = new Move(this,super.getSquare(),end,capture);
-				moves.add(move);
-			}
-		}
-		catch(Exception e){e.printStackTrace();}
-		return moves;
 	}
 	
 	public void promote(String type) throws InvalidMoveException{
@@ -54,8 +40,11 @@ public class Pawn extends Piece{
 		if((move.getY() == 1 && team == Piece.BLACK) || (move.getY() == 8 && team == Piece.WHITE)){
 			boolean done = false;
 			while(!done){
-				System.out.println("What would you like to promote your pawn to? queen, rook, bishop, or knight?");
-				String promotion = in.nextLine().toLowerCase();
+				String promotion = "queen";
+				if(in != null) {
+					System.out.println("What would you like to promote your pawn to? queen, rook, bishop, or knight?");					
+					promotion = in.nextLine().toLowerCase();
+				}
 				promotion = String.valueOf(promotion.charAt(0)).toUpperCase() + promotion.substring(1);
 				try {
 					Class.forName(promotion);
@@ -77,29 +66,30 @@ public class Pawn extends Piece{
 		return Piece.VANILLA_PAWN_VALUE;
 	}
 	
+	private boolean between(int a, int min, int max) {
+		return min <= a && a <= max;
+	}
+	
 	@Override
 	public Move[] getMoves(){
-		Square square = super.getSquare();
 		int team = super.getTeam();
 		int x = square.getX();
+		int y = square.getY();
 		boolean extra = (team == Piece.WHITE && square.getY() == 2) || (team == Piece.BLACK && square.getY() == 7);
-		ArrayList<Move> moves = new ArrayList<Move>();
-		try{
-			moves = addMove(moves, new Square(x,square.getY()+team), false);
-			if(extra){
-				moves = addMove(moves,new Square(x,square.getY()+(team*2)),false);
-			}
-			try{
-				moves = addMove(moves, new Square(square.getX()+1, square.getY() + team), true);				
-			}
-			catch(Exception e){}
-			try{
-				moves = addMove(moves, new Square(square.getX()-1, square.getY() + team), true);
-			}
-			catch(Exception e){}
+		List<Move> moves = new ArrayList<Move>();
+		if(board.checkSquare(new Square(x, y+team)) == null) moves.add(new Move(this, square, new Square(x,y+team)));
+		if(extra && board.checkSquare(new Square(x,y+team)) == null && board.checkSquare(new Square(x,y+2*team)) == null) {
+			moves.add(new Move(this, square, new Square(x,y+2*team)));
 		}
-		catch(InvalidSquareException e){
-			
+		if(between(x-1,0,7)) {
+			Square end = new Square(x-1,y+team);
+			Piece p = board.checkSquare(end);
+			if(p != null && p.team != team) moves.add(new Move(this, square, end, true));
+		}
+		if(between(x+1,0,7)) {
+			Square end = new Square(x+1,y+team);
+			Piece p = board.checkSquare(end);
+			if(p != null && p.team != team) moves.add(new Move(this, square, end, true));
 		}
 		return moves.toArray(new Move[0]);
 	}

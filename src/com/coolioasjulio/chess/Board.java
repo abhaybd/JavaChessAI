@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class Board{
 	public static final Color BROWN = new Color(107,54,54);
 	public static final Color TAN = new Color(203, 177, 154);
-	public static final double spaceScore = 0.2;
+	public static final double spaceScore = 0.02;
 	public ArrayList<Piece> pieces;
 	public ArrayList<Piece> finalPieces;
 	public Board(){
@@ -19,7 +19,20 @@ public class Board{
 	}
 	
 	public List<Piece> getPieces(){
-		return Collections.synchronizedList(pieces);
+		return pieces;
+	}
+	
+	public List<Piece> getPieces(int team) {
+		return getPieces().stream()
+				.filter(p -> p.team == team)
+				.collect(Collectors.toList());
+	}
+	
+	public Move[] getMoves(int team) {
+		return getPieces(team).stream()
+				.flatMap(p -> Arrays.asList(p.getMoves()).stream())
+				.collect(Collectors.toList())
+				.toArray(new Move[0]);
 	}
 	
 	public boolean removePiece(int i) {
@@ -54,56 +67,30 @@ public class Board{
 		return null;
 	}
 	
-	public boolean inCheckMate(int team) throws InvalidMoveException {
-		return inCheckMate(getKing(team));
+	public boolean inStaleMate(int team) {
+		if(inCheck(team)) return false;
+		Move[] moves = getMoves(team);
+		boolean stalemate = true;
+		for(Move move:moves) {
+			List<Piece> before = saveState();
+			doMove(move);
+			if(!inCheck(team)) stalemate = false;
+			restoreState(before);
+		}
+		return stalemate;
 	}
 	
-	public boolean inCheckMate(King k) throws InvalidMoveException{
-		Move[] Kmoves = k.getMoves();
-		if(!inCheck(k)) return false;
-		Square Kbefore = k.getSquare();
-		for(int i = 0; i < Kmoves.length; i++){
-			Move m = Kmoves[i];
-			Piece captured = null;
-			if(m.doesCapture()){
-				captured = checkSquare(m.getEnd());
-				getPieces().remove(captured);
-			}
-			//King toTest = new King(m.getEnd(),k.getTeam(),k.getBoard());
-			k.move(m.getEnd());
-			if(!inCheck(k)){
-				k.move(Kbefore);
-				if(m.doesCapture())	getPieces().add(captured);
-				return false;
-			}
-			k.move(Kbefore);
-			if(m.doesCapture())	getPieces().add(captured);
+	public boolean inCheckMate(int team) throws InvalidMoveException {
+		if(!inCheck(team)) return false;
+		Move[] moves = getMoves(team);
+		boolean checkMate = true;
+		for(Move move:moves) {
+			List<Piece> before = saveState();
+			doMove(move);
+			if(!inCheck(team)) checkMate = false;
+			restoreState(before);
 		}
-		
-		for(int i = 0; i < getPieces().size(); i++){
-			Piece p = getPieces().get(i);
-			if(p.getTeam() != k.getTeam()) continue;
-			Move[] moves = p.getMoves();
-			for(Move m:moves){
-				Square before = p.getSquare();
-				Piece captured = null;
-				if(m.doesCapture()){
-					captured = checkSquare(m.getEnd());
-					getPieces().remove(captured);
-				}
-				p.move(m.getEnd());
-				if(!inCheck(k)){
-					p.move(before);
-					if(m.doesCapture()) getPieces().add(captured);
-					return false;
-				}
-				else {
-					p.move(before);
-					if(m.doesCapture()) getPieces().add(captured);
-				}
-			}
-		}
-		return true;
+		return checkMate;
 	}
 	
 	public King getKing(int team) throws InvalidMoveException{
@@ -112,6 +99,7 @@ public class Board{
 				return (King)p;
 			}
 		}
+		System.err.println(getPieces().stream().map(Piece::toString).collect(Collectors.toList()).toString());
 		throw new InvalidMoveException();
 	}
 	
@@ -127,15 +115,15 @@ public class Board{
 		return true;
 	}
 	
+	public boolean inCheck(int team) {
+		return inCheck(getKing(team));
+	}
 	public boolean inCheck(King k) throws InvalidMoveException{
 		if(k == null) throw new InvalidMoveException();
-		for(Piece p:Collections.synchronizedList(getPieces())){
-			if(p.team == k.getTeam()) continue;
-			Move[] moves = p.getMoves();
-			for(Move m:moves){
-				if(m.getEnd().equals(k.getSquare())){
-					return true;
-				}
+		Move[] moves = getMoves(-k.getTeam());
+		for(Move m:moves){
+			if(m.getEnd().equals(k.getSquare())){
+				return true;
 			}
 		}
 		return false;
@@ -150,15 +138,11 @@ public class Board{
 		return material;
 	}
 	
-	public double getScore(int team, double lastMaterial, double lastOppMaterial){		
-		int space = 0;
-		double material = getMaterialScore(team) - lastMaterial;
-		double oppMaterial = getMaterialScore(-team) - lastOppMaterial;
-		for(Piece p:pieces){
-			if(p.getTeam() != team) continue;
-			space += p.getMoves().length * spaceScore;
-		}
-		return space + material - oppMaterial;
+	public double getScore(int team){
+		double space = (double)getMoves(team).length * spaceScore;
+		double material = getMaterialScore(team);
+		double oppMaterial = getMaterialScore(-team);
+		return space + material - oppMaterial + (inCheckMate(-team)?1000:0);
 	}
 	
 	public void doMove(Move m) {

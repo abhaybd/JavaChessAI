@@ -21,14 +21,10 @@ public class King extends Piece{
 	}
 	
 	public boolean inCheck(){
-		for(Piece p:board.getPieces()){
-			if(p.team != team){
-				Move[] moves = p.getMoves();
-				for(Move m:moves){
-					if(m.getEnd().equals(square)){
-						return true;
-					}
-				}
+		Move[] moves = board.getMoves(-team);
+		for(Move m:moves){
+			if(m.getEnd().equals(square)){
+				return true;
 			}
 		}
 		return false;
@@ -53,7 +49,8 @@ public class King extends Piece{
 					Piece p = board.checkSquare(s);
 					boolean capture = (p != null && p.team != team);
 					if(p == null || capture){
-						moves.add(new Move(this,square,s,capture));
+						Move move = new Move(this,square,s,capture);
+						moves.add(move);
 					}
 				}
 				catch(InvalidSquareException e){
