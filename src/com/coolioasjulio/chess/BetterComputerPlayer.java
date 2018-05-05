@@ -3,10 +3,11 @@ package com.coolioasjulio.chess;
 import java.util.List;
 
 public class BetterComputerPlayer implements Player {
-	private static final int MINIMAX_DEPTH = 2; // Must be multiple of 2
+	private static final long TIMEOUT_MILLIS = 10000;
 	
 	private Board board;
 	private int team;
+	private long expiredTime;
 	public BetterComputerPlayer(Board board, int team) {
 		this.board = board;
 		this.team = team;
@@ -20,12 +21,26 @@ public class BetterComputerPlayer implements Player {
 				List<Piece> before = board.saveState();
 				board.doMove(m);
 				if(!board.inCheck(team)) {
-					double score = (depth <= 1)?board.getScore(team):minimax(depth-1, -team).getScore();
-					if(bestMove == null || score < bestMove.getScore()) {
-						bestMove = new MoveCandidate(m,score);
-					}					
+					double score;
+					if(depth <= 1){
+						score = board.getScore(team);
+					} else {
+						score = minimax(depth-1, -team).getScore();
+					}
+					if(depth > 1) {
+						if(bestMove == null || score < bestMove.getScore()) {
+							bestMove = new MoveCandidate(m,score);
+						}
+					} else {
+						if(bestMove == null || score > bestMove.getScore()) {
+							bestMove = new MoveCandidate(m,score);
+						}
+					}
 				}
 				board.restoreState(before);
+				if(System.currentTimeMillis() > expiredTime){
+					break;
+				}
 			}
 			return bestMove;
 		} else if(team == -this.team) {
@@ -34,12 +49,21 @@ public class BetterComputerPlayer implements Player {
 				List<Piece> before = board.saveState();
 				board.doMove(m);
 				if(!board.inCheck(team)) {
-					double score = depth <= 1?board.getScore(team):minimax(depth-1, -team).getScore();
+					double score;
+					if(depth <= 1){
+						score = board.getScore(team);
+					} else {
+						score = minimax(depth-1, -team).getScore();
+					}
 					if(bestMove == null || score > bestMove.getScore()) {
 						bestMove = new MoveCandidate(m,score);
-					}					
+					}			
+					
 				}
 				board.restoreState(before);
+				if(System.currentTimeMillis() > expiredTime) {
+					break;
+				}
 			}
 			return bestMove;
 		} else {
@@ -49,9 +73,18 @@ public class BetterComputerPlayer implements Player {
 
 	@Override
 	public Move getMove() {
-		MoveCandidate mc = minimax(MINIMAX_DEPTH, team);
-		System.out.printf("%s - Score: %.2f\n", mc.getMove().toString(), mc.getScore());
-		return mc.getMove();
+		MoveCandidate bestMove = null;
+		expiredTime = System.currentTimeMillis() + TIMEOUT_MILLIS;
+		for(int depth = 2; System.currentTimeMillis() <= expiredTime; depth++) {
+			System.out.println("Searching with depth: " + depth);
+			MoveCandidate mc = minimax(depth, team);
+			if(bestMove == null || mc.getScore() < bestMove.getScore()) {
+				System.out.printf("Depth %d is better!\n", depth);
+				bestMove = mc;
+			}
+		}
+		System.out.printf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
+		return bestMove.getMove();
 	}
 
 	@Override
