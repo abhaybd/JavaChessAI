@@ -109,24 +109,28 @@ public class BetterComputerPlayer implements Player {
         
         MoveCandidate bestMove = softmaxSelect(
                 kept,
-                kept.stream().mapToDouble(e -> 1.0 / e.getScore()).toArray());
+                kept.stream().map(e -> 1.0 / e.getScore()).collect(Collectors.toList()));
         
         System.out.printf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
         return bestMove.getMove();
     }
     
-    private <T> T softmaxSelect(List<T> c, double[] scores) {
-        double[] probabilities = Arrays.stream(scores).map(Math::exp).toArray();
-        double denominator = Arrays.stream(probabilities).sum();
-        probabilities = Arrays.stream(probabilities).map(d -> d / denominator).toArray();
+    private <T> T softmaxSelect(List<T> toSelect, List<Double> scores) {
+        if(toSelect.size() != scores.size() || toSelect.size() == 0 || scores.size() == 0) {
+            throw new IllegalArgumentException("Must have equal sizes and nonzero!");            
+        }
+        
+        List<Double> unNormalizedProbabilities = scores.stream().map(Math::exp).collect(Collectors.toList());
+        double denominator = unNormalizedProbabilities.stream().reduce(Double::sum).orElseThrow(IllegalStateException::new);
+        double[] probabilities = unNormalizedProbabilities.stream().mapToDouble(d -> d / denominator).toArray();
         double random = Math.random();
         for(int i = 0; i < probabilities.length; i++) {
             random -= probabilities[i];
             if(random <= 0) {
-                return c.get(i);
+                return toSelect.get(i);
             }
         }
-        return c.get(c.size() - 1);
+        return toSelect.get(toSelect.size() - 1);
     }
 
     @Override
