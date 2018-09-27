@@ -22,12 +22,13 @@ public class Chess extends JPanel {
         frame.pack();
         frame.setVisible(true);
 
-        @SuppressWarnings("resource")
-        Scanner input = new Scanner(System.in);
-        System.out.println("What team do you want to be? w/b");
-        char t = input.nextLine().toLowerCase().charAt(0);
+        char t;
+        try(Scanner input = new Scanner(System.in)) {            
+            System.out.println("What team do you want to be? w/b");
+            t = input.nextLine().toLowerCase().charAt(0);
+        }
+        
         int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
-//        Player human = new HumanConsolePlayer(chess.getBoard(), playerTeam, System.in);
         Player human = new HumanGUIPlayer(playerTeam, chess.getBoard(), chess);
         Player betterComputer = new BetterComputerPlayer(chess.getBoard(), -playerTeam);
 //		Player computer = new ComputerPlayer(chess.getBoard(), Piece.BLACK);

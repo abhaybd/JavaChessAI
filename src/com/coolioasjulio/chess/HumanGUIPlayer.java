@@ -9,7 +9,7 @@ public class HumanGUIPlayer implements Player, MouseListener {
     private Chess chess;
     private Board board;
     private Square fromSquare, toSquare;
-    private Object lock = new Object();
+    private final Object lock = new Object();
     public HumanGUIPlayer(int team, Board board, Chess chess) {
         this.team = team;
         this.board = board;
@@ -40,7 +40,20 @@ public class HumanGUIPlayer implements Player, MouseListener {
             throw new InvalidMoveException("Choose your own piece!");
         }
         
-        Move move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
+        Move move;
+        
+        if(piece instanceof King) {
+            if(toSquare.getX() == 2 && board.canQueenSideCastle((King) piece)) {
+                move = new Move(team, false);
+            } else if(toSquare.getX() == 6 && board.canKingSideCastle((King) piece)) {
+                move = new Move(team, true);
+            } else {
+                move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
+            }
+        } else {            
+            move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
+        }
+        
         
         return move;
     }
