@@ -11,6 +11,13 @@ public class Square {
         return bottom <= toCheck && toCheck <= upper;
     }
 
+    /**
+     * Create a square object for the given coordinates
+     * 
+     * @param x In range [0,7]
+     * @param y In range [1,8]. Yeah, ik I hate myself.
+     * @throws InvalidSquareException
+     */
     public Square(int x, int y) throws InvalidSquareException {
         if (!between(x, 0, 7) || !between(y, 1, 8)) {
             throw new InvalidSquareException();

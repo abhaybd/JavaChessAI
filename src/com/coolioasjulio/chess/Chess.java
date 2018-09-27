@@ -12,19 +12,9 @@ import javax.swing.JPanel;
 
 public class Chess extends JPanel {
     private static final long serialVersionUID = 1L;
-    private Board board;
-    private ArrayList<Move> moves;
-    private List<Piece> piecesToDraw;
-
-    public Chess() {
-        board = new Board();
-        board.setup();
-        moves = new ArrayList<Move>();
-        this.setPreferredSize(new Dimension(800, 800));
-    }
 
     public static void main(String[] args) {
-        Chess chess = new Chess();
+        Chess chess = new Chess(100);
         JFrame frame = new JFrame();
         frame.add(chess);
         frame.setResizable(false);
@@ -37,10 +27,28 @@ public class Chess extends JPanel {
         System.out.println("What team do you want to be? w/b");
         char t = input.nextLine().toLowerCase().charAt(0);
         int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
-        Player human = new HumanPlayer(chess.getBoard(), playerTeam, System.in);
+//        Player human = new HumanConsolePlayer(chess.getBoard(), playerTeam, System.in);
+        Player human = new HumanGUIPlayer(playerTeam, chess.getBoard(), chess);
         Player betterComputer = new BetterComputerPlayer(chess.getBoard(), -playerTeam);
 //		Player computer = new ComputerPlayer(chess.getBoard(), Piece.BLACK);
         chess.runGame(human, betterComputer);
+    }
+    
+    private Board board;
+    private ArrayList<Move> moves;
+    private List<Piece> piecesToDraw;
+    private int tileSize;
+    
+    public Chess(int tileSize) {
+        this.tileSize = tileSize;
+        board = new Board();
+        board.setup();
+        moves = new ArrayList<Move>();
+        this.setPreferredSize(new Dimension(tileSize*8, tileSize*8));
+    }
+    
+    public int getTileSize() {
+        return tileSize;
     }
 
     private boolean isEven(int i) {
@@ -55,8 +63,8 @@ public class Chess extends JPanel {
         List<Piece> toDraw = piecesToDraw != null ? piecesToDraw : board.getPieces();
         for (Piece p : toDraw) {
             Square square = p.getSquare();
-            int x = square.getX() * 100;
-            int y = this.getHeight() - square.getY() * 100;
+            int x = square.getX() * tileSize;
+            int y = this.getHeight() - square.getY() * tileSize;
             g.drawImage(Piece.getImage(p), x, y, null);
         }
     }
@@ -64,12 +72,12 @@ public class Chess extends JPanel {
     private void drawBoard(Graphics g) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                int x = i * 100;
-                int y = j * 100;
+                int x = i * tileSize;
+                int y = j * tileSize;
                 g.setColor(Board.TAN);
                 if (isEven(i + j))
                     g.setColor(Board.BROWN);
-                g.fillRect(x, y, 100, 100);
+                g.fillRect(x, y, tileSize, tileSize);
             }
         }
     }

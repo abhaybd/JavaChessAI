@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class HumanPlayer implements Player {
+public class HumanConsolePlayer implements Player {
     private static ArrayList<InputStream> inputStreams = new ArrayList<>();
 
     private Board board;
     private int team;
     private Scanner input;
 
-    public HumanPlayer(Board board, int team, InputStream is) {
+    public HumanConsolePlayer(Board board, int team, InputStream is) {
         if (inputStreams.contains(is)) {
             throw new IllegalArgumentException("Cannot reuse input streams!");
         }
