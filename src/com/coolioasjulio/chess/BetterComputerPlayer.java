@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BetterComputerPlayer implements Player {
-    private static final long TIMEOUT_MILLIS = 13000;
+    private static final long TIMEOUT_MILLIS = 2000;
     private static final int KEEP_MOVES = 2;
 
     private Board board;
@@ -18,71 +18,62 @@ public class BetterComputerPlayer implements Player {
         this.board = board;
         this.team = team;
     }
+    
+    private List<MoveCandidate> bestMovesAtDepth(int depth, int team, double alpha, double beta) {
+        Move[] moves = board.getMoves(team);
+        List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
+        for (Move m : moves) {
+            List<Piece> before = board.saveState();
+            try {
+                board.doMove(m);
+                if (!board.inCheck(team)) {
+                    double score;
+                    if (depth <= 1) {
+                        score = board.getScore(team);
+                    } else {
+                        MoveCandidate[] possibleMoves = minimax(depth - 1, -team, alpha, beta);
+                        if (possibleMoves == null || possibleMoves.length == 0)
+                            continue;
+                        MoveCandidate mc = possibleMoves[0];
+                        score = mc.getScore();
+                    }
+                    
+                    if(team == this.team) {
+                        alpha = Math.min(alpha, score);
+                    } else {
+                        beta = Math.max(beta, score);
+                    }
+                    
+                    bestMoves.add(new MoveCandidate(m, score));
+                }
+            } finally {
+                board.restoreState(before);
+                if (bestMoves.size() > 0 && (System.currentTimeMillis() > expiredTime || beta >= alpha)) {
+                    break;
+                }
+            }
+        }
+        
+        return bestMoves;
+    }
 
     private MoveCandidate[] minimax(int depth, int team, double alpha, double beta) {
-        Move[] moves = board.getMoves(team);
-        if (team == this.team) {
-            List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
-            for (Move m : moves) {
-                List<Piece> before = board.saveState();
-                try {
-                    board.doMove(m);
-                    if (!board.inCheck(team)) {
-                        double score;
-                        if (depth <= 1) {
-                            score = board.getScore(team);
-                        } else {
-                            MoveCandidate[] possibleMoves = minimax(depth - 1, -team, alpha, beta);
-                            if (possibleMoves == null || possibleMoves.length == 0)
-                                continue;
-                            MoveCandidate mc = possibleMoves[0];
-                            score = mc.getScore();
-                        }
-                        alpha = Math.min(alpha, score);
-                        bestMoves.add(new MoveCandidate(m, score));
-                    }
-                } finally {
-                    board.restoreState(before);
-                    if (bestMoves.size() > 0 && (System.currentTimeMillis() > expiredTime || beta >= alpha)) {
-                        break;
-                    }
-                }
-            }
-            int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
-            return bestMoves.stream().sorted(Comparator.comparing(MoveCandidate::getScore)).collect(Collectors.toList())
-                    .subList(0, toKeep).toArray(new MoveCandidate[0]);
+        List<MoveCandidate> bestMoves = bestMovesAtDepth(depth, team, alpha, beta);
+        int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
+        if(team == this.team) {
+            return bestMoves.stream()
+                    .sorted(Comparator.comparing(MoveCandidate::getScore))
+                    .collect(Collectors.toList())
+                    .subList(0, toKeep)
+                    .toArray(new MoveCandidate[0]);
         } else if (team == -this.team) {
-            List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
-            for (Move m : moves) {
-                List<Piece> before = board.saveState();
-                try {
-                    board.doMove(m);
-                    if (!board.inCheck(team)) {
-                        double score;
-                        if (depth <= 1) {
-                            score = board.getScore(team);
-                        } else {
-                            MoveCandidate[] possibleMoves = minimax(depth - 1, -team, alpha, beta);
-                            if (possibleMoves == null || possibleMoves.length == 0)
-                                continue;
-                            MoveCandidate mc = possibleMoves[0];
-                            score = mc.getScore();
-                        }
-                        beta = Math.max(beta, score);
-                        bestMoves.add(new MoveCandidate(m, score));
-                    }
-                } finally {
-                    board.restoreState(before);
-                    if (bestMoves.size() > 0 && (System.currentTimeMillis() > expiredTime || beta >= alpha)) {
-                        break;
-                    }
-                }
-            }
-            int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
-            return bestMoves.stream().sorted(Comparator.comparing(MoveCandidate::getScore).reversed())
-                    .collect(Collectors.toList()).subList(0, toKeep).toArray(new MoveCandidate[0]);
+            return bestMoves.stream()
+                    .sorted(Comparator.comparing(MoveCandidate::getScore).reversed())
+                    .collect(Collectors.toList())
+                    .subList(0, toKeep)
+                    .toArray(new MoveCandidate[0]);
         } else {
-            throw new IllegalArgumentException("team can only be -1 (black) or 1 (white)!");
+            throw new IllegalArgumentException("Team must be -1 or 1!");
         }
     }
 
