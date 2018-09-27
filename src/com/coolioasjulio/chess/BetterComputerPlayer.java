@@ -18,7 +18,7 @@ public class BetterComputerPlayer implements Player {
         this.board = board;
         this.team = team;
     }
-    
+
     private List<MoveCandidate> bestMovesAtDepth(int depth, int team, double alpha, double beta) {
         Move[] moves = board.getMoves(team);
         List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
@@ -37,13 +37,13 @@ public class BetterComputerPlayer implements Player {
                         MoveCandidate mc = possibleMoves[0];
                         score = mc.getScore();
                     }
-                    
-                    if(team == this.team) {
+
+                    if (team == this.team) {
                         alpha = Math.min(alpha, score);
                     } else {
                         beta = Math.max(beta, score);
                     }
-                    
+
                     bestMoves.add(new MoveCandidate(m, score));
                 }
             } finally {
@@ -53,25 +53,19 @@ public class BetterComputerPlayer implements Player {
                 }
             }
         }
-        
+
         return bestMoves;
     }
 
     private MoveCandidate[] minimax(int depth, int team, double alpha, double beta) {
         List<MoveCandidate> bestMoves = bestMovesAtDepth(depth, team, alpha, beta);
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
-        if(team == this.team) {
-            return bestMoves.stream()
-                    .sorted(Comparator.comparing(MoveCandidate::getScore))
-                    .collect(Collectors.toList())
-                    .subList(0, toKeep)
-                    .toArray(new MoveCandidate[0]);
+        if (team == this.team) {
+            return bestMoves.stream().sorted(Comparator.comparing(MoveCandidate::getScore)).collect(Collectors.toList())
+                    .subList(0, toKeep).toArray(new MoveCandidate[0]);
         } else if (team == -this.team) {
-            return bestMoves.stream()
-                    .sorted(Comparator.comparing(MoveCandidate::getScore).reversed())
-                    .collect(Collectors.toList())
-                    .subList(0, toKeep)
-                    .toArray(new MoveCandidate[0]);
+            return bestMoves.stream().sorted(Comparator.comparing(MoveCandidate::getScore).reversed())
+                    .collect(Collectors.toList()).subList(0, toKeep).toArray(new MoveCandidate[0]);
         } else {
             throw new IllegalArgumentException("Team must be -1 or 1!");
         }
@@ -90,34 +84,30 @@ public class BetterComputerPlayer implements Player {
         }
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
         System.out.println(bestMoves.toString());
-        
-        List<MoveCandidate> kept = bestMoves
-                .stream()
-                .distinct()
-                .sorted(Comparator.comparing(MoveCandidate::getScore))
-                .collect(Collectors.toList())
-                .subList(0, toKeep);
-        
-        MoveCandidate bestMove = softmaxSelect(
-                kept,
+
+        List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
+                .collect(Collectors.toList()).subList(0, toKeep);
+
+        MoveCandidate bestMove = softmaxSelect(kept,
                 kept.stream().map(e -> 1.0 / e.getScore()).collect(Collectors.toList()));
-        
+
         System.out.printf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
         return bestMove.getMove();
     }
-    
+
     private <T> T softmaxSelect(List<T> toSelect, List<Double> scores) {
-        if(toSelect.size() != scores.size() || toSelect.size() == 0 || scores.size() == 0) {
-            throw new IllegalArgumentException("Must have equal sizes and nonzero!");            
+        if (toSelect.size() != scores.size() || toSelect.size() == 0 || scores.size() == 0) {
+            throw new IllegalArgumentException("Must have equal sizes and nonzero!");
         }
-        
+
         List<Double> unNormalizedProbabilities = scores.stream().map(Math::exp).collect(Collectors.toList());
-        double denominator = unNormalizedProbabilities.stream().reduce(Double::sum).orElseThrow(IllegalStateException::new);
+        double denominator = unNormalizedProbabilities.stream().reduce(Double::sum)
+                .orElseThrow(IllegalStateException::new);
         double[] probabilities = unNormalizedProbabilities.stream().mapToDouble(d -> d / denominator).toArray();
         double random = Math.random();
-        for(int i = 0; i < probabilities.length; i++) {
+        for (int i = 0; i < probabilities.length; i++) {
             random -= probabilities[i];
-            if(random <= 0) {
+            if (random <= 0) {
                 return toSelect.get(i);
             }
         }

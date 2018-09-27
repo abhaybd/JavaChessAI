@@ -159,8 +159,10 @@ public class Board {
         double material = getMaterialScore(team);
         double oppMaterial = getMaterialScore(-team);
         double checkmateModifier = 0;
-        if(inCheckMate(-team)) checkmateModifier = 1000;
-        else if (inCheckMate(team)) checkmateModifier = -1000;
+        if (inCheckMate(-team))
+            checkmateModifier = 1000;
+        else if (inCheckMate(team))
+            checkmateModifier = -1000;
         return space + material - oppMaterial + checkmateModifier;
     }
 

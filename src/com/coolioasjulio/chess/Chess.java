@@ -23,31 +23,31 @@ public class Chess extends JPanel {
         frame.setVisible(true);
 
         char t;
-        try(Scanner input = new Scanner(System.in)) {            
+        try (Scanner input = new Scanner(System.in)) {
             System.out.println("What team do you want to be? w/b");
             t = input.nextLine().toLowerCase().charAt(0);
         }
-        
+
         int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
         Player human = new HumanGUIPlayer(playerTeam, chess.getBoard(), chess);
         Player betterComputer = new BetterComputerPlayer(chess.getBoard(), -playerTeam);
 //		Player computer = new ComputerPlayer(chess.getBoard(), Piece.BLACK);
         chess.runGame(human, betterComputer);
     }
-    
+
     private Board board;
     private ArrayList<Move> moves;
     private List<Piece> piecesToDraw;
     private int tileSize;
-    
+
     public Chess(int tileSize) {
         this.tileSize = tileSize;
         board = new Board();
         board.setup();
         moves = new ArrayList<Move>();
-        this.setPreferredSize(new Dimension(tileSize*8, tileSize*8));
+        this.setPreferredSize(new Dimension(tileSize * 8, tileSize * 8));
     }
-    
+
     public int getTileSize() {
         return tileSize;
     }
@@ -88,9 +88,9 @@ public class Chess extends JPanel {
         while (!Thread.interrupted()) {
             List<Piece> beforeState = board.saveState();
             piecesToDraw = beforeState;
-            
+
             repaint();
-            
+
             try {
                 Player toMove = team == player1.getTeam() ? player1 : player2;
                 Move m = toMove.getMove();

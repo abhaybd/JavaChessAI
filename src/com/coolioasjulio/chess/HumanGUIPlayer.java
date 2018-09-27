@@ -4,12 +4,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class HumanGUIPlayer implements Player, MouseListener {
-    
+
     private int team;
     private Chess chess;
     private Board board;
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
+
     public HumanGUIPlayer(int team, Board board, Chess chess) {
         this.team = team;
         this.board = board;
@@ -20,12 +21,11 @@ public class HumanGUIPlayer implements Player, MouseListener {
     @Override
     public Move getMove() {
         // Wait for the mouse click
-        synchronized(lock) {
+        synchronized (lock) {
             try {
                 fromSquare = null;
                 toSquare = null;
-                System.out.println("It is " + ((team == Piece.WHITE) ? "white" : "black")
-                        + "'s turn!");
+                System.out.println("It is " + ((team == Piece.WHITE) ? "white" : "black") + "'s turn!");
                 System.out.println("Click the piece you want to move!");
                 lock.wait();
                 System.out.println("Click the square you want to move to!");
@@ -34,27 +34,26 @@ public class HumanGUIPlayer implements Player, MouseListener {
                 e.printStackTrace();
             }
         }
-        
+
         Piece piece = board.checkSquare(fromSquare);
-        if(piece.team != team) {
+        if (piece.team != team) {
             throw new InvalidMoveException("Choose your own piece!");
         }
-        
+
         Move move;
-        
-        if(piece instanceof King) {
-            if(toSquare.getX() == 2 && board.canQueenSideCastle((King) piece)) {
+
+        if (piece instanceof King) {
+            if (toSquare.getX() == 2 && board.canQueenSideCastle((King) piece)) {
                 move = new Move(team, false);
-            } else if(toSquare.getX() == 6 && board.canKingSideCastle((King) piece)) {
+            } else if (toSquare.getX() == 6 && board.canKingSideCastle((King) piece)) {
                 move = new Move(team, true);
             } else {
                 move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
             }
-        } else {            
+        } else {
             move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
         }
-        
-        
+
         return move;
     }
 
@@ -73,14 +72,14 @@ public class HumanGUIPlayer implements Player, MouseListener {
         int squareX = e.getX() / chess.getTileSize();
         int squareY = (chess.getWidth() - e.getY()) / chess.getTileSize() + 1;
         Square square = new Square(squareX, squareY);
-        synchronized(lock) {            
-            if(fromSquare == null) {
+        synchronized (lock) {
+            if (fromSquare == null) {
                 Piece p = board.checkSquare(square);
-                if(p != null && p.getTeam() == team) {    
+                if (p != null && p.getTeam() == team) {
                     fromSquare = square;
                     lock.notifyAll();
                 }
-            } else if(toSquare == null){
+            } else if (toSquare == null) {
                 toSquare = square;
                 lock.notifyAll();
             }
@@ -90,25 +89,25 @@ public class HumanGUIPlayer implements Player, MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
 }
