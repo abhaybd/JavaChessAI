@@ -1,5 +1,6 @@
 package com.coolioasjulio.chess;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class Chess extends JPanel {
         }
 
         int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
-        Player human = new HumanGUIPlayer(playerTeam, chess.getBoard(), chess);
+        Player human = new HumanGUIPlayer(playerTeam, chess);
         Player betterComputer = new BetterComputerPlayer(chess.getBoard(), -playerTeam);
 //		Player computer = new ComputerPlayer(chess.getBoard(), Piece.BLACK);
         chess.runGame(human, betterComputer);
@@ -39,13 +40,19 @@ public class Chess extends JPanel {
     private ArrayList<Move> moves;
     private List<Piece> piecesToDraw;
     private int tileSize;
+    private List<Square> highlightedSquares;
 
     public Chess(int tileSize) {
         this.tileSize = tileSize;
         board = new Board();
         board.setup();
-        moves = new ArrayList<Move>();
+        moves = new ArrayList<>();
+        highlightedSquares = new ArrayList<>();
         this.setPreferredSize(new Dimension(tileSize * 8, tileSize * 8));
+    }
+
+    public void addHighlightedSquare(Square square) {
+        highlightedSquares.add(square);
     }
 
     public int getTileSize() {
@@ -60,27 +67,10 @@ public class Chess extends JPanel {
         return board;
     }
 
-    private void drawPieces(Graphics g) throws IOException {
-        List<Piece> toDraw = piecesToDraw != null ? piecesToDraw : board.getPieces();
-        for (Piece p : toDraw) {
-            Square square = p.getSquare();
-            int x = square.getX() * tileSize;
-            int y = this.getHeight() - square.getY() * tileSize;
-            g.drawImage(Piece.getImage(p), x, y, null);
-        }
-    }
-
-    private void drawBoard(Graphics g) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                int x = i * tileSize;
-                int y = j * tileSize;
-                g.setColor(Board.TAN);
-                if (isEven(i + j))
-                    g.setColor(Board.BROWN);
-                g.fillRect(x, y, tileSize, tileSize);
-            }
-        }
+    public void runGame(final Player player1, final Player player2) {
+        Thread t = new Thread(() -> playGame(player1, player2));
+        t.setDaemon(true);
+        t.start();
     }
 
     private void playGame(Player player1, Player player2) {
@@ -94,6 +84,7 @@ public class Chess extends JPanel {
             try {
                 Player toMove = team == player1.getTeam() ? player1 : player2;
                 Move m = toMove.getMove();
+
                 board.restoreState(beforeState);
 
                 board.doMove(m);
@@ -122,16 +113,11 @@ public class Chess extends JPanel {
                 e.printStackTrace();
                 board.restoreState(beforeState);
             }
+            highlightedSquares.clear();
         }
         piecesToDraw = null;
         printMoves();
         repaint();
-    }
-
-    public void runGame(final Player player1, final Player player2) {
-        Thread t = new Thread(() -> playGame(player1, player2));
-        t.setDaemon(true);
-        t.start();
     }
 
     private void printMoves() {
@@ -151,12 +137,47 @@ public class Chess extends JPanel {
         }
     }
 
+    private void drawBoard(Graphics g) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                int x = i * tileSize;
+                int y = j * tileSize;
+                g.setColor(Board.TAN);
+                if (isEven(i + j))
+                    g.setColor(Board.BROWN);
+                g.fillRect(x, y, tileSize, tileSize);
+            }
+        }
+    }
+
+    private void drawPieces(Graphics g) throws IOException {
+        List<Piece> toDraw = piecesToDraw != null ? piecesToDraw : board.getPieces();
+        for (Piece p : toDraw) {
+            Square square = p.getSquare();
+            int x = square.getX() * tileSize;
+            int y = this.getHeight() - square.getY() * tileSize;
+            g.drawImage(Piece.getImage(p), x, y, null);
+        }
+    }
+
+    private void drawHighlightedSquares(Graphics g) {
+        g.setColor(new Color(0, 255, 255, 50));
+        for (Square square : highlightedSquares) {
+            int x = square.getX() * tileSize;
+            int y = getHeight() - square.getY() * tileSize;
+            g.fillRect(x, y, tileSize, tileSize);
+        }
+    }
+
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         try {
             drawBoard(g);
+            drawHighlightedSquares(g);
             drawPieces(g);
         } catch (Exception e) {
-        } // Fail silently
+            e.printStackTrace();
+        }
     }
 }

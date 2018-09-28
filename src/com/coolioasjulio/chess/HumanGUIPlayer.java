@@ -11,9 +11,9 @@ public class HumanGUIPlayer implements Player, MouseListener {
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
 
-    public HumanGUIPlayer(int team, Board board, Chess chess) {
+    public HumanGUIPlayer(int team, Chess chess) {
         this.team = team;
-        this.board = board;
+        this.board = chess.getBoard();
         this.chess = chess;
         chess.addMouseListener(this);
     }
@@ -28,6 +28,8 @@ public class HumanGUIPlayer implements Player, MouseListener {
                 System.out.println("It is " + ((team == Piece.WHITE) ? "white" : "black") + "'s turn!");
                 System.out.println("Click the piece you want to move!");
                 lock.wait();
+                chess.addHighlightedSquare(fromSquare);
+                chess.repaint();
                 System.out.println("Click the square you want to move to!");
                 lock.wait();
             } catch (InterruptedException e) {
@@ -88,26 +90,18 @@ public class HumanGUIPlayer implements Player, MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
 }
