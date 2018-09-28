@@ -6,12 +6,12 @@ import java.awt.event.MouseListener;
 public class HumanGUIPlayer implements Player, MouseListener {
 
     private int team;
-    private Chess chess;
+    private ChessGame chess;
     private Board board;
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
 
-    public HumanGUIPlayer(int team, Chess chess) {
+    public HumanGUIPlayer(int team, ChessGame chess) {
         this.team = team;
         this.board = chess.getBoard();
         this.chess = chess;
@@ -32,6 +32,7 @@ public class HumanGUIPlayer implements Player, MouseListener {
                 chess.repaint();
                 System.out.println("Click the square you want to move to!");
                 lock.wait();
+                System.out.println();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

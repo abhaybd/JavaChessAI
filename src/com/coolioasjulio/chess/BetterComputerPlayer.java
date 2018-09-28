@@ -21,7 +21,7 @@ public class BetterComputerPlayer implements Player {
 
     private List<MoveCandidate> bestMovesAtDepth(int depth, int team, double alpha, double beta) {
         Move[] moves = board.getMoves(team);
-        List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
+        List<MoveCandidate> bestMoves = new ArrayList<>();
         for (Move m : moves) {
             List<Piece> before = board.saveState();
             try {
@@ -87,6 +87,7 @@ public class BetterComputerPlayer implements Player {
                 bestMoves.addAll(Arrays.asList(moves));
             }
         }
+        System.out.println();
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
 
         List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))

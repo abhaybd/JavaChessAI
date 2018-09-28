@@ -6,35 +6,11 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Chess extends JPanel {
+public class ChessGame extends JPanel {
     private static final long serialVersionUID = 1L;
-
-    public static void main(String[] args) {
-        Chess chess = new Chess(100);
-        JFrame frame = new JFrame();
-        frame.add(chess);
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-
-        char t;
-        try (Scanner input = new Scanner(System.in)) {
-            System.out.println("What team do you want to be? w/b");
-            t = input.nextLine().toLowerCase().charAt(0);
-        }
-
-        int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
-        Player human = new HumanGUIPlayer(playerTeam, chess);
-        Player betterComputer = new BetterComputerPlayer(chess.getBoard(), -playerTeam);
-//		Player computer = new ComputerPlayer(chess.getBoard(), Piece.BLACK);
-        chess.runGame(human, betterComputer);
-    }
 
     private Board board;
     private ArrayList<Move> moves;
@@ -42,7 +18,7 @@ public class Chess extends JPanel {
     private int tileSize;
     private List<Square> highlightedSquares;
 
-    public Chess(int tileSize) {
+    public ChessGame(int tileSize) {
         this.tileSize = tileSize;
         board = new Board();
         board.setup();
@@ -152,7 +128,8 @@ public class Chess extends JPanel {
 
     private void drawPieces(Graphics g) throws IOException {
         List<Piece> toDraw = piecesToDraw != null ? piecesToDraw : board.getPieces();
-        for (Piece p : toDraw) {
+        for (int i = 0; i < toDraw.size(); i++) {
+            Piece p = toDraw.get(i);
             Square square = p.getSquare();
             int x = square.getX() * tileSize;
             int y = this.getHeight() - square.getY() * tileSize;
