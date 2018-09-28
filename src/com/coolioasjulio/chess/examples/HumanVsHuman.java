@@ -3,9 +3,9 @@ package com.coolioasjulio.chess.examples;
 import javax.swing.JFrame;
 
 import com.coolioasjulio.chess.ChessGame;
-import com.coolioasjulio.chess.HumanGUIPlayer;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
+import com.coolioasjulio.chess.players.HumanGUIPlayer;
 
 public class HumanVsHuman {
     public static void main(String[] args) {

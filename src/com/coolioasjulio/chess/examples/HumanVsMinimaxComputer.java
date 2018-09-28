@@ -5,12 +5,13 @@ import java.util.Scanner;
 import javax.swing.JFrame;
 
 import com.coolioasjulio.chess.ChessGame;
-import com.coolioasjulio.chess.ComputerPlayer;
-import com.coolioasjulio.chess.HumanGUIPlayer;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
+import com.coolioasjulio.chess.players.HumanGUIPlayer;
+import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
 
-public class HumanVsComputer {
+public class HumanVsMinimaxComputer {
+
     public static void main(String[] args) {
         ChessGame game = new ChessGame(100);
         JFrame frame = new JFrame();
@@ -28,7 +29,8 @@ public class HumanVsComputer {
 
         int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
         Player human = new HumanGUIPlayer(playerTeam, game);
-        Player computer = new ComputerPlayer(game.getBoard(), -playerTeam);
-        game.runGame(human, computer);
+        Player betterComputer = new MinimaxComputerPlayer(game.getBoard(), -playerTeam);
+        game.runGame(human, betterComputer);
     }
+
 }

@@ -1,7 +1,16 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.players;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.ChessGame;
+import com.coolioasjulio.chess.InvalidMoveException;
+import com.coolioasjulio.chess.King;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.Piece;
+import com.coolioasjulio.chess.Player;
+import com.coolioasjulio.chess.Square;
 
 public class HumanGUIPlayer implements Player, MouseListener {
 
@@ -39,7 +48,7 @@ public class HumanGUIPlayer implements Player, MouseListener {
         }
 
         Piece piece = board.checkSquare(fromSquare);
-        if (piece.team != team) {
+        if (piece.getTeam() != team) {
             throw new InvalidMoveException("Choose your own piece!");
         }
 

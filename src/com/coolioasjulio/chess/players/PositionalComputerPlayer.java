@@ -1,9 +1,16 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.players;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class ComputerPlayer implements Player {
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.InvalidMoveException;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.Pawn;
+import com.coolioasjulio.chess.Piece;
+import com.coolioasjulio.chess.Player;
+
+public class PositionalComputerPlayer implements Player {
     private Board board;
     private int team;
 
@@ -12,7 +19,7 @@ public class ComputerPlayer implements Player {
      * @param board the board object that this opponent is playing on
      * @param team  which team is the opponent on?
      */
-    public ComputerPlayer(Board board, int team) {
+    public PositionalComputerPlayer(Board board, int team) {
         this.board = board;
         this.team = team;
     }

@@ -2,13 +2,13 @@ package com.coolioasjulio.chess.examples;
 
 import javax.swing.JFrame;
 
-import com.coolioasjulio.chess.BetterComputerPlayer;
 import com.coolioasjulio.chess.ChessGame;
-import com.coolioasjulio.chess.ComputerPlayer;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
+import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
+import com.coolioasjulio.chess.players.PositionalComputerPlayer;
 
-public class BetterComputerVsComputer {
+public class MinimaxComputerVsPositionalComputer {
     public static void main(String[] args) {
         ChessGame game = new ChessGame(100);
         JFrame frame = new JFrame();
@@ -18,8 +18,8 @@ public class BetterComputerVsComputer {
         frame.pack();
         frame.setVisible(true);
 
-        Player betterComputer = new BetterComputerPlayer(game.getBoard(), Piece.WHITE);
-        Player computer = new ComputerPlayer(game.getBoard(), Piece.BLACK);
+        Player betterComputer = new MinimaxComputerPlayer(game.getBoard(), Piece.WHITE);
+        Player computer = new PositionalComputerPlayer(game.getBoard(), Piece.BLACK);
         game.runGame(betterComputer, computer);
     }
 }

@@ -1,9 +1,16 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.players;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.InvalidMoveException;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.Piece;
+import com.coolioasjulio.chess.Player;
+import com.coolioasjulio.chess.Square;
 
 public class HumanConsolePlayer implements Player {
     private static ArrayList<InputStream> inputStreams = new ArrayList<>();
@@ -55,7 +62,7 @@ public class HumanConsolePlayer implements Player {
                 throw new InvalidMoveException();
 
             Piece p = board.checkSquare(start);
-            if (p == null || !Piece.getType(p).equalsIgnoreCase(type) || p.team != team)
+            if (p == null || !Piece.getType(p).equalsIgnoreCase(type) || p.getTeam() != team)
                 throw new InvalidMoveException();
 
             Move[] possibleMoves = p.getMoves();

@@ -1,4 +1,4 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.players;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,7 +6,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BetterComputerPlayer implements Player {
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.MoveCandidate;
+import com.coolioasjulio.chess.Piece;
+import com.coolioasjulio.chess.Player;
+
+public class MinimaxComputerPlayer implements Player {
     private static final long TIMEOUT_MILLIS = 2000;
     private static final int KEEP_MOVES = 4;
 
@@ -14,7 +20,7 @@ public class BetterComputerPlayer implements Player {
     private int team;
     private long expiredTime;
 
-    public BetterComputerPlayer(Board board, int team) {
+    public MinimaxComputerPlayer(Board board, int team) {
         this.board = board;
         this.team = team;
     }
