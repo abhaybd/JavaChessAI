@@ -97,6 +97,10 @@ public class Chess extends JPanel {
                 board.restoreState(beforeState);
 
                 board.doMove(m);
+                if (board.inCheck(team) || board.inCheckMate(team)) {
+                    throw new InvalidMoveException();
+                }
+
                 moves.add(m);
 
                 team *= -1;
@@ -119,7 +123,9 @@ public class Chess extends JPanel {
                 board.restoreState(beforeState);
             }
         }
+        piecesToDraw = null;
         printMoves();
+        repaint();
     }
 
     public void runGame(final Player player1, final Player player2) {

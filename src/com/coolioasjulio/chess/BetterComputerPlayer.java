@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class BetterComputerPlayer implements Player {
     private static final long TIMEOUT_MILLIS = 2000;
-    private static final int KEEP_MOVES = 2;
+    private static final int KEEP_MOVES = 4;
 
     private Board board;
     private int team;
@@ -29,11 +29,16 @@ public class BetterComputerPlayer implements Player {
                 if (!board.inCheck(team)) {
                     double score;
                     if (depth <= 1) {
+                        // This should NOT be the AI
                         score = board.getScore(team);
                     } else {
                         MoveCandidate[] possibleMoves = minimax(depth - 1, -team, alpha, beta);
-                        if (possibleMoves == null || possibleMoves.length == 0)
-                            continue;
+
+                        // If you detect a checkmate, return it immediately.
+                        if (possibleMoves == null || possibleMoves.length == 0) {
+                            return Arrays.asList(new MoveCandidate(m, team == this.team ? -1000 : 1000));
+                        }
+
                         MoveCandidate mc = possibleMoves[0];
                         score = mc.getScore();
                     }
@@ -48,9 +53,9 @@ public class BetterComputerPlayer implements Player {
                 }
             } finally {
                 board.restoreState(before);
-                if (bestMoves.size() > 0 && (System.currentTimeMillis() > expiredTime || beta >= alpha)) {
-                    break;
-                }
+            }
+            if (bestMoves.size() > 0 && (System.currentTimeMillis() > expiredTime)) {
+                break;
             }
         }
 
@@ -83,13 +88,13 @@ public class BetterComputerPlayer implements Player {
             }
         }
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
-        System.out.println(bestMoves.toString());
 
         List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
                 .collect(Collectors.toList()).subList(0, toKeep);
+        System.out.println(kept.toString());
 
         MoveCandidate bestMove = softmaxSelect(kept,
-                kept.stream().map(e -> 1.0 / e.getScore()).collect(Collectors.toList()));
+                kept.stream().map(e -> -e.getScore()).collect(Collectors.toList()));
 
         System.out.printf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
         return bestMove.getMove();
