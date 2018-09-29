@@ -27,8 +27,17 @@ public class HumanVsPositionalComputer {
         }
 
         int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
-        Player human = new HumanGUIPlayer(playerTeam, game);
-        Player computer = new PositionalComputerPlayer(game.getBoard(), -playerTeam);
-        game.runGame(human, computer);
+        Player human = new HumanGUIPlayer(game);
+        Player computer = new PositionalComputerPlayer(game.getBoard());
+
+        switch (playerTeam) {
+            case Piece.BLACK:
+                game.runGame(computer, human);
+                break;
+
+            case Piece.WHITE:
+                game.runGame(human, computer);
+                break;
+        }
     }
 }

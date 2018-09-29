@@ -10,18 +10,14 @@ import com.coolioasjulio.chess.Pawn;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
 
-public class PositionalComputerPlayer implements Player {
-    private Board board;
-    private int team;
+public class PositionalComputerPlayer extends Player {
 
     /**
      * 
      * @param board the board object that this opponent is playing on
-     * @param team  which team is the opponent on?
      */
-    public PositionalComputerPlayer(Board board, int team) {
-        this.board = board;
-        this.team = team;
+    public PositionalComputerPlayer(Board board) {
+        super(board);
     }
 
     private int numAttackers(Move move) {
@@ -74,14 +70,6 @@ public class PositionalComputerPlayer implements Player {
         int numDefenders = numDefenders(move);
         int numAttackers = numAttackers(move);
         return numDefenders >= numAttackers;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public int getTeam() {
-        return team;
     }
 
     @Override

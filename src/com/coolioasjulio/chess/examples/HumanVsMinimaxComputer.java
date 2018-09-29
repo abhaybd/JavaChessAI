@@ -28,9 +28,18 @@ public class HumanVsMinimaxComputer {
         }
 
         int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
-        Player human = new HumanGUIPlayer(playerTeam, game);
-        Player betterComputer = new MinimaxComputerPlayer(game.getBoard(), -playerTeam);
-        game.runGame(human, betterComputer);
+        Player human = new HumanGUIPlayer(game);
+        Player betterComputer = new MinimaxComputerPlayer(game.getBoard());
+
+        switch (playerTeam) {
+            case Piece.BLACK:
+                game.runGame(betterComputer, human);
+                break;
+
+            case Piece.WHITE:
+                game.runGame(human, betterComputer);
+                break;
+        }
     }
 
 }

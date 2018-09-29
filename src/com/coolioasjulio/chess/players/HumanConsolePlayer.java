@@ -1,7 +1,6 @@
 package com.coolioasjulio.chess.players;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,21 +11,14 @@ import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.Square;
 
-public class HumanConsolePlayer implements Player {
-    private static ArrayList<InputStream> inputStreams = new ArrayList<>();
-
+public class HumanConsolePlayer extends Player {
     private Board board;
-    private int team;
     private Scanner input;
 
-    public HumanConsolePlayer(Board board, int team, InputStream is) {
-        if (inputStreams.contains(is)) {
-            throw new IllegalArgumentException("Cannot reuse input streams!");
-        }
+    public HumanConsolePlayer(Board board, InputStream is) {
+        super(board);
         this.board = board;
-        this.team = team;
         input = new Scanner(is);
-        inputStreams.add(is);
     }
 
     @Override
@@ -91,15 +83,5 @@ public class HumanConsolePlayer implements Player {
             }
         }
         return false;
-    }
-
-    @Override
-    public int getTeam() {
-        return team;
-    }
-
-    @Override
-    public Board getBoard() {
-        return board;
     }
 }

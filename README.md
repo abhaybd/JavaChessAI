@@ -15,17 +15,17 @@ There are two implementations of a computer AI.
 
 A rough outline of the program is as follows:
 
-A player (whether human or computer) should implement the Player interface. It should return the selected move when `getMove()` is called. If any exceptions are thrown, it will try again.
+A player (whether human or computer) should extend the Player class. It should return the selected move when `getMove()` is called. If any exceptions are thrown, it will try again.
 
-All pieces have their own class, all of which extend the class Piece.
-All pieces have the getMoves() function which returns a Move array representing all possible moves given it's position on the board, and the pieces around it. (Note that all moves returned by this function may not be legal)
-Pieces have a square property, which represents which square they are on.
-Instantiating a Piece does not automatically place it onto the Board.
-Pieces have a Board property which says which board they are on.
-Pieces have a move() function which moves the Piece, but does NOT capture the piece, if the move is a capturing move. It does not check if the supplied square is a legal move.
-The Move object has the starting Square, ending Square, the Piece which does the move, and a boolean denoting whether it captures or not.
+All pieces have their own class, all of which extend the class `Piece`.
+All pieces have the `getMoves()` function which returns a `Move` array representing all possible moves given it's position on the board, and the pieces around it. (Note that all moves returned by this function may not be legal)
+`Piece`s have a square property, which represents which square they are on.
+Instantiating a `Piece` does not automatically place it onto the Board.
+Pieces have a `Board` property which says which board they are on.
+Pieces have a `move()` function which moves the `Piece`, but does NOT capture the piece, if the move is a capturing move. It does not check if the supplied square is a legal move.
+The `Move` object has the starting `Square`, ending `Square`, the `Piece` which does the move, and a boolean denoting whether it captures or not.
 
-The Square object represents a square on the chess board. Instead of a 2D array representing the board, the Board object simply has an ArrayList of Pieces, each of which have a Square property.
+The `Square` object represents a square on the chess board. Instead of a 2D array representing the board, the `Board` object simply has an ArrayList of Pieces, each of which have a Square property.
 
-The Board holds all the pieces, and has a checkSquare() function, which checks the Square given to it as a parameter and returns the Piece which is on that square. If no piece occupies that square, it returns null.
-The Board also has a checkScore(int team) function which checks the score of the team passed as a parameter. The team can be Board.BLACK(-1) or Board.WHITE(1).
+The `Board` holds all the pieces, and has a `checkSquare()` function, which checks the `Square` given to it as a parameter and returns the `Piece` which is on that square. If no piece occupies that square, it returns null.
+The `Board` also has a `checkScore(int team)` function which checks the score of the team passed as a parameter. The team can be `Board.BLACK(-1)` or `Board.WHITE(1)`.

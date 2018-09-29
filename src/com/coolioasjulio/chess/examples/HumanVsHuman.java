@@ -3,7 +3,6 @@ package com.coolioasjulio.chess.examples;
 import javax.swing.JFrame;
 
 import com.coolioasjulio.chess.ChessGame;
-import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
 
@@ -17,8 +16,8 @@ public class HumanVsHuman {
         frame.pack();
         frame.setVisible(true);
 
-        Player human1 = new HumanGUIPlayer(Piece.WHITE, game);
-        Player human2 = new HumanGUIPlayer(Piece.BLACK, game);
+        Player human1 = new HumanGUIPlayer(game);
+        Player human2 = new HumanGUIPlayer(game);
         game.runGame(human1, human2);
     }
 }

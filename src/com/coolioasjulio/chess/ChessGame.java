@@ -43,14 +43,23 @@ public class ChessGame extends JPanel {
         return board;
     }
 
-    public void runGame(final Player player1, final Player player2) {
-        Thread t = new Thread(() -> playGame(player1, player2));
+    /**
+     * Run a game between these two players.
+     * 
+     * @param white The white player.
+     * @param black The black player.
+     */
+    public void runGame(final Player white, final Player black) {
+        Thread t = new Thread(() -> playGame(white, black));
         t.setDaemon(true);
         t.start();
     }
 
-    private void playGame(Player player1, Player player2) {
-        int team = 1;
+    private void playGame(Player white, Player black) {
+        white.setTeam(Piece.WHITE);
+        black.setTeam(Piece.BLACK);
+        int team = Piece.WHITE;
+
         while (!Thread.interrupted()) {
             List<Piece> beforeState = board.saveState();
             piecesToDraw = beforeState;
@@ -58,7 +67,7 @@ public class ChessGame extends JPanel {
             repaint();
 
             try {
-                Player toMove = team == player1.getTeam() ? player1 : player2;
+                Player toMove = team == white.getTeam() ? white : black;
                 Move m = toMove.getMove();
 
                 board.restoreState(beforeState);

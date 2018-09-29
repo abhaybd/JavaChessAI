@@ -12,17 +12,15 @@ import com.coolioasjulio.chess.MoveCandidate;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
 
-public class MinimaxComputerPlayer implements Player {
+public class MinimaxComputerPlayer extends Player {
     private static final long TIMEOUT_MILLIS = 2000;
     private static final int KEEP_MOVES = 4;
 
-    private Board board;
-    private int team;
     private long expiredTime;
 
-    public MinimaxComputerPlayer(Board board, int team) {
+    public MinimaxComputerPlayer(Board board) {
+        super(board);
         this.board = board;
-        this.team = team;
     }
 
     private List<MoveCandidate> bestMovesAtDepth(int depth, int team, double alpha, double beta) {
@@ -124,15 +122,5 @@ public class MinimaxComputerPlayer implements Player {
             }
         }
         return toSelect.get(toSelect.size() - 1);
-    }
-
-    @Override
-    public int getTeam() {
-        return team;
-    }
-
-    @Override
-    public Board getBoard() {
-        return board;
     }
 }

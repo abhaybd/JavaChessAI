@@ -3,7 +3,6 @@ package com.coolioasjulio.chess.players;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.InvalidMoveException;
 import com.coolioasjulio.chess.King;
@@ -12,16 +11,14 @@ import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.Square;
 
-public class HumanGUIPlayer implements Player, MouseListener {
+public class HumanGUIPlayer extends Player implements MouseListener {
 
-    private int team;
     private ChessGame chess;
-    private Board board;
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
 
-    public HumanGUIPlayer(int team, ChessGame chess) {
-        this.team = team;
+    public HumanGUIPlayer(ChessGame chess) {
+        super(chess.getBoard());
         this.board = chess.getBoard();
         this.chess = chess;
         chess.addMouseListener(this);
@@ -67,16 +64,6 @@ public class HumanGUIPlayer implements Player, MouseListener {
         }
 
         return move;
-    }
-
-    @Override
-    public int getTeam() {
-        return team;
-    }
-
-    @Override
-    public Board getBoard() {
-        return board;
     }
 
     @Override

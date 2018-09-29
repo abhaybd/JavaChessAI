@@ -1,9 +1,21 @@
 package com.coolioasjulio.chess;
 
-public interface Player {
-    public Move getMove();
+public abstract class Player {
 
-    public int getTeam();
+    protected Board board;
+    protected int team;
 
-    public Board getBoard();
+    public Player(Board board) {
+        this.board = board;
+    }
+
+    public void setTeam(int team) {
+        this.team = team;
+    }
+
+    public int getTeam() {
+        return team;
+    }
+
+    public abstract Move getMove();
 }
