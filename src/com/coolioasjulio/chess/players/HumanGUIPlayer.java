@@ -3,6 +3,8 @@ package com.coolioasjulio.chess.players;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JComponent;
+
 import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.InvalidMoveException;
 import com.coolioasjulio.chess.King;
@@ -15,14 +17,15 @@ import com.coolioasjulio.chess.Square;
 public class HumanGUIPlayer extends Player implements MouseListener {
 
     private ChessGame chess;
+    private JComponent component;
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
 
-    public HumanGUIPlayer(ChessGame chess) {
+    public HumanGUIPlayer(ChessGame chess, JComponent component) {
         super(chess.getBoard());
-        this.board = chess.getBoard();
         this.chess = chess;
-        chess.addMouseListener(this);
+        this.component = component;
+        component.addMouseListener(this);
     }
 
     @Override
@@ -36,7 +39,7 @@ public class HumanGUIPlayer extends Player implements MouseListener {
                 Logger.getGlobalLogger().log("Click the piece you want to move!");
                 lock.wait();
                 chess.addHighlightedSquare(fromSquare);
-                chess.repaint();
+                chess.draw();
                 Logger.getGlobalLogger().log("Click the square you want to move to!");
                 lock.wait();
                 Logger.getGlobalLogger().log();
@@ -70,7 +73,7 @@ public class HumanGUIPlayer extends Player implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         int squareX = e.getX() / chess.getTileSize();
-        int squareY = (chess.getWidth() - e.getY()) / chess.getTileSize() + 1;
+        int squareY = (component.getWidth() - e.getY()) / chess.getTileSize() + 1;
         Square square = new Square(squareX, squareY);
         synchronized (lock) {
             if (fromSquare == null) {

@@ -3,18 +3,18 @@ package com.coolioasjulio.chess.examples;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
 import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
+import com.coolioasjulio.chess.ui.ChessGameUI;
 
 public class HumanVsMinimaxComputer {
 
     public static void main(String[] args) {
-        ChessGame game = new ChessGame(100);
+        ChessGameUI game = new ChessGameUI(100);
         JFrame frame = new JFrame();
-        frame.add(game);
+        frame.add(game.getPanel());
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -22,7 +22,7 @@ public class HumanVsMinimaxComputer {
 
         int playerTeam = getTeamInput(frame);
 
-        Player human = new HumanGUIPlayer(game);
+        Player human = new HumanGUIPlayer(game, game.getPanel());
         Player betterComputer = new MinimaxComputerPlayer(game.getBoard());
 
         switch (playerTeam) {

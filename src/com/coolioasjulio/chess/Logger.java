@@ -51,7 +51,7 @@ public class Logger {
     public void logErr(String err, boolean flush) {
         log("***ERROR*** " + err, flush);
     }
-    
+
     public void logf(String format, Object... args) {
         log(String.format(format, args));
     }

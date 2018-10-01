@@ -1,24 +1,16 @@
 package com.coolioasjulio.chess;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
-import javax.swing.JPanel;
+public abstract class ChessGame {
 
-public class ChessGame extends JPanel {
-    private static final long serialVersionUID = 1L;
-
-    private Board board;
-    private ArrayList<Move> moves;
-    private List<Piece> piecesToDraw;
-    private int tileSize;
-    private List<Square> highlightedSquares;
+    protected Board board;
+    protected ArrayList<Move> moves;
+    protected List<Piece> piecesToDraw;
+    protected int tileSize;
+    protected List<Square> highlightedSquares;
     private Thread gameThread;
 
     public ChessGame(int tileSize) {
@@ -27,7 +19,10 @@ public class ChessGame extends JPanel {
         board.setup();
         moves = new ArrayList<>();
         highlightedSquares = new ArrayList<>();
-        this.setPreferredSize(new Dimension(tileSize * 8, tileSize * 8));
+    }
+
+    public List<Piece> getPiecesToDraw() {
+        return piecesToDraw;
     }
 
     public void addHighlightedSquare(Square square) {
@@ -36,10 +31,6 @@ public class ChessGame extends JPanel {
 
     public int getTileSize() {
         return tileSize;
-    }
-
-    private boolean isEven(int i) {
-        return i % 2 == 0;
     }
 
     public Board getBoard() {
@@ -75,7 +66,7 @@ public class ChessGame extends JPanel {
             List<Piece> beforeState = board.saveState();
             piecesToDraw = beforeState;
 
-            repaint();
+            draw();
 
             try {
                 Player toMove = team == white.getTeam() ? white : black;
@@ -118,7 +109,7 @@ public class ChessGame extends JPanel {
             highlightedSquares.clear();
         }
         piecesToDraw = null;
-        repaint();
+        draw();
 
         return winner;
     }
@@ -138,48 +129,5 @@ public class ChessGame extends JPanel {
         }
     }
 
-    private void drawBoard(Graphics g) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                int x = i * tileSize;
-                int y = j * tileSize;
-                g.setColor(Board.TAN);
-                if (isEven(i + j))
-                    g.setColor(Board.BROWN);
-                g.fillRect(x, y, tileSize, tileSize);
-            }
-        }
-    }
-
-    private void drawPieces(Graphics g) throws IOException {
-        List<Piece> toDraw = piecesToDraw != null ? piecesToDraw : board.getPieces();
-        for (int i = 0; i < toDraw.size(); i++) {
-            Piece p = toDraw.get(i);
-            Square square = p.getSquare();
-            int x = square.getX() * tileSize;
-            int y = this.getHeight() - square.getY() * tileSize;
-            g.drawImage(Piece.getImage(p), x, y, null);
-        }
-    }
-
-    private void drawHighlightedSquares(Graphics g) {
-        g.setColor(new Color(0, 255, 255, 50));
-        for (Square square : highlightedSquares) {
-            int x = square.getX() * tileSize;
-            int y = getHeight() - square.getY() * tileSize;
-            g.fillRect(x, y, tileSize, tileSize);
-        }
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        try {
-            drawBoard(g);
-            drawHighlightedSquares(g);
-            drawPieces(g);
-        } catch (ConcurrentModificationException | IOException e) {
-            e.printStackTrace(); // Catch any multithreaded/IO problems
-        }
-    }
+    public abstract void draw();
 }

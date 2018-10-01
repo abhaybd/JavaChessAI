@@ -3,13 +3,13 @@ package com.coolioasjulio.chess.examples;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
 import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
 import com.coolioasjulio.chess.players.PositionalComputerPlayer;
+import com.coolioasjulio.chess.ui.ChessGameUI;
 
 public class App {
 
@@ -20,15 +20,15 @@ public class App {
     public static void main(String[] args) {
         Logger.setGlobalLogger(new Logger(System.out));
 
-        ChessGame game = new ChessGame(100);
+        ChessGameUI game = new ChessGameUI(100);
         JFrame frame = new JFrame();
-        frame.add(game);
+        frame.add(game.getPanel());
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
-        Player human = new HumanGUIPlayer(game);
+        Player human = new HumanGUIPlayer(game, game.getPanel());
         Player opponent = getOpponent(frame, game);
 
         int playerTeam = opponent instanceof HumanGUIPlayer ? Piece.WHITE : getTeamInput(frame);
@@ -67,7 +67,7 @@ public class App {
         frame.dispose();
     }
 
-    private static Player getOpponent(JFrame frame, ChessGame game) {
+    private static Player getOpponent(JFrame frame, ChessGameUI game) {
         Object[] options = GameModeOptions.values();
         int choice = JOptionPane.showOptionDialog(frame, "What gamemode would you like to play?", "Game mode select",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -76,7 +76,7 @@ public class App {
         Player player;
         switch (gamemode) {
             case HumanVsHuman:
-                player = new HumanGUIPlayer(game);
+                player = new HumanGUIPlayer(game, game.getPanel());
                 break;
 
             case HumanVsBotLvl1:
