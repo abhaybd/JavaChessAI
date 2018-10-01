@@ -74,7 +74,7 @@ public class ChessGame extends JPanel {
 
                 board.doMove(m);
                 if (board.inCheck(team) || board.inCheckMate(team)) {
-                    throw new InvalidMoveException();
+                    throw new InvalidMoveException("You are in check or checkmate!");
                 }
 
                 moves.add(m);
@@ -92,7 +92,11 @@ public class ChessGame extends JPanel {
                     System.out.println("Check!");
                 }
             } catch (InvalidMoveException e) {
-                System.err.println("Invalid! Try again!");
+                if(e.getMessage() == null || e.getMessage().equals("")) {
+                    System.err.println("Invalid! Try again!");                    
+                } else {
+                    System.err.println("Invalid! Try again! - " + e.getMessage());
+                }
                 board.restoreState(beforeState);
             } catch (Exception e) {
                 e.printStackTrace();

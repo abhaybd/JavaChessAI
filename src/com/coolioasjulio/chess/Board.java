@@ -178,14 +178,14 @@ public class Board {
                 k.move(new Square(2, k.getSquare().getY()));
                 r.move(new Square(3, r.getSquare().getY()));
             } else {
-                throw new InvalidMoveException();
+                throw new InvalidMoveException("Cannot castle!");
             }
         } else {
             Piece p = this.checkSquare(m.getStart());
             List<Square> endSquares = Arrays.asList(p.getMoves()).stream().map(Move::getEnd)
                     .collect(Collectors.toList());
             if (m.getPiece().getBoard() != this || !endSquares.contains(m.getEnd())) {
-                throw new InvalidMoveException();
+                throw new InvalidMoveException("Invalid move or end square!");
             }
             if (m.doesCapture()) {
                 removePiece(checkSquare(m.getEnd()));
@@ -205,7 +205,7 @@ public class Board {
         pieces.addAll(state.stream().map(Piece::copy).collect(Collectors.toList()));
     }
 
-    void pawns() throws InvalidSquareException {
+    private void pawns() {
         for (int i = 0; i < 8; i++) {
             Square w = new Square(i, 2);
             Square b = new Square(i, 7);
@@ -216,7 +216,7 @@ public class Board {
         }
     }
 
-    void knights() throws InvalidSquareException {
+    private void knights() {
         for (int i = 1; i < 8; i += 5) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
@@ -227,7 +227,7 @@ public class Board {
         }
     }
 
-    void rooks() throws InvalidSquareException {
+    private void rooks() {
         for (int i = 0; i < 8; i += 7) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
@@ -238,7 +238,7 @@ public class Board {
         }
     }
 
-    void bishops() throws InvalidSquareException {
+    private void bishops() {
         for (int i = 2; i < 8; i += 3) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
@@ -249,7 +249,7 @@ public class Board {
         }
     }
 
-    void queens() throws InvalidSquareException {
+    private void queens() {
         Square w = new Square(3, 1);
         Square b = new Square(3, 8);
         Queen white = new Queen(w, Piece.WHITE, this);
@@ -258,7 +258,7 @@ public class Board {
         pieces.add(black);
     }
 
-    void kings() throws InvalidSquareException {
+    private void kings() {
         Square w = new Square(4, 1);
         Square b = new Square(4, 8);
         King white = new King(w, Piece.WHITE, this);
