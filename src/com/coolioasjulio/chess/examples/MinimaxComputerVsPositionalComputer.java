@@ -19,6 +19,6 @@ public class MinimaxComputerVsPositionalComputer {
 
         Player betterComputer = new MinimaxComputerPlayer(game.getBoard());
         Player computer = new PositionalComputerPlayer(game.getBoard());
-        game.runGame(betterComputer, computer);
+        game.playGameAsync(betterComputer, computer);
     }
 }

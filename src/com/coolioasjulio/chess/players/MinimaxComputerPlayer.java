@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.MoveCandidate;
 import com.coolioasjulio.chess.Piece;
@@ -85,18 +86,18 @@ public class MinimaxComputerPlayer extends Player {
         List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
         expiredTime = System.currentTimeMillis() + TIMEOUT_MILLIS;
         for (int depth = 2; System.currentTimeMillis() <= expiredTime; depth += 2) {
-            System.out.println("Searching with depth: " + depth);
+            Logger.getGlobalLogger().log("Searching with depth: " + depth);
             MoveCandidate[] moves = minimax(depth, team, Double.MAX_VALUE, Double.MIN_VALUE);
             if (System.currentTimeMillis() <= expiredTime) {
                 bestMoves.addAll(Arrays.asList(moves));
             }
         }
-        System.out.println();
+        Logger.getGlobalLogger().log();
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
 
         List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
                 .collect(Collectors.toList()).subList(0, toKeep);
-        System.out.println(kept.toString());
+        Logger.getGlobalLogger().log(kept.toString());
 
         MoveCandidate bestMove = softmaxSelect(kept,
                 kept.stream().map(e -> -e.getScore()).collect(Collectors.toList()));

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.InvalidMoveException;
+import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Pawn;
 import com.coolioasjulio.chess.Piece;
@@ -99,8 +100,8 @@ public class PositionalComputerPlayer extends Player {
         }
         double bestScore = moves.keySet().stream().reduce(Math::max).get();
         Move bestMove = moves.get(bestScore);
-        System.out.println();
-        System.out.println(bestMove.toString() + " - Score: " + bestScore);
+        Logger.getGlobalLogger().log();
+        Logger.getGlobalLogger().log(bestMove.toString() + " - Score: " + bestScore);
         return bestMove;
     }
 }

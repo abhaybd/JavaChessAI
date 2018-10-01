@@ -25,11 +25,11 @@ public class HumanVsPositionalComputer {
 
         switch (playerTeam) {
             case Piece.BLACK:
-                game.runGame(computer, human);
+                game.playGameAsync(computer, human);
                 break;
 
             case Piece.WHITE:
-                game.runGame(human, computer);
+                game.playGameAsync(human, computer);
                 break;
         }
     }

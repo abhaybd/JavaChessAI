@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.InvalidMoveException;
+import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
@@ -25,7 +26,7 @@ public class HumanConsolePlayer extends Player {
     public Move getMove() {
         List<Piece> beforeState = board.saveState();
         try {
-            System.out.println("It is " + ((team == Piece.WHITE) ? "white" : "black")
+            Logger.getGlobalLogger().log("It is " + ((team == Piece.WHITE) ? "white" : "black")
                     + "'s turn! Input move in long notation. Ex: Nb1-c3");
             String response = input.nextLine();
             Square start = null;

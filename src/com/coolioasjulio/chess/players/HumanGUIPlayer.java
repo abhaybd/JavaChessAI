@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.InvalidMoveException;
 import com.coolioasjulio.chess.King;
+import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
@@ -31,14 +32,14 @@ public class HumanGUIPlayer extends Player implements MouseListener {
             try {
                 fromSquare = null;
                 toSquare = null;
-                System.out.println("It is " + ((team == Piece.WHITE) ? "white" : "black") + "'s turn!");
-                System.out.println("Click the piece you want to move!");
+                Logger.getGlobalLogger().log("It is " + ((team == Piece.WHITE) ? "white" : "black") + "'s turn!");
+                Logger.getGlobalLogger().log("Click the piece you want to move!");
                 lock.wait();
                 chess.addHighlightedSquare(fromSquare);
                 chess.repaint();
-                System.out.println("Click the square you want to move to!");
+                Logger.getGlobalLogger().log("Click the square you want to move to!");
                 lock.wait();
-                System.out.println();
+                Logger.getGlobalLogger().log();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

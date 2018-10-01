@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class ChessGame extends JPanel {
     private List<Piece> piecesToDraw;
     private int tileSize;
     private List<Square> highlightedSquares;
+    private Thread gameThread;
 
     public ChessGame(int tileSize) {
         this.tileSize = tileSize;
@@ -43,22 +45,30 @@ public class ChessGame extends JPanel {
         return board;
     }
 
+    public void interruptGame() {
+        gameThread.interrupt();
+    }
+
     /**
-     * Run a game between these two players.
+     * Run a game between these two players in a separate thread.
      * 
      * @param white The white player.
      * @param black The black player.
      */
-    public void runGame(final Player white, final Player black) {
-        Thread t = new Thread(() -> playGame(white, black));
-        t.setDaemon(true);
-        t.start();
+    public void playGameAsync(final Player white, final Player black) {
+        if (gameThread != null) {
+            throw new IllegalStateException("Game has already been started! Create a new instance!");
+        }
+
+        gameThread = new Thread(() -> playGame(white, black));
+        gameThread.start();
     }
 
-    private void playGame(Player white, Player black) {
+    public int playGame(Player white, Player black) {
         white.setTeam(Piece.WHITE);
         black.setTeam(Piece.BLACK);
         int team = Piece.WHITE;
+        int winner = 0;
 
         while (!Thread.interrupted()) {
             List<Piece> beforeState = board.saveState();
@@ -81,21 +91,23 @@ public class ChessGame extends JPanel {
 
                 team *= -1;
                 if (board.inCheckMate(team)) {
-                    System.out.println("Checkmate!");
-                    System.out.println(team == Piece.WHITE ? "0-1" : "1-0");
+                    Logger.getGlobalLogger().log("Checkmate!");
+                    Logger.getGlobalLogger().log(team == Piece.WHITE ? "0-1" : "1-0");
+                    winner = -team;
                     break;
                 } else if (board.inStaleMate(team)) {
-                    System.out.println("Stalemate!");
-                    System.out.println("1/2-1/2");
+                    Logger.getGlobalLogger().log("Stalemate!");
+                    Logger.getGlobalLogger().log("1/2-1/2");
+                    winner = 0;
                     break;
                 } else if (board.inCheck(team)) {
-                    System.out.println("Check!");
+                    Logger.getGlobalLogger().log("Check!");
                 }
             } catch (InvalidMoveException e) {
-                if(e.getMessage() == null || e.getMessage().equals("")) {
-                    System.err.println("Invalid! Try again!");                    
+                if (e.getMessage() == null || e.getMessage().equals("")) {
+                    Logger.getGlobalLogger().logErr("Invalid! Try again!");
                 } else {
-                    System.err.println("Invalid! Try again! - " + e.getMessage());
+                    Logger.getGlobalLogger().logErr("Invalid! Try again! - " + e.getMessage());
                 }
                 board.restoreState(beforeState);
             } catch (Exception e) {
@@ -105,23 +117,22 @@ public class ChessGame extends JPanel {
             highlightedSquares.clear();
         }
         piecesToDraw = null;
-        printMoves();
         repaint();
+
+        return winner;
     }
 
-    private void printMoves() {
-        System.out.println();
+    public void printMoves(PrintStream out) {
+        out.println("\n===MOVES===");
         for (int i = 0; i < moves.size(); i += 2) {
             int moveNum = (i / 2) + 1;
             String whiteMove = moves.get(i).toString();
             if (i == moves.size() - 1) {
-                System.out.println(String.format("%02d. %2$6s 1-0", moveNum, whiteMove));
+                out.println(String.format("%02d. %2$6s 1-0", moveNum, whiteMove));
             } else if (i == moves.size() - 2) {
-                System.out.println(
-                        String.format("%02d. %2$6s, %3$6s 0-1", moveNum, whiteMove, moves.get(i + 1).toString()));
+                out.println(String.format("%02d. %2$6s, %3$6s 0-1", moveNum, whiteMove, moves.get(i + 1).toString()));
             } else {
-                System.out
-                        .println(String.format("%02d. %2$6s, %3$6s", moveNum, whiteMove, moves.get(i + 1).toString()));
+                out.println(String.format("%02d. %2$6s, %3$6s", moveNum, whiteMove, moves.get(i + 1).toString()));
             }
         }
     }

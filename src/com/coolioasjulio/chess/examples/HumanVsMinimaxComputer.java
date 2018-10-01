@@ -27,11 +27,11 @@ public class HumanVsMinimaxComputer {
 
         switch (playerTeam) {
             case Piece.BLACK:
-                game.runGame(betterComputer, human);
+                game.playGameAsync(betterComputer, human);
                 break;
 
             case Piece.WHITE:
-                game.runGame(human, betterComputer);
+                game.playGameAsync(human, betterComputer);
                 break;
         }
     }

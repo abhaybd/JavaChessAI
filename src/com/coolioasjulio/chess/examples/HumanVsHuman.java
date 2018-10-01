@@ -18,6 +18,6 @@ public class HumanVsHuman {
 
         Player human1 = new HumanGUIPlayer(game);
         Player human2 = new HumanGUIPlayer(game);
-        game.runGame(human1, human2);
+        game.playGameAsync(human1, human2);
     }
 }
