@@ -1,8 +1,7 @@
 package com.coolioasjulio.chess.examples;
 
-import java.util.Scanner;
-
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.Piece;
@@ -20,13 +19,7 @@ public class HumanVsPositionalComputer {
         frame.pack();
         frame.setVisible(true);
 
-        char t;
-        try (Scanner input = new Scanner(System.in)) {
-            System.out.println("What team do you want to be? w/b");
-            t = input.nextLine().toLowerCase().charAt(0);
-        }
-
-        int playerTeam = (t == 'b') ? Piece.BLACK : Piece.WHITE;
+        int playerTeam = getTeamInput(frame);
         Player human = new HumanGUIPlayer(game);
         Player computer = new PositionalComputerPlayer(game.getBoard());
 
@@ -39,5 +32,12 @@ public class HumanVsPositionalComputer {
                 game.runGame(human, computer);
                 break;
         }
+    }
+
+    private static int getTeamInput(JFrame frame) {
+        Object[] options = new Object[] { "Black", "White" };
+        int choice = JOptionPane.showOptionDialog(frame, "What team would you like to play as?", "Pick a team",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+        return 2 * choice - 1; // 1 -> 1, 0 -> -1
     }
 }
