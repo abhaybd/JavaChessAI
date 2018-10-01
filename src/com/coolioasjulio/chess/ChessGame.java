@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -177,8 +178,8 @@ public class ChessGame extends JPanel {
             drawBoard(g);
             drawHighlightedSquares(g);
             drawPieces(g);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ConcurrentModificationException | IOException e) {
+            e.printStackTrace(); // Catch any multithreaded/IO problems
         }
     }
 }

@@ -102,7 +102,7 @@ public class MinimaxComputerPlayer extends Player {
         MoveCandidate bestMove = softmaxSelect(kept,
                 kept.stream().map(e -> -e.getScore()).collect(Collectors.toList()));
 
-        System.out.printf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
+        Logger.getGlobalLogger().logf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
         return bestMove.getMove();
     }
 
