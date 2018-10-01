@@ -19,7 +19,7 @@ public class App {
 
     public static void main(String[] args) {
         Logger.setGlobalLogger(new Logger(System.out));
-        
+
         ChessGame game = new ChessGame(100);
         JFrame frame = new JFrame();
         frame.add(game);
@@ -62,7 +62,7 @@ public class App {
         }
 
         JOptionPane.showMessageDialog(frame, message);
-        
+
         game.printMoves(System.out);
         frame.dispose();
     }

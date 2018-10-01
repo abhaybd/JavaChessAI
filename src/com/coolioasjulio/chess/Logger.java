@@ -15,7 +15,7 @@ public class Logger {
         }
         return instance;
     }
-    
+
     public static void setGlobalLogger(Logger logger) {
         if (instance != null) {
             instance.closeLogFile();
@@ -25,9 +25,9 @@ public class Logger {
 
     private boolean loggingEnabled;
     private PrintStream out;
-    
+
     public Logger() {
-        
+
     }
 
     public Logger(String path) {
@@ -35,19 +35,23 @@ public class Logger {
             throw new IllegalArgumentException("Invalid path!");
         }
     }
-    
+
     public Logger(PrintStream out) {
         this.out = out;
     }
-    
+
+    public PrintStream getOutputStream() {
+        return out;
+    }
+
     public void logErr(String err) {
         logErr(err, false);
     }
-    
+
     public void logErr(String err, boolean flush) {
         log("***ERROR*** " + err, flush);
     }
-    
+
     public void log() {
         log("", false);
     }
@@ -57,9 +61,11 @@ public class Logger {
     }
 
     public void log(String log, boolean flush) {
-        out.println(log);
-        if (flush) {
-            out.flush();
+        if (loggingEnabled) {
+            out.println(log);
+            if (flush) {
+                out.flush();
+            }
         }
     }
 
