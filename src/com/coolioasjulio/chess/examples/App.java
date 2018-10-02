@@ -1,5 +1,9 @@
 package com.coolioasjulio.chess.examples;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -10,6 +14,8 @@ import com.coolioasjulio.chess.players.HumanGUIPlayer;
 import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
 import com.coolioasjulio.chess.players.PositionalComputerPlayer;
 import com.coolioasjulio.chess.ui.ChessGameUI;
+import com.coolioasjulio.chess.ui.ChessAxisLabel;
+import com.coolioasjulio.chess.ui.ChessAxisLabel.Axis;
 
 public class App {
 
@@ -17,14 +23,46 @@ public class App {
         HumanVsHuman, HumanVsBotLvl1, HumanVsBotLvl2
     }
 
+    private static final int TILE_SIZE = 100;
+    public static final Color BROWN = new Color(107, 54, 54);
+    public static final Color TAN = new Color(203, 177, 154);
+    public static final Color BG_COLOR = new Color(67, 34, 34);
+
+    private static void configConstraints(GridBagConstraints c, int x, int y, int width, int height) {
+        c.gridx = x;
+        c.gridy = y;
+        c.gridwidth = width;
+        c.gridheight = height;
+    }
+
     public static void main(String[] args) {
         Logger.setGlobalLogger(new Logger(System.out));
+        Logger.getGlobalLogger().setLoggingEnabled(true);
 
-        ChessGameUI game = new ChessGameUI(100);
+        ChessGameUI game = new ChessGameUI(TILE_SIZE, TAN, BROWN);
         JFrame frame = new JFrame();
-        frame.add(game.getPanel());
-        frame.setResizable(false);
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        frame.getContentPane().setBackground(BG_COLOR);
+
+        configConstraints(c, 1, 0, 8, 1);
+        frame.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), BG_COLOR, TAN), c);
+
+        configConstraints(c, 0, 1, 1, 8);
+        frame.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), BG_COLOR, TAN), c);
+
+        configConstraints(c, 1, 1, 8, 8);
+        frame.add(game.getPanel(), c);
+
+        configConstraints(c, 1, 9, 8, 1);
+        frame.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), BG_COLOR, TAN), c);
+
+        configConstraints(c, 9, 1, 1, 8);
+        frame.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), BG_COLOR, TAN), c);
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         frame.pack();
         frame.setVisible(true);
 

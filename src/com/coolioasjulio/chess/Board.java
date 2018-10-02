@@ -1,6 +1,5 @@
 package com.coolioasjulio.chess;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,8 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Board {
-    public static final Color BROWN = new Color(107, 54, 54);
-    public static final Color TAN = new Color(203, 177, 154);
     public static final double spaceScore = 0.02;
     private List<Piece> pieces;
 

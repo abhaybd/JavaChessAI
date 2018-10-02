@@ -122,6 +122,6 @@ public class MinimaxComputerPlayer extends Player {
                 return toSelect.get(i);
             }
         }
-        return toSelect.get(toSelect.size() - 1);
+        throw new IllegalStateException("The softmax selection malfunctioned! The numbers do not sum to 1!");
     }
 }

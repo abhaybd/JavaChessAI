@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Square;
@@ -17,9 +16,12 @@ import com.coolioasjulio.chess.Square;
 public class ChessGameUI extends ChessGame {
 
     private ChessGamePanel panel;
+    private Color light, dark;
 
-    public ChessGameUI(int tileSize) {
+    public ChessGameUI(int tileSize, Color light, Color dark) {
         super(tileSize);
+        this.light = light;
+        this.dark = dark;
         panel = new ChessGamePanel();
     }
 
@@ -44,9 +46,9 @@ public class ChessGameUI extends ChessGame {
                 for (int j = 0; j < 8; j++) {
                     int x = i * tileSize;
                     int y = j * tileSize;
-                    g.setColor(Board.TAN);
+                    g.setColor(dark);
                     if ((i + j) % 2 == 0)
-                        g.setColor(Board.BROWN);
+                        g.setColor(light);
                     g.fillRect(x, y, tileSize, tileSize);
                 }
             }
