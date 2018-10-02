@@ -111,7 +111,9 @@ public class MinimaxComputerPlayer extends Player {
             throw new IllegalArgumentException("Must have equal sizes and nonzero!");
         }
 
-        List<Double> unNormalizedProbabilities = scores.stream().map(Math::exp).collect(Collectors.toList());
+        List<Double> unNormalizedProbabilities = scores.stream().map(Math::exp).map(e -> e == 0.0 ? 1e-8 : e)
+                .map(e -> e == Double.POSITIVE_INFINITY ? Double.MAX_VALUE / toSelect.size() : e)
+                .collect(Collectors.toList());
         double denominator = unNormalizedProbabilities.stream().reduce(Double::sum)
                 .orElseThrow(IllegalStateException::new);
         double[] probabilities = unNormalizedProbabilities.stream().mapToDouble(d -> d / denominator).toArray();
