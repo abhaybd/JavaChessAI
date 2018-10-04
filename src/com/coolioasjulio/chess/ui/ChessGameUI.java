@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.coolioasjulio.chess.ChessGame;
@@ -17,12 +18,24 @@ public class ChessGameUI extends ChessGame {
 
     private ChessGamePanel panel;
     private Color light, dark;
+    private JLabel label;
 
     public ChessGameUI(int tileSize, Color light, Color dark) {
         super(tileSize);
         this.light = light;
         this.dark = dark;
         panel = new ChessGamePanel();
+    }
+
+    @Override
+    public void onTurnEnded(int team) {
+        if (label != null) {
+            label.setText("Current move: " + (team == Piece.WHITE ? "white" : "black"));
+        }
+    }
+
+    public void setTurnIndicator(JLabel label) {
+        this.label = label;
     }
 
     public JPanel getPanel() {
@@ -61,7 +74,7 @@ public class ChessGameUI extends ChessGame {
                 Square square = p.getSquare();
                 int x = square.getX() * tileSize;
                 int y = this.getHeight() - square.getY() * tileSize;
-                g.drawImage(Piece.getImage(p), x, y, null);
+                g.drawImage(PieceImage.getImage(p, tileSize), x, y, null);
             }
         }
 

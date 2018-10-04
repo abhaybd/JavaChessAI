@@ -1,16 +1,11 @@
 package com.coolioasjulio.chess;
 
-import java.awt.Image;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
-
-import javax.imageio.ImageIO;
 
 public abstract class Piece {
     public static final double KING_VALUE = 200;
@@ -30,7 +25,6 @@ public abstract class Piece {
     public static final int WHITE = 1;
     public static final int BLACK = -1;
 
-    private static HashMap<String, Image> pieceImages = new HashMap<>();
     private static HashMap<String, double[][]> pieceSquareTables = new HashMap<>();
 
     public static String getType(Piece p) {
@@ -119,26 +113,6 @@ public abstract class Piece {
         }
     }
 
-    public static Image getImage(Piece p) throws IOException {
-        String name = p.getName();
-        String folder = "";
-        if (p.getTeam() == Piece.WHITE) {
-            name = "w" + name;
-            folder = "white/";
-        } else {
-            name = "b" + name;
-            folder = "black/";
-        }
-
-        if (pieceImages.containsKey(name)) {
-            return pieceImages.get(name);
-        }
-
-        Image img = ImageIO.read(new File(folder + name + ".png")).getScaledInstance(100, 100, Image.SCALE_FAST);
-        pieceImages.put(name, img);
-        return img;
-    }
-
     protected Square square;
     protected int team;
     protected Board board;
@@ -203,10 +177,6 @@ public abstract class Piece {
 
     public boolean hasMoved() {
         return moved;
-    }
-
-    public Image getImage() throws IOException {
-        return Piece.getImage(this);
     }
 
     public String getType() {

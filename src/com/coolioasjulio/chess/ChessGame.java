@@ -66,6 +66,8 @@ public abstract class ChessGame {
             List<Piece> beforeState = board.saveState();
             piecesToDraw = beforeState;
 
+            onTurnEnded(team);
+
             draw();
 
             try {
@@ -130,4 +132,8 @@ public abstract class ChessGame {
     }
 
     public abstract void draw();
+
+    public void onTurnEnded(int team) {
+
+    }
 }

@@ -1,11 +1,15 @@
 package com.coolioasjulio.chess.examples;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Piece;
@@ -17,7 +21,8 @@ import com.coolioasjulio.chess.ui.ChessGameUI;
 import com.coolioasjulio.chess.ui.ChessAxisLabel;
 import com.coolioasjulio.chess.ui.ChessAxisLabel.Axis;
 
-public class App {
+public class App extends JFrame {
+    private static final long serialVersionUID = 1L;
 
     private static enum GameModeOptions {
         HumanVsHuman, HumanVsBotLvl1, HumanVsBotLvl2
@@ -28,48 +33,62 @@ public class App {
     public static final Color TAN = new Color(203, 177, 154);
     public static final Color BG_COLOR = new Color(67, 34, 34);
 
-    private static void configConstraints(GridBagConstraints c, int x, int y, int width, int height) {
-        c.gridx = x;
-        c.gridy = y;
-        c.gridwidth = width;
-        c.gridheight = height;
-    }
-
     public static void main(String[] args) {
         Logger.setGlobalLogger(new Logger(System.out));
         Logger.getGlobalLogger().setLoggingEnabled(true);
 
-        ChessGameUI game = new ChessGameUI(TILE_SIZE, TAN, BROWN);
-        JFrame frame = new JFrame();
-        frame.setLayout(new GridBagLayout());
+        App app = new App(BG_COLOR, TAN, BROWN, TILE_SIZE);
+        app.playGame();
+        app.dispose();
+    }
+
+    private ChessGameUI game;
+
+    public App(Color bgColor, Color lightTile, Color darkTile, int tileSize) {
+        game = new ChessGameUI(tileSize, TAN, BROWN);
+
+        this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        frame.getContentPane().setBackground(BG_COLOR);
+        this.getContentPane().setBackground(bgColor);
 
-        configConstraints(c, 1, 0, 8, 1);
-        frame.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), BG_COLOR, TAN), c);
+        configConstraints(c, 0, 0, 10, 1);
+        JLabel turnIndicator = new JLabel();
+        game.setTurnIndicator(turnIndicator);
+        turnIndicator.setBackground(bgColor);
+        turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, 50));
+        turnIndicator.setForeground(lightTile);
+        turnIndicator.setPreferredSize(new Dimension(tileSize * 8, tileSize));
+        turnIndicator.setHorizontalAlignment(SwingConstants.CENTER);
+        c.anchor = GridBagConstraints.CENTER;
+        this.add(turnIndicator, c);
 
-        configConstraints(c, 0, 1, 1, 8);
-        frame.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), BG_COLOR, TAN), c);
+        configConstraints(c, 1, 1, 8, 1);
+        this.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile), c);
 
-        configConstraints(c, 1, 1, 8, 8);
-        frame.add(game.getPanel(), c);
+        configConstraints(c, 0, 2, 1, 8);
+        this.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile), c);
 
-        configConstraints(c, 1, 9, 8, 1);
-        frame.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), BG_COLOR, TAN), c);
+        configConstraints(c, 1, 2, 8, 8);
+        this.add(game.getPanel(), c);
 
-        configConstraints(c, 9, 1, 1, 8);
-        frame.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), BG_COLOR, TAN), c);
+        configConstraints(c, 1, 10, 8, 1);
+        this.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile), c);
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.pack();
-        frame.setVisible(true);
+        configConstraints(c, 9, 2, 1, 8);
+        this.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile), c);
 
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setResizable(false);
+        this.pack();
+        this.setVisible(true);
+    }
+
+    public void playGame() {
         Player human = new HumanGUIPlayer(game, game.getPanel());
-        Player opponent = getOpponent(frame, game);
+        Player opponent = getOpponent();
 
-        int playerTeam = opponent instanceof HumanGUIPlayer ? Piece.WHITE : getTeamInput(frame);
+        int playerTeam = opponent instanceof HumanGUIPlayer ? Piece.WHITE : getTeamInput();
 
         int winner;
         switch (playerTeam) {
@@ -99,15 +118,19 @@ public class App {
                 message = "Stalemate! It's a tie!";
         }
 
-        JOptionPane.showMessageDialog(frame, message);
-
-        game.printMoves(System.out);
-        frame.dispose();
+        JOptionPane.showMessageDialog(this, message);
     }
 
-    private static Player getOpponent(JFrame frame, ChessGameUI game) {
+    private void configConstraints(GridBagConstraints c, int x, int y, int width, int height) {
+        c.gridx = x;
+        c.gridy = y;
+        c.gridwidth = width;
+        c.gridheight = height;
+    }
+
+    private Player getOpponent() {
         Object[] options = GameModeOptions.values();
-        int choice = JOptionPane.showOptionDialog(frame, "What gamemode would you like to play?", "Game mode select",
+        int choice = JOptionPane.showOptionDialog(this, "What gamemode would you like to play?", "Game mode select",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         GameModeOptions gamemode = GameModeOptions.values()[choice];
 
@@ -132,9 +155,9 @@ public class App {
         return player;
     }
 
-    private static int getTeamInput(JFrame frame) {
+    private int getTeamInput() {
         Object[] options = new Object[] { "Black", "White" };
-        int choice = JOptionPane.showOptionDialog(frame, "What team would you like to play as?", "Pick a team",
+        int choice = JOptionPane.showOptionDialog(this, "What team would you like to play as?", "Pick a team",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
         return 2 * choice - 1; // 1 -> 1, 0 -> -1
     }
