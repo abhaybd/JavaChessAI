@@ -8,7 +8,7 @@ import com.coolioasjulio.chess.ui.ChessGameUI;
 
 public class HumanVsHuman {
     public static void main(String[] args) {
-        ChessGameUI game = new ChessGameUI(100, App.TAN, App.BROWN);
+        ChessGameUI game = new ChessGameUI(100, App.LIGHT, App.DARK);
         JFrame frame = new JFrame();
         frame.add(game.getPanel());
         frame.setResizable(false);

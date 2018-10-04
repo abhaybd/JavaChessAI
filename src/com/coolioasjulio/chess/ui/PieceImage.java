@@ -45,7 +45,7 @@ public class PieceImage {
         }
 
         Image img = ImageIO.read(new File(folder + name + ".png")).getScaledInstance(tileSize, tileSize,
-                Image.SCALE_FAST);
+                Image.SCALE_SMOOTH);
         pieceImages.put(name, img);
         return img;
     }

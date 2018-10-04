@@ -29,15 +29,15 @@ public class App extends JFrame {
     }
 
     private static final int TILE_SIZE = 100;
-    public static final Color BROWN = new Color(107, 54, 54);
-    public static final Color TAN = new Color(203, 177, 154);
-    public static final Color BG_COLOR = new Color(67, 34, 34);
+    public static final Color DARK = new Color(83, 124, 73);
+    public static final Color LIGHT = new Color(255, 233, 175);
+    public static final Color BG_COLOR = new Color(20, 40, 20);
 
     public static void main(String[] args) {
         Logger.setGlobalLogger(new Logger(System.out));
         Logger.getGlobalLogger().setLoggingEnabled(true);
 
-        App app = new App(BG_COLOR, TAN, BROWN, TILE_SIZE);
+        App app = new App(BG_COLOR, LIGHT, DARK, TILE_SIZE);
         app.playGame();
         app.dispose();
     }
@@ -45,7 +45,7 @@ public class App extends JFrame {
     private ChessGameUI game;
 
     public App(Color bgColor, Color lightTile, Color darkTile, int tileSize) {
-        game = new ChessGameUI(tileSize, TAN, BROWN);
+        game = new ChessGameUI(tileSize, LIGHT, DARK);
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
