@@ -56,7 +56,7 @@ public class App extends JFrame {
         JLabel turnIndicator = new JLabel();
         game.setTurnIndicator(turnIndicator);
         turnIndicator.setBackground(bgColor);
-        turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, 50));
+        turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, tileSize / 2));
         turnIndicator.setForeground(lightTile);
         turnIndicator.setPreferredSize(new Dimension(tileSize * 8, tileSize));
         turnIndicator.setHorizontalAlignment(SwingConstants.CENTER);
@@ -132,6 +132,9 @@ public class App extends JFrame {
         Object[] options = GameModeOptions.values();
         int choice = JOptionPane.showOptionDialog(this, "What gamemode would you like to play?", "Game mode select",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (choice == -1) {
+            throw new IllegalStateException("User cancelled!");
+        }
         GameModeOptions gamemode = GameModeOptions.values()[choice];
 
         Player player;
@@ -159,6 +162,9 @@ public class App extends JFrame {
         Object[] options = new Object[] { "Black", "White" };
         int choice = JOptionPane.showOptionDialog(this, "What team would you like to play as?", "Pick a team",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+        if (choice == -1) {
+            throw new IllegalStateException("User cancelled!");
+        }
         return 2 * choice - 1; // 1 -> 1, 0 -> -1
     }
 }

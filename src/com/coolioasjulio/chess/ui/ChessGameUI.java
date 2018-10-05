@@ -74,6 +74,7 @@ public class ChessGameUI extends ChessGame {
                 Square square = p.getSquare();
                 int x = square.getX() * tileSize;
                 int y = this.getHeight() - square.getY() * tileSize;
+
                 g.drawImage(PieceImage.getImage(p, tileSize), x, y, null);
             }
         }
