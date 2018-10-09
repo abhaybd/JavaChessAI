@@ -5,7 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,7 +30,7 @@ public class App extends JFrame {
         HumanVsHuman, HumanVsBotLvl1, HumanVsBotLvl2
     }
 
-    private static final int TILE_SIZE = 100;
+    private static final int TILE_SIZE = 80;
     public static final Color DARK = new Color(83, 124, 73);
     public static final Color LIGHT = new Color(255, 233, 175);
     public static final Color BG_COLOR = new Color(20, 40, 20);
@@ -46,6 +48,12 @@ public class App extends JFrame {
 
     public App(Color bgColor, Color lightTile, Color darkTile, int tileSize) {
         game = new ChessGameUI(tileSize, LIGHT, DARK);
+
+        try {
+            this.setIconImage(ImageIO.read(App.class.getClassLoader().getResourceAsStream("icon.png")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();

@@ -1,7 +1,8 @@
 package com.coolioasjulio.chess;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -84,7 +85,8 @@ public abstract class Piece {
     }
 
     private static double[][] loadPieceSquareTable(String file) {
-        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+        InputStream is = Piece.class.getClassLoader().getResourceAsStream(file);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(is))) {
             ArrayList<double[]> tableList = new ArrayList<>();
 
             String line;
