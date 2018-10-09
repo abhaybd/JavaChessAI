@@ -138,11 +138,12 @@ public class App extends JFrame {
 
     private Player getOpponent() {
         Object[] options = GameModeOptions.values();
-        int choice = JOptionPane.showOptionDialog(this, "What gamemode would you like to play?", "Game mode select",
-                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        if (choice == -1) {
-            throw new IllegalStateException("User cancelled!");
-        }
+        int choice;
+        do {
+            choice = JOptionPane.showOptionDialog(this, "What gamemode would you like to play?", "Game mode select",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        } while (choice == -1);
+
         GameModeOptions gamemode = GameModeOptions.values()[choice];
 
         Player player;
@@ -168,11 +169,12 @@ public class App extends JFrame {
 
     private int getTeamInput() {
         Object[] options = new Object[] { "Black", "White" };
-        int choice = JOptionPane.showOptionDialog(this, "What team would you like to play as?", "Pick a team",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-        if (choice == -1) {
-            throw new IllegalStateException("User cancelled!");
-        }
+        int choice;
+        do {
+            choice = JOptionPane.showOptionDialog(this, "What team would you like to play as?", "Pick a team",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+        } while (choice == -1);
+
         return 2 * choice - 1; // 1 -> 1, 0 -> -1
     }
 }
