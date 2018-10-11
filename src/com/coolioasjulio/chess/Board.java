@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Board {
-    public static final double spaceScore = 0.02;
     private List<Piece> pieces;
 
     public Board() {
@@ -23,8 +22,22 @@ public class Board {
     }
 
     public Move[] getMoves(int team) {
+        return getMoves(team, true);
+    }
 
-        return getPieces(team).stream().flatMap(p -> Arrays.asList(p.getMoves()).stream()).toArray(Move[]::new);
+    public Move[] getMoves(int team, boolean castleMoves) {
+        List<Move> moves = getPieces(team).stream().flatMap(p -> Arrays.asList(p.getMoves()).stream())
+                .collect(Collectors.toList());
+        if (castleMoves) {
+            King k = getKing(team);
+            if (canKingSideCastle(k)) {
+                moves.add(new Move(team, true));
+            }
+            if (canQueenSideCastle(k)) {
+                moves.add(new Move(team, false));
+            }
+        }
+        return moves.toArray(new Move[0]);
     }
 
     public boolean removePiece(int i) {
@@ -69,24 +82,28 @@ public class Board {
         if (!(p instanceof Rook) || p.getTeam() != k.getTeam())
             return false;
         Rook r = (Rook) p;
-        if (r.hasMoved() || !freePath(k.getSquare(), r.getSquare(), k.getTeam()))
+        if (r.hasMoved() || !freePath(r.getSquare(), k.getSquare(), k.getTeam()))
             return false;
         return true;
     }
 
     public boolean inStaleMate(int team) {
-        if (inCheck(team))
+        if (inCheck(team)) {
             return false;
+        }
         Move[] moves = getMoves(team);
-        boolean stalemate = true;
         for (Move move : moves) {
             List<Piece> before = saveState();
-            doMove(move);
-            if (!inCheck(team))
-                stalemate = false;
-            restoreState(before);
+            try {
+                doMove(move);
+                if (!inCheck(team)) {
+                    return false;
+                }
+            } finally {
+                restoreState(before);
+            }
         }
-        return stalemate;
+        return true;
     }
 
     public boolean inCheckMate(int team) throws InvalidMoveException {
@@ -114,7 +131,7 @@ public class Board {
 
     public boolean freePath(Square start, Square end, int team) {
         if (start.getY() != end.getY())
-            throw new InvalidSquareException();
+            throw new InvalidSquareException("Invalid castle path!");
         for (int i = start.getX() + 1; i < end.getX(); i++) {
             Square check = new Square(i, start.getY());
             King k = new King(check, team, this);
@@ -131,8 +148,8 @@ public class Board {
 
     public boolean inCheck(King k) throws InvalidMoveException {
         if (k == null)
-            throw new InvalidMoveException();
-        Move[] moves = getMoves(-k.getTeam());
+            throw new InvalidMoveException("Invalid king!");
+        Move[] moves = getMoves(-k.getTeam(), false);
         for (Move m : moves) {
             if (m.getEnd().equals(k.getSquare())) {
                 return true;

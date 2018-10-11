@@ -154,7 +154,7 @@ public abstract class Piece {
         moved = true;
         Piece p = board.checkSquare(move);
         if (p != null && p.team == team) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Can't move into your own piece!");
         }
         square = move;
     }

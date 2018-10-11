@@ -28,7 +28,7 @@ public class Pawn extends Piece {
             Knight n = new Knight(square, team, board);
             board.getPieces().add(n);
         } else
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Unrecognized piece!");
         board.removePiece(this);
     }
 
