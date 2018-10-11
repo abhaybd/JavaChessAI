@@ -12,15 +12,20 @@ import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.MoveCandidate;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
+import com.coolioasjulio.chess.heuristics.Heuristic;
+import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
 
 public class MinimaxComputerPlayer extends Player {
     private static final long TIMEOUT_MILLIS = 2000;
     private static final int KEEP_MOVES = 4;
+    private static final double SPACE_SCORE = 0.0;
 
     private long expiredTime;
+    private Heuristic heuristic;
 
     public MinimaxComputerPlayer(Board board) {
         super(board);
+        this.heuristic = new PositionalHeuristic(SPACE_SCORE);
         this.board = board;
     }
 
@@ -35,7 +40,7 @@ public class MinimaxComputerPlayer extends Player {
                     double score;
                     if (depth <= 1) {
                         // This should NOT be the AI
-                        score = board.getScore(team);
+                        score = heuristic.getScore(board, team);
                     } else {
                         MoveCandidate[] possibleMoves = minimax(depth - 1, -team, alpha, beta);
 

@@ -10,8 +10,13 @@ import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Pawn;
 import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Player;
+import com.coolioasjulio.chess.heuristics.Heuristic;
+import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
 
 public class PositionalComputerPlayer extends Player {
+    private static final double SPACE_SCORE = 0.02;
+
+    private Heuristic heuristic;
 
     /**
      * 
@@ -19,6 +24,7 @@ public class PositionalComputerPlayer extends Player {
      */
     public PositionalComputerPlayer(Board board) {
         super(board);
+        heuristic = new PositionalHeuristic(SPACE_SCORE);
     }
 
     private int numAttackers(Move move) {
@@ -88,7 +94,7 @@ public class PositionalComputerPlayer extends Player {
                     score -= m.getPiece().getValue();
                 }
                 board.doMove(m);
-                score += board.getScore(team);
+                score += heuristic.getScore(board, team);
                 if (board.inCheckMate(-team))
                     score += 99999;
                 boolean check = board.inCheck(board.getKing(team));

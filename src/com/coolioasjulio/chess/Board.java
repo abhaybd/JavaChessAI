@@ -142,25 +142,7 @@ public class Board {
     }
 
     public double getMaterialScore(int team) {
-        double material = 0;
-        for (Piece p : pieces) {
-            if (p.getTeam() != team)
-                continue;
-            material += p.getValue();
-        }
-        return material;
-    }
-
-    public double getScore(int team) {
-        double space = (double) getMoves(team).length * spaceScore;
-        double material = getMaterialScore(team);
-        double oppMaterial = getMaterialScore(-team);
-        double checkmateModifier = 0;
-        if (inCheckMate(-team))
-            checkmateModifier = 1000;
-        else if (inCheckMate(team))
-            checkmateModifier = -1000;
-        return space + material - oppMaterial + checkmateModifier;
+        return pieces.stream().filter(e -> e.getTeam() == team).mapToDouble(e -> e.getValue()).sum();
     }
 
     public void doMove(Move m) {
