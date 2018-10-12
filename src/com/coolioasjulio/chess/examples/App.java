@@ -30,7 +30,7 @@ public class App extends JFrame {
         HumanVsHuman, HumanVsBotLvl1, HumanVsBotLvl2
     }
 
-    private static final int TILE_SIZE = 80;
+    private static final int TILE_SIZE = 100;
     public static final Color DARK = new Color(83, 124, 73);
     public static final Color LIGHT = new Color(255, 233, 175);
     public static final Color BG_COLOR = new Color(20, 40, 20);

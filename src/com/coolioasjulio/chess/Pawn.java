@@ -2,7 +2,6 @@ package com.coolioasjulio.chess;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Pawn extends Piece {
 
@@ -33,25 +32,16 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public void move(Square move, Scanner in) throws InvalidMoveException {
-        super.move(move, in);
+    public void move(Square move, String promotion) {
+        super.move(move, promotion);
         if ((move.getY() == 1 && team == Piece.BLACK) || (move.getY() == 8 && team == Piece.WHITE)) {
-            boolean done = false;
-            while (!done) {
-                String promotion = "queen";
-                if (in != null) {
-                    System.out.println("What would you like to promote your pawn to? queen, rook, bishop, or knight?");
-                    promotion = in.nextLine().toLowerCase();
-                }
-                promotion = String.valueOf(promotion.charAt(0)).toUpperCase() + promotion.substring(1);
-                try {
-                    Class.forName("com.coolioasjulio.chess." + promotion);
-                    promote(promotion);
-                } catch (ClassNotFoundException e) {
-                    System.err.println("Invalid piece for promotion: " + promotion);
-                    continue;
-                }
-                done = true;
+            promotion = promotion == null ? "queen" : promotion;
+            promotion = String.valueOf(promotion.charAt(0)).toUpperCase() + promotion.toLowerCase().substring(1);
+            try {
+                Class.forName("com.coolioasjulio.chess." + promotion);
+                promote(promotion);
+            } catch (ClassNotFoundException e) {
+                throw new InvalidMoveException("Invalid piece for promotion: " + promotion);
             }
         }
     }

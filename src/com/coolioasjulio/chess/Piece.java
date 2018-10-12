@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Scanner;
 
 public abstract class Piece {
     public static final double KING_VALUE = 200;
@@ -150,7 +149,7 @@ public abstract class Piece {
         move(move, null);
     }
 
-    public void move(Square move, Scanner in) throws InvalidMoveException {
+    public void move(Square move, String promotion) throws InvalidMoveException {
         moved = true;
         Piece p = board.checkSquare(move);
         if (p != null && p.team == team) {
