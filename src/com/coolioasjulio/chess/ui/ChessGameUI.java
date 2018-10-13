@@ -8,6 +8,7 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.coolioasjulio.chess.ChessGame;
@@ -19,6 +20,7 @@ public class ChessGameUI extends ChessGame {
     private ChessGamePanel panel;
     private Color light, dark;
     private JLabel label;
+    private List<Piece> toDraw;
 
     public ChessGameUI(int tileSize, Color light, Color dark) {
         super(tileSize);
@@ -28,9 +30,16 @@ public class ChessGameUI extends ChessGame {
     }
 
     @Override
-    public void onTurnEnded(int team) {
+    public void onTurnStarted(int team) {
         if (label != null) {
             label.setText("Current move: " + (team == Piece.WHITE ? "white" : "black"));
+        }
+    }
+
+    @Override
+    public void onTurnEnded(int team, boolean check) {
+        if (check) {
+            JOptionPane.showMessageDialog(panel, "Check!", "Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -43,7 +52,8 @@ public class ChessGameUI extends ChessGame {
     }
 
     @Override
-    public void draw() {
+    public void draw(List<Piece> toDraw) {
+        this.toDraw = toDraw;
         panel.repaint();
     }
 
@@ -68,7 +78,7 @@ public class ChessGameUI extends ChessGame {
         }
 
         private void drawPieces(Graphics g) throws IOException {
-            List<Piece> toDraw = piecesToDraw != null ? piecesToDraw : board.getPieces();
+            toDraw = toDraw == null ? board.getPieces() : toDraw;
             for (int i = 0; i < toDraw.size(); i++) {
                 Piece p = toDraw.get(i);
                 Square square = p.getSquare();
@@ -100,5 +110,4 @@ public class ChessGameUI extends ChessGame {
             }
         }
     }
-
 }

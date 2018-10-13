@@ -8,7 +8,6 @@ public abstract class ChessGame {
 
     protected Board board;
     protected ArrayList<Move> moves;
-    protected List<Piece> piecesToDraw;
     protected int tileSize;
     protected List<Square> highlightedSquares;
     private Thread gameThread;
@@ -19,10 +18,6 @@ public abstract class ChessGame {
         board.setup();
         moves = new ArrayList<>();
         highlightedSquares = new ArrayList<>();
-    }
-
-    public List<Piece> getPiecesToDraw() {
-        return piecesToDraw;
     }
 
     public void addHighlightedSquare(Square square) {
@@ -64,12 +59,12 @@ public abstract class ChessGame {
 
         while (!Thread.interrupted()) {
             List<Piece> beforeState = board.saveState();
-            piecesToDraw = beforeState;
 
-            onTurnEnded(team);
+            onTurnStarted(team);
 
-            draw();
+            draw(beforeState);
 
+            boolean check = false;
             try {
                 Player toMove = team == white.getTeam() ? white : black;
                 Move m = toMove.getMove();
@@ -95,6 +90,7 @@ public abstract class ChessGame {
                     winner = 0;
                     break;
                 } else if (board.inCheck(team)) {
+                    check = true;
                     Logger.getGlobalLogger().log("Check!");
                 }
             } catch (InvalidMoveException e) {
@@ -107,11 +103,12 @@ public abstract class ChessGame {
             } catch (Exception e) {
                 e.printStackTrace();
                 board.restoreState(beforeState);
+            } finally {
+                highlightedSquares.clear();
             }
-            highlightedSquares.clear();
+            draw();
+            onTurnEnded(-team, check);
         }
-        piecesToDraw = null;
-        draw();
 
         return winner;
     }
@@ -131,9 +128,17 @@ public abstract class ChessGame {
         }
     }
 
-    public abstract void draw();
+    public void draw() {
+        draw(board.getPieces());
+    }
 
-    public void onTurnEnded(int team) {
+    public abstract void draw(List<Piece> toDraw);
 
+    public void onTurnStarted(int team) {
+        // Empty
+    }
+
+    public void onTurnEnded(int team, boolean check) {
+        // Empty
     }
 }
