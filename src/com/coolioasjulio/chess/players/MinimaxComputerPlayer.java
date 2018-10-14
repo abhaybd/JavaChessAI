@@ -16,7 +16,7 @@ import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
 
 public class MinimaxComputerPlayer extends Player {
     private static final long TIMEOUT_MILLIS = 2000;
-    private static final int KEEP_MOVES = 4;
+    private static final int KEEP_MOVES = 3;
     private static final double SPACE_SCORE = 0.0;
 
     private long expiredTime;
@@ -28,48 +28,51 @@ public class MinimaxComputerPlayer extends Player {
         this.board = board;
     }
 
-    private List<MoveCandidate> movesAtDepth(Board board, int depth, int team, double alpha, double beta) {
+    private List<MoveCandidate> movesAtDepth(Board board, int depth, int team) {
         Move[] moves = board.getMoves(team);
         List<MoveCandidate> bestMoves = new ArrayList<>();
         for (Move m : moves) {
             Board boardCopy = board.copy();
             boardCopy.doMove(m);
-            if (!boardCopy.inCheck(team)) {
-                double score;
-                if (depth <= 1) {
-                    // This should NOT be the AI
-                    score = heuristic.getScore(boardCopy, team);
-                } else {
-                    MoveCandidate[] possibleMoves = minimax(boardCopy, depth - 1, -team, alpha, beta);
 
-                    // If you detect a checkmate, return it immediately.
-                    if (possibleMoves == null || possibleMoves.length == 0) {
-                        return Arrays.asList(new MoveCandidate(m, team == this.team ? -1000 : 1000));
-                    }
+            if (boardCopy.inCheck(team))
+                continue;
 
-                    MoveCandidate mc = possibleMoves[0];
-                    score = mc.getScore();
+            double score;
+            if (depth <= 1) {
+                // This should NOT be the AI
+                score = heuristic.getScore(boardCopy, team);
+            } else {
+                MoveCandidate[] possibleMoves = minimax(boardCopy, depth - 1, -team);
+
+                // Timeout
+                if (possibleMoves == null) {
+                    return null;
                 }
 
-                if (team == this.team) {
-                    alpha = Math.min(alpha, score);
-                } else {
-                    beta = Math.max(beta, score);
+                // If you detect a checkmate, return it immediately.
+                if (possibleMoves.length == 0) {
+                    return Arrays.asList(new MoveCandidate(m, team == this.team ? -1000 : 1000));
                 }
 
-                bestMoves.add(new MoveCandidate(m, score));
+                MoveCandidate mc = possibleMoves[0];
+                score = mc.getScore();
             }
 
-            if (bestMoves.size() > 0 && (System.currentTimeMillis() > expiredTime)) {
-                break;
+            bestMoves.add(new MoveCandidate(m, score));
+
+            if (System.currentTimeMillis() > expiredTime) {
+                return null; // A half-searched tree is as good as a not searched tree
             }
         }
 
         return bestMoves;
     }
 
-    private MoveCandidate[] minimax(Board board, int depth, int team, double alpha, double beta) {
-        List<MoveCandidate> bestMoves = movesAtDepth(board, depth, team, alpha, beta);
+    private MoveCandidate[] minimax(Board board, int depth, int team) {
+        List<MoveCandidate> bestMoves = movesAtDepth(board, depth, team);
+        if (bestMoves == null)
+            return null;
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
         if (team == this.team) {
             return bestMoves.stream().sorted(Comparator.comparing(MoveCandidate::getScore)).collect(Collectors.toList())
@@ -88,12 +91,16 @@ public class MinimaxComputerPlayer extends Player {
         expiredTime = System.currentTimeMillis() + TIMEOUT_MILLIS;
         for (int depth = 2; System.currentTimeMillis() <= expiredTime; depth += 2) {
             Logger.getGlobalLogger().log("Searching with depth: " + depth);
-            MoveCandidate[] moves = minimax(board, depth, team, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
-            if (System.currentTimeMillis() <= expiredTime) {
+            MoveCandidate[] moves = minimax(board, depth, team);
+            if (moves != null) {
                 bestMoves.addAll(Arrays.asList(moves));
-                break;
             }
         }
+
+        if (bestMoves.size() == 0) {
+            throw new IllegalStateException("TIMEOUT value is too little!");
+        }
+
         Logger.getGlobalLogger().log();
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
 
