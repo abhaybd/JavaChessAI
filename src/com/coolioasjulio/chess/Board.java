@@ -180,7 +180,7 @@ public class Board {
             Piece p = this.checkSquare(m.getStart());
             List<Square> endSquares = Arrays.asList(p.getMoves()).stream().map(Move::getEnd)
                     .collect(Collectors.toList());
-            if (m.getPiece().getBoard() != this || !endSquares.contains(m.getEnd())) {
+            if (!endSquares.contains(m.getEnd())) {
                 throw new InvalidMoveException("Invalid move or end square!");
             }
             if (m.doesCapture()) {
@@ -190,10 +190,15 @@ public class Board {
         }
     }
 
-    public List<Piece> saveState() {
-        ArrayList<Piece> copy = new ArrayList<>();
-        copy.addAll(pieces.stream().map(Piece::copy).collect(Collectors.toList()));
+    public Board copy() {
+        Board copy = new Board();
+        copy.pieces = saveState();
+        copy.pieces.forEach(p -> p.setBoard(copy));
         return copy;
+    }
+
+    public List<Piece> saveState() {
+        return pieces.stream().map(Piece::copy).collect(Collectors.toList());
     }
 
     public void restoreState(List<Piece> state) {
@@ -213,7 +218,7 @@ public class Board {
     }
 
     private void knights() {
-        for (int i = 1; i < 8; i += 5) {
+        for (int i : new int[] { 1, 6 }) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Knight white = new Knight(w, Piece.WHITE, this);
@@ -224,7 +229,7 @@ public class Board {
     }
 
     private void rooks() {
-        for (int i = 0; i < 8; i += 7) {
+        for (int i : new int[] { 0, 7 }) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Rook white = new Rook(w, Piece.WHITE, this);
@@ -235,7 +240,7 @@ public class Board {
     }
 
     private void bishops() {
-        for (int i = 2; i < 8; i += 3) {
+        for (int i : new int[] { 2, 5 }) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Bishop white = new Bishop(w, Piece.WHITE, this);

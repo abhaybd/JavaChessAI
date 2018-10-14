@@ -88,7 +88,7 @@ public class PositionalComputerPlayer extends Player {
                 continue;
             Move[] possible = p.getMoves();
             for (Move m : possible) {
-                List<Piece> before = board.saveState();
+                Board board = this.board.copy();
                 double score = 0;
                 if (!safeMove(m)) {
                     score -= m.getPiece().getValue();
@@ -101,7 +101,6 @@ public class PositionalComputerPlayer extends Player {
                 if (!check) {
                     moves.put(score, m);
                 }
-                board.restoreState(before);
             }
         }
         double bestScore = moves.keySet().stream().reduce(Math::max).get();

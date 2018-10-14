@@ -145,11 +145,11 @@ public abstract class Piece {
      */
     public abstract double getRawValue();
 
-    public void move(Square move) throws InvalidMoveException {
+    void move(Square move) throws InvalidMoveException {
         move(move, null);
     }
 
-    public void move(Square move, String promotion) throws InvalidMoveException {
+    void move(Square move, String promotion) throws InvalidMoveException {
         moved = true;
         Piece p = board.checkSquare(move);
         if (p != null && p.team == team) {
@@ -203,6 +203,10 @@ public abstract class Piece {
 
     public Board getBoard() {
         return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public int getTeam() {
