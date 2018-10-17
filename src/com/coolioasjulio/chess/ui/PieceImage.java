@@ -24,7 +24,7 @@ public class PieceImage {
      * piece. k for King, n for Knight, q for Queen, r for Rook, b for Bishop, p for
      * Pawn.
      * 
-     * @param p The piece to load the image of
+     * @param p        The piece to load the image of
      * @param tileSize The width and height of the tiles
      * @return An Image, scaled to tileSizextileSize
      * @throws IOException

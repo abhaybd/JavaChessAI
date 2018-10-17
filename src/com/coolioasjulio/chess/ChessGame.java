@@ -94,9 +94,9 @@ public abstract class ChessGame {
                     Logger.getGlobalLogger().log("Check!");
                 }
             } catch (InvalidMoveException e) {
-                e.printStackTrace();
                 if (e.getMessage() == null || e.getMessage().equals("")) {
                     Logger.getGlobalLogger().logErr("Invalid! Try again!");
+                    e.printStackTrace();
                 } else {
                     Logger.getGlobalLogger().logErr("Invalid! Try again! - " + e.getMessage());
                 }

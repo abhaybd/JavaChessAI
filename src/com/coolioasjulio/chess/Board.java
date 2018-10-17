@@ -190,6 +190,9 @@ public class Board {
         }
     }
 
+    /*
+     * Deep copy of the board.
+     */
     public Board copy() {
         Board copy = new Board();
         copy.pieces = saveState();
@@ -197,6 +200,11 @@ public class Board {
         return copy;
     }
 
+    /**
+     * Deep copy of the pieces.
+     * 
+     * @return List with a deep copy of the pieces.
+     */
     public List<Piece> saveState() {
         return pieces.stream().map(Piece::copy).collect(Collectors.toList());
     }
