@@ -1,6 +1,5 @@
 package com.coolioasjulio.chess.players;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -31,15 +30,8 @@ public class MinimaxComputerPlayer extends Player {
 
     @Override
     public Move getMove() {
-        List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
+        List<MoveCandidate> bestMoves = ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, 2, team));
 
-        bestMoves.addAll(ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, 2, team)));
-
-        if (bestMoves.size() == 0) {
-            throw new IllegalStateException("TIMEOUT value is too little!");
-        }
-
-        Logger.getGlobalLogger().log();
         int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
 
         List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
@@ -134,18 +126,6 @@ public class MinimaxComputerPlayer extends Player {
             return subtasks;
         }
 
-        private List<MoveCandidate> ordered(List<MoveCandidate> moves) {
-            if (team == playerTeam) {
-                return moves.stream().sorted(Comparator.comparing(MoveCandidate::getScore))
-                        .collect(Collectors.toList());
-            } else if (team == -playerTeam) {
-                return moves.stream().sorted(Comparator.comparing(MoveCandidate::getScore).reversed())
-                        .collect(Collectors.toList());
-            } else {
-                throw new IllegalArgumentException("Team must be -1 or 1!");
-            }
-        }
-
         private List<MoveCandidate> work() {
             Move[] moves = board.getMoves(team);
             List<MoveCandidate> candidates = new LinkedList<>();
@@ -162,6 +142,18 @@ public class MinimaxComputerPlayer extends Player {
             }
 
             return ordered(candidates);
+        }
+
+        private List<MoveCandidate> ordered(List<MoveCandidate> moves) {
+            if (team == playerTeam) {
+                return moves.stream().sorted(Comparator.comparing(MoveCandidate::getScore))
+                        .collect(Collectors.toList());
+            } else if (team == -playerTeam) {
+                return moves.stream().sorted(Comparator.comparing(MoveCandidate::getScore).reversed())
+                        .collect(Collectors.toList());
+            } else {
+                throw new IllegalArgumentException("Team must be -1 or 1!");
+            }
         }
     }
 }
