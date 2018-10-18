@@ -20,13 +20,12 @@ import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
 
 public class MinimaxComputerPlayer extends Player {
     private static final int KEEP_MOVES = 3;
-    private static final double SPACE_SCORE = 0.0;
 
     private Heuristic heuristic;
 
     public MinimaxComputerPlayer(Board board) {
         super(board);
-        this.heuristic = new PositionalHeuristic(SPACE_SCORE);
+        this.heuristic = new PositionalHeuristic(0.0);
         this.board = board;
     }
 
