@@ -22,7 +22,6 @@ public class MinimaxComputerPlayer extends Player {
     private static final int KEEP_MOVES = 3;
     private static final double SPACE_SCORE = 0.0;
 
-    private long expiredTime;
     private Heuristic heuristic;
 
     public MinimaxComputerPlayer(Board board) {
@@ -34,17 +33,6 @@ public class MinimaxComputerPlayer extends Player {
     @Override
     public Move getMove() {
         List<MoveCandidate> bestMoves = new ArrayList<MoveCandidate>();
-        expiredTime = Long.MAX_VALUE; // System.currentTimeMillis() + TIMEOUT_MILLIS;
-//        for (int depth = 2; System.currentTimeMillis() <= expiredTime; depth += 2) {
-//            Logger.getGlobalLogger().log("Searching with depth: " + depth);
-//            MinimaxRecursiveTask task = new MinimaxRecursiveTask(board, depth, team);
-//            List<MoveCandidate> moves = ForkJoinPool.commonPool().invoke(task);
-//            if (moves != null) {
-//                bestMoves.addAll(moves);
-//            } else {
-//                break;
-//            }
-//        }
 
         bestMoves.addAll(ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, 2, team)));
 
@@ -113,19 +101,10 @@ public class MinimaxComputerPlayer extends Player {
             if (depth <= 1) {
                 return work();
             } else {
-                if (System.currentTimeMillis() > expiredTime) {
-                    return null;
-                }
-
                 Collection<MinimaxRecursiveTask> futures = invokeAll(createSubtasks());
                 List<MoveCandidate> candidates = new LinkedList<>();
                 for (MinimaxRecursiveTask future : futures) {
                     List<MoveCandidate> possibleMoves = future.join();
-
-                    // Timeout, so the search was aborted
-                    if (possibleMoves == null) {
-                        return null;
-                    }
 
                     // If you detect a checkmate, return it immediately.
                     if (possibleMoves.size() == 0) {
@@ -181,10 +160,6 @@ public class MinimaxComputerPlayer extends Player {
                 }
 
                 candidates.add(new MoveCandidate(m, heuristic.getScore(boardCopy, team)));
-
-                if (System.currentTimeMillis() > expiredTime) {
-                    return null;
-                }
             }
 
             return ordered(candidates);
