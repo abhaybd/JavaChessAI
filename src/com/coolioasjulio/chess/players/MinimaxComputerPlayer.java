@@ -16,54 +16,52 @@ import com.coolioasjulio.chess.MoveCandidate;
 import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
+import com.coolioasjulio.chess.selectors.Selector;
+import com.coolioasjulio.chess.selectors.SoftmaxSelector;
 
 public class MinimaxComputerPlayer extends Player {
     private static final int KEEP_MOVES = 3;
 
     private Heuristic heuristic;
+    private int keepMoves;
+    private Selector selector;
 
     public MinimaxComputerPlayer(Board board) {
         super(board);
-        this.heuristic = new PositionalHeuristic(0.0);
         this.board = board;
+        setHeuristic(new PositionalHeuristic(0.0)).setKeepMoves(KEEP_MOVES).setSelector(new SoftmaxSelector());
+    }
+
+    public MinimaxComputerPlayer setHeuristic(Heuristic heuristic) {
+        this.heuristic = heuristic;
+        return this;
+    }
+
+    public MinimaxComputerPlayer setKeepMoves(int keepMoves) {
+        this.keepMoves = keepMoves;
+        return this;
+    }
+
+    public MinimaxComputerPlayer setSelector(Selector selector) {
+        this.selector = selector;
+        return this;
     }
 
     @Override
     public Move getMove() {
         List<MoveCandidate> bestMoves = ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, 2, team));
 
-        int toKeep = Math.min(KEEP_MOVES, bestMoves.size());
+        int toKeep = Math.min(keepMoves, bestMoves.size());
 
         List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
                 .collect(Collectors.toList()).subList(0, toKeep);
         Logger.getGlobalLogger().log(kept.toString());
 
-        MoveCandidate bestMove = softmaxSelect(kept,
+        MoveCandidate bestMove = selector.select(kept,
                 kept.stream().map(e -> -e.getScore()).collect(Collectors.toList()));
 
         Logger.getGlobalLogger().logf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
         return bestMove.getMove();
-    }
-
-    private <T> T softmaxSelect(List<T> toSelect, List<Double> scores) {
-        if (toSelect.size() != scores.size() || toSelect.size() == 0 || scores.size() == 0) {
-            throw new IllegalArgumentException("Must have equal sizes and nonzero!");
-        }
-
-        List<Double> unNormalizedProbabilities = scores.stream().map(Math::exp).map(e -> e == 0.0 ? 1e-8 : e)
-                .map(e -> e == Double.POSITIVE_INFINITY ? Double.MAX_VALUE / toSelect.size() : e)
-                .collect(Collectors.toList());
-        double denominator = unNormalizedProbabilities.stream().reduce(Double::sum)
-                .orElseThrow(IllegalStateException::new);
-        double[] probabilities = unNormalizedProbabilities.stream().mapToDouble(d -> d / denominator).toArray();
-        double random = Math.random();
-        for (int i = 0; i < probabilities.length; i++) {
-            random -= probabilities[i];
-            if (random <= 0) {
-                return toSelect.get(i);
-            }
-        }
-        throw new IllegalStateException("The softmax selection malfunctioned! The numbers do not sum to 1!");
     }
 
     private class MinimaxRecursiveTask extends RecursiveTask<List<MoveCandidate>> {
