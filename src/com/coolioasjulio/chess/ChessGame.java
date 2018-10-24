@@ -110,6 +110,7 @@ public abstract class ChessGame {
             draw();
             onTurnEnded(-team, check);
         }
+        draw();
 
         return winner;
     }
