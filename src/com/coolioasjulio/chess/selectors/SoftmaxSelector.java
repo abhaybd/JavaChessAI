@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SoftmaxSelector implements Selector {
-
     @Override
     public <T> T select(List<T> toSelect, List<Double> scores) {
         if (toSelect.size() != scores.size() || toSelect.size() == 0 || scores.size() == 0) {
