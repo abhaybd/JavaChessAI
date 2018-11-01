@@ -14,4 +14,9 @@ public class GreedySelector implements Selector {
 
         return toSelect.get(argmax);
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 }

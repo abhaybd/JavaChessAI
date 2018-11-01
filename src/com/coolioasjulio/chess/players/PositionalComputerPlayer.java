@@ -9,7 +9,6 @@ import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Pawn;
 import com.coolioasjulio.chess.Piece;
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
 

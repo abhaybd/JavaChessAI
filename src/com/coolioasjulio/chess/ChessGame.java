@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.coolioasjulio.chess.players.Player;
+
 public abstract class ChessGame {
 
     protected Board board;

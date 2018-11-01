@@ -4,10 +4,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.coolioasjulio.chess.Piece;
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
+import com.coolioasjulio.chess.players.Player;
 import com.coolioasjulio.chess.players.PositionalComputerPlayer;
 import com.coolioasjulio.chess.ui.ChessGameUI;
+import com.coolioasjulio.jchess.App;
 
 public class HumanVsPositionalComputer {
     public static void main(String[] args) {

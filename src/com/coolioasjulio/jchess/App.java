@@ -1,4 +1,4 @@
-package examples;
+package com.coolioasjulio.jchess;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,16 +8,19 @@ import java.awt.GridBagLayout;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Piece;
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
 import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
+import com.coolioasjulio.chess.players.Player;
 import com.coolioasjulio.chess.players.PositionalComputerPlayer;
 import com.coolioasjulio.chess.ui.ChessGameUI;
 import com.coolioasjulio.chess.ui.ChessAxisLabel;
@@ -47,6 +50,17 @@ public class App extends JFrame {
     private ChessGameUI game;
 
     public App(Color bgColor, Color lightTile, Color darkTile, int tileSize) {
+        try {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
+        }
+
         game = new ChessGameUI(tileSize, LIGHT, DARK);
 
         try {
@@ -60,13 +74,19 @@ public class App extends JFrame {
 
         this.getContentPane().setBackground(bgColor);
 
-        configConstraints(c, 0, 0, 10, 1);
+        configConstraints(c, 1, 0, 1, 1);
+        JButton settingsButton = new JButton();
+        settingsButton.setText("Settings");
+        settingsButton.addActionListener(e -> openSettingsPanel());
+        this.add(settingsButton, c);
+
+        configConstraints(c, 2, 0, 7, 1);
         JLabel turnIndicator = new JLabel();
         game.setTurnIndicator(turnIndicator);
         turnIndicator.setBackground(bgColor);
         turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, tileSize / 2));
         turnIndicator.setForeground(lightTile);
-        turnIndicator.setPreferredSize(new Dimension(tileSize * 8, tileSize));
+        turnIndicator.setPreferredSize(new Dimension(tileSize * 6, tileSize));
         turnIndicator.setHorizontalAlignment(SwingConstants.CENTER);
         c.anchor = GridBagConstraints.CENTER;
         this.add(turnIndicator, c);
@@ -90,6 +110,13 @@ public class App extends JFrame {
         this.setResizable(false);
         this.pack();
         this.setVisible(true);
+    }
+
+    private void openSettingsPanel() {
+        SettingsFrame frame = new SettingsFrame(this);
+        frame.setResizable(false);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     public void playGame() {
@@ -129,7 +156,7 @@ public class App extends JFrame {
         JOptionPane.showMessageDialog(this, message);
     }
 
-    private void configConstraints(GridBagConstraints c, int x, int y, int width, int height) {
+    void configConstraints(GridBagConstraints c, int x, int y, int width, int height) {
         c.gridx = x;
         c.gridy = y;
         c.gridwidth = width;
