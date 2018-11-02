@@ -5,9 +5,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +30,9 @@ import com.coolioasjulio.chess.players.PositionalComputerPlayer;
 import com.coolioasjulio.chess.ui.ChessGameUI;
 import com.coolioasjulio.chess.ui.ChessAxisLabel;
 import com.coolioasjulio.chess.ui.ChessAxisLabel.Axis;
+import com.coolioasjulio.configuration.ConfigurationMenu;
+import com.coolioasjulio.configuration.Setting;
+import com.coolioasjulio.configuration.Setting.InputType;
 
 public class App extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -48,6 +56,9 @@ public class App extends JFrame {
     }
 
     private ChessGameUI game;
+    private JLabel turnIndicator;
+    private ChessAxisLabel top, left, right, bottom;
+    private JButton settingsButton;
 
     public App(Color bgColor, Color lightTile, Color darkTile, int tileSize) {
         try {
@@ -75,13 +86,25 @@ public class App extends JFrame {
         this.getContentPane().setBackground(bgColor);
 
         configConstraints(c, 1, 0, 1, 1);
-        JButton settingsButton = new JButton();
-        settingsButton.setText("Settings");
+        c.anchor = GridBagConstraints.CENTER;
+        settingsButton = new JButton();
+        settingsButton.setBorderPainted(false);
+        settingsButton.setBorder(null);
+        settingsButton.setMargin(new Insets(0, 0, 0, 0));
+        settingsButton.setContentAreaFilled(false);
+        c.insets = new Insets(10, 10, 10, 10);
+        Icon settingsIcon = loadSettingsIcon(tileSize);
+        if (settingsIcon != null) {
+            settingsButton.setIcon(settingsIcon);
+        } else {
+            settingsButton.setText("Settings");
+        }
         settingsButton.addActionListener(e -> openSettingsPanel());
         this.add(settingsButton, c);
 
         configConstraints(c, 2, 0, 7, 1);
-        JLabel turnIndicator = new JLabel();
+        c.insets = new Insets(0, 0, 0, 0);
+        turnIndicator = new JLabel();
         game.setTurnIndicator(turnIndicator);
         turnIndicator.setBackground(bgColor);
         turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, tileSize / 2));
@@ -92,24 +115,59 @@ public class App extends JFrame {
         this.add(turnIndicator, c);
 
         configConstraints(c, 1, 1, 8, 1);
-        this.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile), c);
+        top = new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile);
+        this.add(top, c);
 
         configConstraints(c, 0, 2, 1, 8);
-        this.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile), c);
+        left = new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile);
+        this.add(left, c);
 
         configConstraints(c, 1, 2, 8, 8);
         this.add(game.getPanel(), c);
 
         configConstraints(c, 1, 10, 8, 1);
-        this.add(new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile), c);
+        bottom = new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile);
+        this.add(bottom, c);
 
         configConstraints(c, 9, 2, 1, 8);
-        this.add(new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile), c);
+        right = new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile);
+        this.add(right, c);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.pack();
         this.setVisible(true);
+
+        ConfigurationMenu.addConfigMenu(new ConfigurationMenu("Board Settings", Arrays.asList(
+                new Setting<Integer>("Board Size (%)", InputType.INTEGER, this::setTileSize, game::getTileSize))));
+    }
+
+    private Icon loadSettingsIcon(int tileSize) {
+        try {
+            int size = (int) Math.floor(tileSize * 0.8 + 0.5);
+            return new ImageIcon(ImageIO.read(App.class.getClassLoader().getResourceAsStream("settings.png"))
+                    .getScaledInstance(size, size, Image.SCALE_DEFAULT));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void setTileSize(int tileSize) {
+        game.setTileSize(tileSize);
+        turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, tileSize / 2));
+        turnIndicator.setPreferredSize(new Dimension(tileSize * 6, tileSize));
+        Icon icon = loadSettingsIcon(tileSize);
+        if (icon != null) {
+            settingsButton.setIcon(icon);
+        } else {
+            settingsButton.setText("Settings");
+        }
+        top.setTileSize(tileSize);
+        right.setTileSize(tileSize);
+        bottom.setTileSize(tileSize);
+        left.setTileSize(tileSize);
+        this.pack();
     }
 
     private void openSettingsPanel() {

@@ -42,6 +42,13 @@ public class ChessGameUI extends ChessGame {
             JOptionPane.showMessageDialog(panel, "Check!", "Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }
+    
+    @Override
+    public void setTileSize(int tileSize) {
+        super.setTileSize(tileSize);
+        panel.setPreferredSize(new Dimension(8 * tileSize, 8 * tileSize));
+        PieceImage.clearCachedImages();
+    }
 
     public void setTurnIndicator(JLabel label) {
         this.label = label;

@@ -30,6 +30,10 @@ public abstract class ChessGame {
         return tileSize;
     }
 
+    public void setTileSize(int tileSize) {
+        this.tileSize = tileSize;
+    }
+
     public Board getBoard() {
         return board;
     }

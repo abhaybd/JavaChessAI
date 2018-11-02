@@ -9,7 +9,7 @@ public class Setting<T> {
         FLOAT, INTEGER, STRING, CHOICE
     }
 
-    private String key;
+    private String name;
     private InputType inputType;
     private T[] choices;
     private Consumer<T> callback;
@@ -21,7 +21,7 @@ public class Setting<T> {
         }
         
         this.inputType = inputType;
-        this.key = key;
+        this.name = key;
         this.callback = callback;
         this.currentSetting = currentSetting;
     }
@@ -32,7 +32,7 @@ public class Setting<T> {
             throw new IllegalArgumentException("Length must be greater than 0!");
         }
 
-        this.key = key;
+        this.name = key;
         this.callback = callback;
         inputType = InputType.CHOICE;
         this.choices = choices;
@@ -43,8 +43,8 @@ public class Setting<T> {
         return currentSetting.get();
     }
 
-    public String getKey() {
-        return key;
+    public String getName() {
+        return name;
     }
     
     public void updateValue(T value) {

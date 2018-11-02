@@ -52,7 +52,7 @@ class SettingsFrame extends JDialog {
                 configConstraints(c, 0, index, 1, 1);
                 c.anchor = GridBagConstraints.EAST;
                 c.fill = GridBagConstraints.NONE;
-                this.add(new JLabel(setting.getKey()), c);
+                this.add(new JLabel(setting.getName()), c);
 
                 configConstraints(c, 1, index, 1, 1);
                 c.anchor = GridBagConstraints.CENTER;
@@ -91,14 +91,19 @@ class SettingsFrame extends JDialog {
         for (int i = 0; i < settings.size(); i++) {
             Setting<?> setting = settings.get(i);
             JTextField input;
+            String text;
             switch (setting.getInputType()) {
                 case FLOAT:
                     input = (JTextField) inputs.get(i);
-                    setting.updateUntypedValue(Double.parseDouble(input.getText()));
+                    text = input.getText();
+                    double doubleVal = "".equals(text) ? 0.0 : Double.parseDouble(text);
+                    setting.updateUntypedValue(doubleVal);
                     break;
                 case INTEGER:
                     input = (JTextField) inputs.get(i);
-                    setting.updateUntypedValue(Integer.parseInt(input.getText()));
+                    text = input.getText();
+                    int intVal = "".equals(text) ? 0 : Integer.parseInt(text);
+                    setting.updateUntypedValue(intVal);
                     break;
                 case STRING:
                     input = (JTextField) inputs.get(i);

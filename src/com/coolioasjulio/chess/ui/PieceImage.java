@@ -49,4 +49,8 @@ public class PieceImage {
         pieceImages.put(name, img);
         return img;
     }
+
+    public static void clearCachedImages() {
+        pieceImages.clear();
+    }
 }

@@ -24,6 +24,9 @@ public class DoubleDocumentFilter extends DocumentFilter {
 
     private boolean isValid(String text) {
         try {
+            if ("".equals(text)) {
+                return true;
+            }
             Double.parseDouble(text);
             return true;
         } catch (NumberFormatException e) {

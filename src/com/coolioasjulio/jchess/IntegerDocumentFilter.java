@@ -24,6 +24,9 @@ public class IntegerDocumentFilter extends DocumentFilter {
 
     private boolean isValid(String text) {
         try {
+            if ("".equals(text)) {
+                return true;                
+            }
             Integer.parseInt(text);
             return true;
         } catch (NumberFormatException e) {
