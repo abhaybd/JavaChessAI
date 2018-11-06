@@ -59,8 +59,9 @@ public class App extends JFrame {
     private JLabel turnIndicator;
     private ChessAxisLabel top, left, right, bottom;
     private JButton settingsButton;
+    private Color light;
 
-    public App(Color bgColor, Color lightTile, Color darkTile, int tileSize) {
+    public App(Color bgColor, Color light, Color dark, int tileSize) {
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -73,6 +74,7 @@ public class App extends JFrame {
         }
 
         game = new ChessGameUI(tileSize, LIGHT, DARK);
+        this.light = light;
 
         try {
             this.setIconImage(ImageIO.read(App.class.getClassLoader().getResourceAsStream("icon.png")));
@@ -96,12 +98,13 @@ public class App extends JFrame {
         Icon settingsIcon = loadIcon("settings.png", tileSize);
         if (settingsIcon != null) {
             settingsButton.setIcon(settingsIcon);
+            Icon settingsPressedIcon = loadIcon("settings_pressed.png", tileSize);
+            if (settingsPressedIcon != null) {
+                settingsButton.setPressedIcon(settingsPressedIcon);
+            }
         } else {
             settingsButton.setText("Settings");
-        }
-        Icon settingsPressedIcon = loadIcon("settings_pressed.png", tileSize);
-        if (settingsPressedIcon != null) {
-            settingsButton.setPressedIcon(settingsPressedIcon);
+            settingsButton.setForeground(light);
         }
 
         settingsButton.addActionListener(e -> openSettingsPanel());
@@ -113,29 +116,29 @@ public class App extends JFrame {
         game.setTurnIndicator(turnIndicator);
         turnIndicator.setBackground(bgColor);
         turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, tileSize / 2));
-        turnIndicator.setForeground(lightTile);
+        turnIndicator.setForeground(light);
         turnIndicator.setPreferredSize(new Dimension(tileSize * 6, tileSize));
         turnIndicator.setHorizontalAlignment(SwingConstants.CENTER);
         c.anchor = GridBagConstraints.CENTER;
         this.add(turnIndicator, c);
 
         configConstraints(c, 1, 1, 8, 1);
-        top = new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile);
+        top = new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, light);
         this.add(top, c);
 
         configConstraints(c, 0, 2, 1, 8);
-        left = new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile);
+        left = new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, light);
         this.add(left, c);
 
         configConstraints(c, 1, 2, 8, 8);
         this.add(game.getPanel(), c);
 
         configConstraints(c, 1, 10, 8, 1);
-        bottom = new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, lightTile);
+        bottom = new ChessAxisLabel(Axis.Horizontal, game.getTileSize(), bgColor, light);
         this.add(bottom, c);
 
         configConstraints(c, 9, 2, 1, 8);
-        right = new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, lightTile);
+        right = new ChessAxisLabel(Axis.Vertical, game.getTileSize(), bgColor, light);
         this.add(right, c);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -152,7 +155,7 @@ public class App extends JFrame {
             int size = (int) Math.floor(tileSize * 0.8 + 0.5);
             return new ImageIcon(ImageIO.read(App.class.getClassLoader().getResourceAsStream(path))
                     .getScaledInstance(size, size, Image.SCALE_SMOOTH));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -165,8 +168,13 @@ public class App extends JFrame {
         Icon icon = loadIcon("settings.png", tileSize);
         if (icon != null) {
             settingsButton.setIcon(icon);
+            Icon pressedIcon = loadIcon("settings_pressed.png", tileSize);
+            if (pressedIcon != null) {
+                settingsButton.setPressedIcon(pressedIcon);
+            }
         } else {
             settingsButton.setText("Settings");
+            settingsButton.setForeground(light);
         }
         top.setTileSize(tileSize);
         right.setTileSize(tileSize);
