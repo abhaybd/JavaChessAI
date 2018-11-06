@@ -93,12 +93,17 @@ public class App extends JFrame {
         settingsButton.setMargin(new Insets(0, 0, 0, 0));
         settingsButton.setContentAreaFilled(false);
         c.insets = new Insets(10, 10, 10, 10);
-        Icon settingsIcon = loadSettingsIcon(tileSize);
+        Icon settingsIcon = loadIcon("settings.png", tileSize);
         if (settingsIcon != null) {
             settingsButton.setIcon(settingsIcon);
         } else {
             settingsButton.setText("Settings");
         }
+        Icon settingsPressedIcon = loadIcon("settings_pressed.png", tileSize);
+        if (settingsPressedIcon != null) {
+            settingsButton.setPressedIcon(settingsPressedIcon);
+        }
+
         settingsButton.addActionListener(e -> openSettingsPanel());
         this.add(settingsButton, c);
 
@@ -142,11 +147,11 @@ public class App extends JFrame {
                 new Setting<Integer>("Board Size (%)", InputType.INTEGER, this::setTileSize, game::getTileSize))));
     }
 
-    private Icon loadSettingsIcon(int tileSize) {
+    private Icon loadIcon(String path, int tileSize) {
         try {
             int size = (int) Math.floor(tileSize * 0.8 + 0.5);
-            return new ImageIcon(ImageIO.read(App.class.getClassLoader().getResourceAsStream("settings.png"))
-                    .getScaledInstance(size, size, Image.SCALE_DEFAULT));
+            return new ImageIcon(ImageIO.read(App.class.getClassLoader().getResourceAsStream(path))
+                    .getScaledInstance(size, size, Image.SCALE_SMOOTH));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -157,7 +162,7 @@ public class App extends JFrame {
         game.setTileSize(tileSize);
         turnIndicator.setFont(new Font("Segoe Print", Font.PLAIN, tileSize / 2));
         turnIndicator.setPreferredSize(new Dimension(tileSize * 6, tileSize));
-        Icon icon = loadSettingsIcon(tileSize);
+        Icon icon = loadIcon("settings.png", tileSize);
         if (icon != null) {
             settingsButton.setIcon(icon);
         } else {

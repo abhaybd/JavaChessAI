@@ -17,15 +17,13 @@ public class IntegerDocumentFilter extends DocumentFilter {
 
         if (isValid(sb.toString())) {
             super.insertString(fb, offset, string, attr);
-        } else {
-            // warn the user and don't allow the insert
         }
     }
 
     private boolean isValid(String text) {
         try {
             if ("".equals(text)) {
-                return true;                
+                return true;
             }
             Integer.parseInt(text);
             return true;
@@ -45,10 +43,7 @@ public class IntegerDocumentFilter extends DocumentFilter {
 
         if (isValid(sb.toString())) {
             super.replace(fb, offset, length, text, attrs);
-        } else {
-            // warn the user and don't allow the insert
         }
-
     }
 
     @Override
@@ -60,8 +55,6 @@ public class IntegerDocumentFilter extends DocumentFilter {
 
         if (isValid(sb.toString())) {
             super.remove(fb, offset, length);
-        } else {
-            // warn the user and don't allow the insert
         }
     }
 }
