@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ class SettingsFrame extends JDialog {
 
         Set<ConfigurationMenu> configMenus = ConfigurationMenu.getConfigMenusCopy();
 
-        configMenus = configMenus.stream().filter(e -> e != null).collect(Collectors.toSet());
+        configMenus = configMenus.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
         inputs = new LinkedList<>();
         this.settings = configMenus.stream().flatMap(e -> e.getSettings().stream()).collect(Collectors.toList());
