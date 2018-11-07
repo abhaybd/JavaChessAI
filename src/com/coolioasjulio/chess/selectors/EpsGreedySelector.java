@@ -10,7 +10,7 @@ public class EpsGreedySelector implements Selector {
     /**
      * Selector that chooses either the best option or a random option. Best option
      * has probability epsilon. Random option has probability 1-epsilon.
-     * 
+     *
      * @param epsilon Probability of choosing best option.
      */
     public EpsGreedySelector(double epsilon) {

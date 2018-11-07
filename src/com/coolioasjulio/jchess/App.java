@@ -266,7 +266,7 @@ public class App extends JFrame {
     }
 
     private int getTeamInput() {
-        Object[] options = new Object[] { "Black", "White" };
+        Object[] options = new Object[]{"Black", "White"};
         int choice;
         do {
             choice = JOptionPane.showOptionDialog(this, "What team would you like to play as?", "Pick a team",

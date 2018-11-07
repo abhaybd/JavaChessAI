@@ -17,7 +17,7 @@ public class ConfigurationMenu {
     public static boolean removeConfigMenu(ConfigurationMenu menu) {
         return configMenus.remove(menu);
     }
-    
+
     public static Set<ConfigurationMenu> getConfigMenusCopy() {
         return new HashSet<>(configMenus);
     }

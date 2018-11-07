@@ -44,7 +44,7 @@ public abstract class ChessGame {
 
     /**
      * Run a game between these two players in a separate thread.
-     * 
+     *
      * @param white The white player.
      * @param black The black player.
      */

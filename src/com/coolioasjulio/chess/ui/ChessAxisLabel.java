@@ -32,7 +32,7 @@ public class ChessAxisLabel extends JPanel {
                 break;
         }
     }
-    
+
     public void setTileSize(int tileSize) {
         switch (axis) {
             case Vertical:

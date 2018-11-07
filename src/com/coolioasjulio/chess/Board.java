@@ -202,7 +202,7 @@ public class Board {
 
     /**
      * Deep copy of the pieces.
-     * 
+     *
      * @return List with a deep copy of the pieces.
      */
     public List<Piece> saveState() {
@@ -226,7 +226,7 @@ public class Board {
     }
 
     private void knights() {
-        for (int i : new int[] { 1, 6 }) {
+        for (int i : new int[]{1, 6}) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Knight white = new Knight(w, Piece.WHITE, this);
@@ -237,7 +237,7 @@ public class Board {
     }
 
     private void rooks() {
-        for (int i : new int[] { 0, 7 }) {
+        for (int i : new int[]{0, 7}) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Rook white = new Rook(w, Piece.WHITE, this);
@@ -248,7 +248,7 @@ public class Board {
     }
 
     private void bishops() {
-        for (int i : new int[] { 2, 5 }) {
+        for (int i : new int[]{2, 5}) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Bishop white = new Bishop(w, Piece.WHITE, this);

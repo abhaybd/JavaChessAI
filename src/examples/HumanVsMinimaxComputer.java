@@ -38,7 +38,7 @@ public class HumanVsMinimaxComputer {
     }
 
     private static int getTeamInput(JFrame frame) {
-        Object[] options = new Object[] { "Black", "White" };
+        Object[] options = new Object[]{"Black", "White"};
         int choice = JOptionPane.showOptionDialog(frame, "What team would you like to play as?", "Pick a team",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
         return 2 * choice - 1; // 1 -> 1, 0 -> -1

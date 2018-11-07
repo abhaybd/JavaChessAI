@@ -18,7 +18,6 @@ public class PositionalComputerPlayer extends Player {
     private Heuristic heuristic;
 
     /**
-     * 
      * @param board the board object that this opponent is playing on
      */
     public PositionalComputerPlayer(Board board) {

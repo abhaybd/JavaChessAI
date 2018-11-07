@@ -32,23 +32,23 @@ class SettingsFrame extends JDialog {
         //this.getInsets().set(10, 10, 10, 10);
         GridBagConstraints c = new GridBagConstraints();
         c.ipadx = 20;
-        c.insets = new Insets(5,10,5,10);
-        
+        c.insets = new Insets(5, 10, 5, 10);
+
         Set<ConfigurationMenu> configMenus = ConfigurationMenu.getConfigMenusCopy();
-        
+
         configMenus = configMenus.stream().filter(e -> e != null).collect(Collectors.toSet());
 
         inputs = new LinkedList<>();
         this.settings = configMenus.stream().flatMap(e -> e.getSettings().stream()).collect(Collectors.toList());
-        
+
         int index = 0;
-        for(ConfigurationMenu menu : configMenus) {
+        for (ConfigurationMenu menu : configMenus) {
             configConstraints(c, 0, index++, 2, 1);
             c.anchor = GridBagConstraints.CENTER;
             c.fill = GridBagConstraints.BOTH;
             this.add(new JLabel(String.format("--------%s--------", menu.getName()), JLabel.CENTER), c);
-            
-            for(Setting<?> setting : menu.getSettings()) {
+
+            for (Setting<?> setting : menu.getSettings()) {
                 configConstraints(c, 0, index, 1, 1);
                 c.anchor = GridBagConstraints.EAST;
                 c.fill = GridBagConstraints.NONE;
@@ -75,7 +75,7 @@ class SettingsFrame extends JDialog {
                         inputs.add(combo);
                         break;
                 }
-                
+
                 index++;
             }
         }

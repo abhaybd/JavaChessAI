@@ -19,7 +19,7 @@ public class Setting<T> {
         if (inputType == InputType.CHOICE) {
             throw new IllegalArgumentException("Use the other constructor!");
         }
-        
+
         this.inputType = inputType;
         this.name = key;
         this.callback = callback;
@@ -38,7 +38,7 @@ public class Setting<T> {
         this.choices = choices;
         this.currentSetting = currentSetting;
     }
-    
+
     public T getCurrentSetting() {
         return currentSetting.get();
     }
@@ -46,13 +46,13 @@ public class Setting<T> {
     public String getName() {
         return name;
     }
-    
+
     public void updateValue(T value) {
         callback.accept(value);
     }
-    
+
     @SuppressWarnings("unchecked")
-    public <U> void updateUntypedValue(Object value) {
+    public void updateUntypedValue(Object value) {
         callback.accept((T) value);
     }
 

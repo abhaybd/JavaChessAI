@@ -19,7 +19,7 @@ public class Move {
     /**
      * Done use a regular Move object. In this case, if true, castle king side.
      * Else, castle queen side.
-     * 
+     *
      * @param kingSideCastle
      */
     public Move(int team, boolean kingSideCastle) {

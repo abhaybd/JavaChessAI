@@ -9,15 +9,19 @@ public class DoubleDocumentFilter extends DocumentFilter {
     @Override
     public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
             throws BadLocationException {
-
-        Document doc = fb.getDocument();
-        StringBuilder sb = new StringBuilder();
-        sb.append(doc.getText(0, doc.getLength()));
+        StringBuilder sb = createBuilder(fb);
         sb.insert(offset, string);
 
         if (isValid(sb.toString())) {
             super.insertString(fb, offset, string, attr);
         }
+    }
+
+    private StringBuilder createBuilder(FilterBypass fb) throws BadLocationException {
+        Document doc = fb.getDocument();
+        StringBuilder sb = new StringBuilder();
+        sb.append(doc.getText(0, doc.getLength()));
+        return sb;
     }
 
     private boolean isValid(String text) {
@@ -36,22 +40,17 @@ public class DoubleDocumentFilter extends DocumentFilter {
     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
             throws BadLocationException {
 
-        Document doc = fb.getDocument();
-        StringBuilder sb = new StringBuilder();
-        sb.append(doc.getText(0, doc.getLength()));
+        StringBuilder sb = createBuilder(fb);
         sb.replace(offset, offset + length, text);
 
         if (isValid(sb.toString())) {
             super.replace(fb, offset, length, text, attrs);
         }
-
     }
 
     @Override
     public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-        Document doc = fb.getDocument();
-        StringBuilder sb = new StringBuilder();
-        sb.append(doc.getText(0, doc.getLength()));
+        StringBuilder sb = createBuilder(fb);
         sb.delete(offset, offset + length);
 
         if (isValid(sb.toString())) {

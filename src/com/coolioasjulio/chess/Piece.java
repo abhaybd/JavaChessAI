@@ -140,7 +140,7 @@ public abstract class Piece {
 
     /**
      * Mathematical value of the piece
-     * 
+     *
      * @return
      */
     public abstract double getRawValue();
@@ -169,7 +169,7 @@ public abstract class Piece {
 
     /**
      * Mathematical value of the piece offset by positional value
-     * 
+     *
      * @return
      */
     public double getValue() {
@@ -194,7 +194,7 @@ public abstract class Piece {
 
     /**
      * Chess value of the piece
-     * 
+     *
      * @return
      */
     public double getVanillaValue() {
