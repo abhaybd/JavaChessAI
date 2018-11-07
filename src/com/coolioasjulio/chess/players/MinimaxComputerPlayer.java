@@ -1,5 +1,6 @@
 package com.coolioasjulio.chess.players;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -13,14 +14,29 @@ import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.MoveCandidate;
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
+import com.coolioasjulio.chess.selectors.GreedySelector;
+import com.coolioasjulio.chess.selectors.RandomSelector;
 import com.coolioasjulio.chess.selectors.Selector;
 import com.coolioasjulio.chess.selectors.SoftmaxSelector;
+import com.coolioasjulio.configuration.ConfigurationMenu;
+import com.coolioasjulio.configuration.Setting;
+import com.coolioasjulio.configuration.Setting.InputType;
 
 public class MinimaxComputerPlayer extends Player {
     private static final int KEEP_MOVES = 3;
+
+    private static List<Selector> selectors = new ArrayList<>(
+            Arrays.asList(new SoftmaxSelector(), new RandomSelector(), new GreedySelector()));
+
+    public static void addSelectorChoice(Selector selector) {
+        selectors.add(selector);
+    }
+
+    public static void removeSelectorChoice(Selector selector) {
+        selectors.remove(selector);
+    }
 
     private Heuristic heuristic;
     private int keepMoves;
@@ -30,6 +46,7 @@ public class MinimaxComputerPlayer extends Player {
         super(board);
         this.board = board;
         setHeuristic(new PositionalHeuristic(0.0)).setKeepMoves(KEEP_MOVES).setSelector(new SoftmaxSelector());
+        ConfigurationMenu.addConfigMenu(createConfigurationMenu());
     }
 
     public MinimaxComputerPlayer setHeuristic(Heuristic heuristic) {
@@ -45,6 +62,22 @@ public class MinimaxComputerPlayer extends Player {
     public MinimaxComputerPlayer setSelector(Selector selector) {
         this.selector = selector;
         return this;
+    }
+
+    public int getKeepMoves() {
+        return keepMoves;
+    }
+
+    public Selector getSelector() {
+        return selector;
+    }
+
+    private ConfigurationMenu createConfigurationMenu() {
+        List<Setting<?>> settings = Arrays.asList(
+                new Setting<Integer>("Keep Moves", InputType.INTEGER, this::setKeepMoves, this::getKeepMoves),
+                new Setting<Selector>("Selector", this::setSelector, this::getSelector,
+                        selectors.toArray(new Selector[0])));
+        return new ConfigurationMenu("BotLvl2", settings);
     }
 
     @Override

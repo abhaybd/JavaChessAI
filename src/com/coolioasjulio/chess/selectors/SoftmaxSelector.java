@@ -35,4 +35,9 @@ public class SoftmaxSelector implements Selector {
         // If something doesn't get selected, then the selection malfunctioned.
         throw new IllegalStateException("The softmax selection malfunctioned! The numbers do not sum to 1!");
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 }

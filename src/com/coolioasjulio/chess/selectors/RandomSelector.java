@@ -9,4 +9,9 @@ public class RandomSelector implements Selector {
         int i = ThreadLocalRandom.current().nextInt(toSelect.size());
         return toSelect.get(i);
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 }

@@ -1,4 +1,7 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.players;
+
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.Move;
 
 public abstract class Player {
 

@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.coolioasjulio.chess.players.Player;
+
 public abstract class ChessGame {
 
     protected Board board;
@@ -28,6 +30,10 @@ public abstract class ChessGame {
         return tileSize;
     }
 
+    public void setTileSize(int tileSize) {
+        this.tileSize = tileSize;
+    }
+
     public Board getBoard() {
         return board;
     }
@@ -38,7 +44,7 @@ public abstract class ChessGame {
 
     /**
      * Run a game between these two players in a separate thread.
-     * 
+     *
      * @param white The white player.
      * @param black The black player.
      */

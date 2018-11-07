@@ -4,10 +4,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.coolioasjulio.chess.Piece;
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
+import com.coolioasjulio.chess.players.Player;
 import com.coolioasjulio.chess.players.PositionalComputerPlayer;
 import com.coolioasjulio.chess.ui.ChessGameUI;
+import com.coolioasjulio.jchess.App;
 
 public class HumanVsPositionalComputer {
     public static void main(String[] args) {
@@ -35,7 +36,7 @@ public class HumanVsPositionalComputer {
     }
 
     private static int getTeamInput(JFrame frame) {
-        Object[] options = new Object[] { "Black", "White" };
+        Object[] options = new Object[]{"Black", "White"};
         int choice = JOptionPane.showOptionDialog(frame, "What team would you like to play as?", "Pick a team",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
         return 2 * choice - 1; // 1 -> 1, 0 -> -1

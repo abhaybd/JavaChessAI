@@ -13,7 +13,7 @@ public class Square {
 
     /**
      * Create a square object for the given coordinates
-     * 
+     *
      * @param x In range [0,7]
      * @param y In range [1,8]. Yeah, ik I hate myself.
      * @throws InvalidSquareException
@@ -24,7 +24,7 @@ public class Square {
         }
         char alph = (char) (x + 97);
         this.square = String.valueOf(alph) + (y);
-        this.coords = new int[] { x, y };
+        this.coords = new int[]{x, y};
         this.x = x;
         this.y = y;
     }

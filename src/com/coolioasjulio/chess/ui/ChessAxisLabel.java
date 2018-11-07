@@ -33,6 +33,18 @@ public class ChessAxisLabel extends JPanel {
         }
     }
 
+    public void setTileSize(int tileSize) {
+        switch (axis) {
+            case Vertical:
+                this.setPreferredSize(new Dimension(tileSize / 4, tileSize * 8));
+                break;
+
+            case Horizontal:
+                this.setPreferredSize(new Dimension(tileSize * 8, tileSize / 4));
+                break;
+        }
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

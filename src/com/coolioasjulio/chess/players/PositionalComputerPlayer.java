@@ -9,7 +9,6 @@ import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Pawn;
 import com.coolioasjulio.chess.Piece;
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
 
@@ -19,7 +18,6 @@ public class PositionalComputerPlayer extends Player {
     private Heuristic heuristic;
 
     /**
-     * 
      * @param board the board object that this opponent is playing on
      */
     public PositionalComputerPlayer(Board board) {

@@ -2,9 +2,10 @@ package examples;
 
 import javax.swing.JFrame;
 
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
+import com.coolioasjulio.chess.players.Player;
 import com.coolioasjulio.chess.ui.ChessGameUI;
+import com.coolioasjulio.jchess.App;
 
 public class HumanVsHuman {
     public static void main(String[] args) {

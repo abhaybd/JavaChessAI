@@ -2,10 +2,11 @@ package examples;
 
 import javax.swing.JFrame;
 
-import com.coolioasjulio.chess.Player;
 import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
+import com.coolioasjulio.chess.players.Player;
 import com.coolioasjulio.chess.players.PositionalComputerPlayer;
 import com.coolioasjulio.chess.ui.ChessGameUI;
+import com.coolioasjulio.jchess.App;
 
 public class MinimaxComputerVsPositionalComputer {
     public static void main(String[] args) {
