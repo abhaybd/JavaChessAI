@@ -5,14 +5,23 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 
-public class DoubleDocumentFilter extends DocumentFilter {
+import com.coolioasjulio.configuration.SettingValidator;
+
+public class InputFilter extends DocumentFilter {
+
+    private SettingValidator validator;
+
+    public InputFilter(SettingValidator validator) {
+        this.validator = validator;
+    }
+
     @Override
     public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
             throws BadLocationException {
         StringBuilder sb = createBuilder(fb);
         sb.insert(offset, string);
 
-        if (isValid(sb.toString())) {
+        if (validator.isValid(sb.toString())) {
             super.insertString(fb, offset, string, attr);
         }
     }
@@ -24,18 +33,6 @@ public class DoubleDocumentFilter extends DocumentFilter {
         return sb;
     }
 
-    private boolean isValid(String text) {
-        try {
-            if ("".equals(text)) {
-                return true;
-            }
-            Double.parseDouble(text);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
     @Override
     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
             throws BadLocationException {
@@ -43,7 +40,7 @@ public class DoubleDocumentFilter extends DocumentFilter {
         StringBuilder sb = createBuilder(fb);
         sb.replace(offset, offset + length, text);
 
-        if (isValid(sb.toString())) {
+        if (validator.isValid(sb.toString())) {
             super.replace(fb, offset, length, text, attrs);
         }
     }
@@ -53,7 +50,7 @@ public class DoubleDocumentFilter extends DocumentFilter {
         StringBuilder sb = createBuilder(fb);
         sb.delete(offset, offset + length);
 
-        if (isValid(sb.toString())) {
+        if (validator.isValid(sb.toString())) {
             super.remove(fb, offset, length);
         }
     }

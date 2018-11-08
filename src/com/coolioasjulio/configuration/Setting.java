@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 
 public class Setting<T> {
     public static enum InputType {
-        FLOAT, INTEGER, STRING, CHOICE
+        DOUBLE, INTEGER, STRING, CHOICE
     }
 
     private String name;
@@ -14,6 +14,7 @@ public class Setting<T> {
     private T[] choices;
     private Consumer<T> callback;
     private Supplier<T> currentSetting;
+    private SettingValidator validator = new DefaultValidator();
 
     public Setting(String key, InputType inputType, Consumer<T> callback, Supplier<T> currentSetting) {
         if (inputType == InputType.CHOICE) {
@@ -24,6 +25,19 @@ public class Setting<T> {
         this.name = key;
         this.callback = callback;
         this.currentSetting = currentSetting;
+
+        switch (inputType) {
+            case INTEGER:
+                setValidator(new IntegerValidator());
+                break;
+
+            case DOUBLE:
+                setValidator(new DoubleValidator());
+                break;
+
+            default:
+                break;
+        }
     }
 
     @SafeVarargs
@@ -37,6 +51,15 @@ public class Setting<T> {
         inputType = InputType.CHOICE;
         this.choices = choices;
         this.currentSetting = currentSetting;
+    }
+
+    public Setting<T> setValidator(SettingValidator validator) {
+        this.validator = validator == null ? new DefaultValidator() : validator;
+        return this;
+    }
+
+    public SettingValidator getValidator() {
+        return validator;
     }
 
     public T getCurrentSetting() {

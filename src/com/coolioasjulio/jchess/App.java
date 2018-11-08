@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -146,8 +145,8 @@ public class App extends JFrame {
         this.pack();
         this.setVisible(true);
 
-        ConfigurationMenu.addConfigMenu(new ConfigurationMenu("Board Settings", Arrays.asList(
-                new Setting<Integer>("Board Size (%)", InputType.INTEGER, this::setTileSize, game::getTileSize))));
+        ConfigurationMenu.addConfigMenu(new ConfigurationMenu("Board Settings",
+                new Setting<Integer>("Board Size (%)", InputType.INTEGER, this::setTileSize, game::getTileSize)));
     }
 
     private Icon loadIcon(String path, int tileSize) {
@@ -266,7 +265,7 @@ public class App extends JFrame {
     }
 
     private int getTeamInput() {
-        Object[] options = new Object[]{"Black", "White"};
+        Object[] options = new Object[] { "Black", "White" };
         int choice;
         do {
             choice = JOptionPane.showOptionDialog(this, "What team would you like to play as?", "Pick a team",

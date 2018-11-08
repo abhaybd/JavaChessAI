@@ -1,6 +1,7 @@
 package com.coolioasjulio.configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,10 @@ public class ConfigurationMenu {
 
     private String name;
     private List<Setting<?>> settings;
+
+    public ConfigurationMenu(String name, Setting<?>... settings) {
+        this(name, Arrays.asList(settings));
+    }
 
     public ConfigurationMenu(String name, List<Setting<?>> settings) {
         this.name = name;

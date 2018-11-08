@@ -30,7 +30,7 @@ class SettingsFrame extends JDialog {
     public SettingsFrame(JFrame parent) {
         super(parent);
         this.setLayout(new GridBagLayout());
-        //this.getInsets().set(10, 10, 10, 10);
+        // this.getInsets().set(10, 10, 10, 10);
         GridBagConstraints c = new GridBagConstraints();
         c.ipadx = 20;
         c.insets = new Insets(5, 10, 5, 10);
@@ -59,21 +59,18 @@ class SettingsFrame extends JDialog {
                 c.anchor = GridBagConstraints.CENTER;
                 c.fill = GridBagConstraints.BOTH;
                 switch (setting.getInputType()) {
-                    case FLOAT:
-                        this.add(configureInput(new DoubleDocumentFilter(), setting.getCurrentSetting().toString()), c);
-                        break;
-                    case INTEGER:
-                        this.add(configureInput(new IntegerDocumentFilter(), setting.getCurrentSetting().toString()), c);
-                        break;
-                    case STRING:
-                        this.add(configureInput(null, setting.getCurrentSetting().toString()), c);
-                        break;
                     case CHOICE:
-                    default:
                         JComboBox<String> combo = new JComboBox<String>(setting.getChoicesNames());
                         this.add(combo, c);
                         combo.setSelectedItem(setting.getCurrentSetting().toString());
                         inputs.add(combo);
+                        break;
+                    case DOUBLE:
+                    case INTEGER:
+                    case STRING:
+                    default:
+                        this.add(configureInput(new InputFilter(setting.getValidator()),
+                                setting.getCurrentSetting().toString()), c);
                         break;
                 }
 
@@ -94,17 +91,21 @@ class SettingsFrame extends JDialog {
             JTextField input;
             String text;
             switch (setting.getInputType()) {
-                case FLOAT:
+                case DOUBLE:
                     input = (JTextField) inputs.get(i);
                     text = input.getText();
-                    double doubleVal = "".equals(text) ? 0.0 : Double.parseDouble(text);
-                    setting.updateUntypedValue(doubleVal);
+                    if ("".equals(text)) {
+                        continue;
+                    }
+                    setting.updateUntypedValue(Double.parseDouble(text));
                     break;
                 case INTEGER:
                     input = (JTextField) inputs.get(i);
                     text = input.getText();
-                    int intVal = "".equals(text) ? 0 : Integer.parseInt(text);
-                    setting.updateUntypedValue(intVal);
+                    if ("".equals(text)) {
+                        continue;
+                    }
+                    setting.updateUntypedValue(Integer.parseInt(text));
                     break;
                 case STRING:
                     input = (JTextField) inputs.get(i);

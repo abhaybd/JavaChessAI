@@ -25,7 +25,8 @@ import com.coolioasjulio.configuration.Setting;
 import com.coolioasjulio.configuration.Setting.InputType;
 
 public class MinimaxComputerPlayer extends Player {
-    private static final int KEEP_MOVES = 3;
+    private static final int DEFAULT_KEEP_MOVES = 3;
+    private static final int DEFAULT_SEARCH_DEPTH = 2;
 
     private static List<Selector> selectors = new ArrayList<>(
             Arrays.asList(new SoftmaxSelector(), new RandomSelector(), new GreedySelector()));
@@ -41,11 +42,13 @@ public class MinimaxComputerPlayer extends Player {
     private Heuristic heuristic;
     private int keepMoves;
     private Selector selector;
+    private int depth;
 
     public MinimaxComputerPlayer(Board board) {
         super(board);
         this.board = board;
-        setHeuristic(new PositionalHeuristic(0.0)).setKeepMoves(KEEP_MOVES).setSelector(new SoftmaxSelector());
+        this.depth = DEFAULT_SEARCH_DEPTH;
+        setHeuristic(new PositionalHeuristic(0.0)).setKeepMoves(DEFAULT_KEEP_MOVES).setSelector(new SoftmaxSelector());
         ConfigurationMenu.addConfigMenu(createConfigurationMenu());
     }
 
@@ -72,17 +75,38 @@ public class MinimaxComputerPlayer extends Player {
         return selector;
     }
 
+    public void setSearchDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public int getSearchDepth() {
+        return depth;
+    }
+
     private ConfigurationMenu createConfigurationMenu() {
-        List<Setting<?>> settings = Arrays.asList(
+        return new ConfigurationMenu("BotLvl2",
                 new Setting<Integer>("Keep Moves", InputType.INTEGER, this::setKeepMoves, this::getKeepMoves),
                 new Setting<Selector>("Selector", this::setSelector, this::getSelector,
-                        selectors.toArray(new Selector[0])));
-        return new ConfigurationMenu("BotLvl2", settings);
+                        selectors.toArray(new Selector[0])),
+                new Setting<Integer>("Search Depth", InputType.INTEGER, this::setSearchDepth, this::getSearchDepth)
+                        .setValidator(this::validInput));
+    }
+
+    private boolean validInput(String text) {
+        try {
+            if ("".equals(text)) {
+                return true;
+            }
+            int i = Integer.parseInt(text);
+            return i % 2 == 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
     public Move getMove() {
-        List<MoveCandidate> bestMoves = ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, 2, team));
+        List<MoveCandidate> bestMoves = ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, depth, team));
 
         int toKeep = Math.min(keepMoves, bestMoves.size());
 

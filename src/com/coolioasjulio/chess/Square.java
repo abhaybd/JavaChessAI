@@ -24,7 +24,7 @@ public class Square {
         }
         char alph = (char) (x + 97);
         this.square = String.valueOf(alph) + (y);
-        this.coords = new int[]{x, y};
+        this.coords = new int[] { x, y };
         this.x = x;
         this.y = y;
     }
