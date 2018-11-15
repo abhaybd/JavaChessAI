@@ -6,6 +6,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
+import com.coolioasjulio.chess.exceptions.InvalidSquareException;
+import com.coolioasjulio.chess.pieces.Bishop;
+import com.coolioasjulio.chess.pieces.King;
+import com.coolioasjulio.chess.pieces.Knight;
+import com.coolioasjulio.chess.pieces.Pawn;
+import com.coolioasjulio.chess.pieces.Piece;
+import com.coolioasjulio.chess.pieces.Queen;
+import com.coolioasjulio.chess.pieces.Rook;
+
 public class Board {
     private List<Piece> pieces;
 
@@ -18,7 +28,7 @@ public class Board {
     }
 
     public List<Piece> getPieces(int team) {
-        return pieces.stream().filter(p -> p.team == team).collect(Collectors.toList());
+        return pieces.stream().filter(p -> p.getTeam() == team).collect(Collectors.toList());
     }
 
     public Move[] getMoves(int team) {
@@ -122,7 +132,7 @@ public class Board {
     }
 
     public King getKing(int team) {
-        Optional<Piece> king = pieces.stream().filter(p -> p instanceof King && p.team == team).findFirst();
+        Optional<Piece> king = pieces.stream().filter(p -> p instanceof King && p.getTeam() == team).findFirst();
         if (king.isPresent())
             return (King) king.get();
 

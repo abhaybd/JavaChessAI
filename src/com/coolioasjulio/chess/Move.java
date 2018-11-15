@@ -3,6 +3,8 @@ package com.coolioasjulio.chess;
 import java.util.Collections;
 import java.util.Objects;
 
+import com.coolioasjulio.chess.pieces.Piece;
+
 public class Move {
     private Piece piece;
     private int team;

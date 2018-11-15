@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
+import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.chess.players.Player;
 
 public abstract class ChessGame {
@@ -54,6 +56,7 @@ public abstract class ChessGame {
         }
 
         gameThread = new Thread(() -> playGame(white, black));
+        gameThread.setDaemon(true);
         gameThread.start();
     }
 

@@ -1,4 +1,4 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.exceptions;
 
 public class InvalidSquareException extends RuntimeException {
     private static final long serialVersionUID = 1L;

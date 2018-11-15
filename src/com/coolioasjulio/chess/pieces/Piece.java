@@ -1,4 +1,4 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.pieces;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -6,6 +6,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
+import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 
 public abstract class Piece {
     public static final double KING_VALUE = 200;
@@ -145,11 +151,24 @@ public abstract class Piece {
      */
     public abstract double getRawValue();
 
-    void move(Square move) throws InvalidMoveException {
+    /**
+     * INTERNAL USE ONLY.
+     * 
+     * @param move Move to make.
+     * @throws InvalidMoveException If something goes wrong.
+     */
+    public void move(Square move) throws InvalidMoveException {
         move(move, null);
     }
 
-    void move(Square move, String promotion) throws InvalidMoveException {
+    /**
+     * INTERNAL USE ONLY.
+     * 
+     * @param move Move to make.
+     * @param promotion Piece to promote to, if applicable.
+     * @throws InvalidMoveException If something goes wrong.
+     */
+    public void move(Square move, String promotion) throws InvalidMoveException {
         moved = true;
         Piece p = board.checkSquare(move);
         if (p != null && p.team == team) {

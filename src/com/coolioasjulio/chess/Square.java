@@ -2,6 +2,8 @@ package com.coolioasjulio.chess;
 
 import java.util.Objects;
 
+import com.coolioasjulio.chess.exceptions.InvalidSquareException;
+
 public class Square {
     private String square;
     private int x, y;

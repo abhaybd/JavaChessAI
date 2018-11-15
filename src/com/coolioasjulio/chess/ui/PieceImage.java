@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
-import com.coolioasjulio.chess.Piece;
+import com.coolioasjulio.chess.pieces.Piece;
 
 public class PieceImage {
 

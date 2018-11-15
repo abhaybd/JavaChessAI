@@ -1,7 +1,13 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.pieces;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
+import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 
 public class Pawn extends Piece {
 
@@ -38,7 +44,7 @@ public class Pawn extends Piece {
             promotion = promotion == null ? "queen" : promotion;
             promotion = String.valueOf(promotion.charAt(0)).toUpperCase() + promotion.toLowerCase().substring(1);
             try {
-                Class.forName("com.coolioasjulio.chess." + promotion);
+                Class.forName(String.format("%s.%s", Pawn.class.getPackage().getName(), promotion));
                 promote(promotion);
             } catch (ClassNotFoundException e) {
                 throw new InvalidMoveException("Invalid piece for promotion: " + promotion);
@@ -63,14 +69,15 @@ public class Pawn extends Piece {
         int team = super.getTeam();
         int x = square.getX();
         int y = square.getY();
-        boolean extra = (team == Piece.WHITE && square.getY() == 2) || (team == Piece.BLACK && square.getY() == 7);
-        List<Move> moves = new ArrayList<Move>();
-        if (board.checkSquare(new Square(x, y + team)) == null)
+        List<Move> moves = new ArrayList<>();
+        if (board.checkSquare(new Square(x, y + team)) == null) {
             moves.add(new Move(this, square, new Square(x, y + team)));
-        if (extra && board.checkSquare(new Square(x, y + team)) == null
-                && board.checkSquare(new Square(x, y + 2 * team)) == null) {
-            moves.add(new Move(this, square, new Square(x, y + 2 * team)));
+            boolean extra = (team == Piece.WHITE && square.getY() == 2) || (team == Piece.BLACK && square.getY() == 7);
+            if (extra && board.checkSquare(new Square(x, y + 2 * team)) == null) {
+                moves.add(new Move(this, square, new Square(x, y + 2 * team)));
+            }
         }
+
         if (between(x - 1, 0, 7)) {
             Square end = new Square(x - 1, y + team);
             Piece p = board.checkSquare(end);

@@ -1,7 +1,11 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.pieces;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.Square;
 
 public class Queen extends Piece {
     public Queen(Square square, int team, Board board) {

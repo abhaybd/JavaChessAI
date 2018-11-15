@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.InvalidMoveException;
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
-import com.coolioasjulio.chess.Pawn;
-import com.coolioasjulio.chess.Piece;
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
+import com.coolioasjulio.chess.pieces.Pawn;
+import com.coolioasjulio.chess.pieces.Piece;
 
 public class PositionalComputerPlayer extends Player {
     private static final double SPACE_SCORE = 0.02;

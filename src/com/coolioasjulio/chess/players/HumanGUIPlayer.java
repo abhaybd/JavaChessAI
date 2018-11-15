@@ -6,12 +6,12 @@ import java.awt.event.MouseListener;
 import javax.swing.JComponent;
 
 import com.coolioasjulio.chess.ChessGame;
-import com.coolioasjulio.chess.InvalidMoveException;
-import com.coolioasjulio.chess.King;
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
-import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
+import com.coolioasjulio.chess.pieces.King;
+import com.coolioasjulio.chess.pieces.Piece;
 
 public class HumanGUIPlayer extends Player implements MouseListener {
 

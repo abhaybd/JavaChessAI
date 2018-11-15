@@ -12,8 +12,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.coolioasjulio.chess.ChessGame;
-import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.pieces.Piece;
 
 public class ChessGameUI extends ChessGame {
 

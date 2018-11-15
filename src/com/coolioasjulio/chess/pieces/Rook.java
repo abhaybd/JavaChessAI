@@ -1,38 +1,43 @@
-package com.coolioasjulio.chess;
+package com.coolioasjulio.chess.pieces;
 
 import java.util.ArrayList;
 
-public class Bishop extends Piece {
+import com.coolioasjulio.chess.Board;
+import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 
-    public Bishop(Square square, int team, Board board) {
+public class Rook extends Piece {
+
+    public Rook(Square square, int team, Board board) {
         super(square, team, board);
     }
 
-    public Bishop(String square, int team, Board board) throws InvalidSquareException {
-        super(square, team, board);
-    }
-
-    private boolean between(int toCheck, int bottom, int upper) {
-        return bottom <= toCheck && toCheck <= upper;
+    private boolean between(int toCheck, int lower, int upper) {
+        return lower <= toCheck && toCheck <= upper;
     }
 
     public double getRawValue() {
-        return Piece.BISHOP_VALUE;
+        return Piece.ROOK_VALUE;
     }
 
     public double getVanillaValue() {
-        return Piece.VANILLA_BISHOP_VALUE;
+        return Piece.VANILLA_ROOK_VALUE;
     }
 
+    @Override
     public Move[] getMoves() {
         Square square = super.getSquare();
         int team = super.getTeam();
         ArrayList<Move> moves = new ArrayList<Move>();
-        for (int x = -1; x <= 1; x += 2) {
-            for (int y = -1; y <= 1; y += 2) {
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                if (Math.abs(x) == Math.abs(y)) {
+                    continue;
+                }
                 try {
-                    int mult = 1;
                     Piece p = board.checkSquare(new Square(x + square.getX(), y + square.getY()));
+                    int mult = 1;
                     while (p == null && between(x * mult + square.getX(), 0, 7)
                             && between(y * mult + square.getY(), 1, 8)) {
                         moves.add(
@@ -51,7 +56,7 @@ public class Bishop extends Piece {
         return moves.toArray(new Move[0]);
     }
 
-    public Bishop copy() {
-        return new Bishop(this.square, this.team, this.board);
+    public Rook copy() {
+        return new Rook(this.square, this.team, this.board);
     }
 }

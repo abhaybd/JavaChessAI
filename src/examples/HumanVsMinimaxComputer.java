@@ -3,7 +3,7 @@ package examples;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.coolioasjulio.chess.Piece;
+import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
 import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
 import com.coolioasjulio.chess.players.Player;

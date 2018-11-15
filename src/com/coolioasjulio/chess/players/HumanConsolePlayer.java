@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.InvalidMoveException;
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
-import com.coolioasjulio.chess.Piece;
 import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
+import com.coolioasjulio.chess.pieces.Piece;
 
 public class HumanConsolePlayer extends Player {
     private Board board;
