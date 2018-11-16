@@ -6,6 +6,8 @@ import java.util.List;
 import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
+import com.coolioasjulio.chess.evaluators.PieceEvaluator;
+import com.coolioasjulio.chess.evaluators.PositionalPieceEvaluator;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
@@ -16,6 +18,7 @@ public class PositionalComputerPlayer extends Player {
     private static final double SPACE_SCORE = 0.02;
 
     private Heuristic heuristic;
+    private PieceEvaluator pieceEvaluator;
 
     /**
      * @param board the board object that this opponent is playing on
@@ -23,6 +26,7 @@ public class PositionalComputerPlayer extends Player {
     public PositionalComputerPlayer(Board board) {
         super(board);
         heuristic = new PositionalHeuristic(SPACE_SCORE);
+        pieceEvaluator = new PositionalPieceEvaluator();
     }
 
     private int numAttackers(Move move) {
@@ -68,7 +72,7 @@ public class PositionalComputerPlayer extends Player {
         if (piece instanceof Pawn)
             return true;
         if (move.doesCapture()) {
-            if (board.checkSquare(move.getEnd()).getValue() >= move.getPiece().getValue()) {
+            if (pieceEvaluator.getValue(board.checkSquare(move.getEnd())) >= pieceEvaluator.getValue(move.getPiece())) {
                 return true;
             }
         }
@@ -89,7 +93,7 @@ public class PositionalComputerPlayer extends Player {
                 Board board = this.board.copy();
                 double score = 0;
                 if (!safeMove(m)) {
-                    score -= m.getPiece().getValue();
+                    score -= pieceEvaluator.getValue(m.getPiece());
                 }
                 board.doMove(m);
                 score += heuristic.getScore(board, team);

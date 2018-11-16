@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.coolioasjulio.chess.evaluators.PieceEvaluator;
+import com.coolioasjulio.chess.evaluators.VanillaPieceEvaluator;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 import com.coolioasjulio.chess.pieces.Bishop;
@@ -169,7 +171,11 @@ public class Board {
     }
 
     public double getMaterialScore(int team) {
-        return pieces.stream().filter(e -> e.getTeam() == team).mapToDouble(e -> e.getValue()).sum();
+        return getMaterialScore(team, new VanillaPieceEvaluator());
+    }
+
+    public double getMaterialScore(int team, PieceEvaluator evaluator) {
+        return pieces.stream().filter(e -> e.getTeam() == team).mapToDouble(evaluator::getValue).sum();
     }
 
     public void doMove(Move m) {
