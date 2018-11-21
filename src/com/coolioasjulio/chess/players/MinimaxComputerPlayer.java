@@ -8,14 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.MoveCandidate;
 import com.coolioasjulio.chess.heuristics.Heuristic;
-import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
+import com.coolioasjulio.chess.heuristics.MaterialHeuristic;
 import com.coolioasjulio.chess.selectors.GreedySelector;
 import com.coolioasjulio.chess.selectors.RandomSelector;
 import com.coolioasjulio.chess.selectors.Selector;
@@ -48,7 +48,7 @@ public class MinimaxComputerPlayer extends Player {
         super(board);
         this.board = board;
         this.depth = DEFAULT_SEARCH_DEPTH;
-        setHeuristic(new PositionalHeuristic(0.0)).setKeepMoves(DEFAULT_KEEP_MOVES).setSelector(new SoftmaxSelector());
+        setHeuristic(new MaterialHeuristic(0.0)).setKeepMoves(DEFAULT_KEEP_MOVES).setSelector(new SoftmaxSelector());
         ConfigurationMenu.addConfigMenu(createConfigurationMenu());
     }
 
@@ -112,12 +112,12 @@ public class MinimaxComputerPlayer extends Player {
 
         List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
                 .collect(Collectors.toList()).subList(0, toKeep);
-        Logger.getGlobalLogger().log(kept.toString());
+        Logger.getLogger("MinimaxComputerPlayer").info(kept.toString());
 
         MoveCandidate bestMove = selector.select(kept,
                 kept.stream().map(e -> -e.getScore()).collect(Collectors.toList()));
 
-        Logger.getGlobalLogger().logf("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore());
+        Logger.getLogger("MinimaxComputerPlayer").info(String.format("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore()));
         return bestMove.getMove();
     }
 

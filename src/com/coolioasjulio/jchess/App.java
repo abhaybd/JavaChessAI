@@ -20,7 +20,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.chess.players.HumanGUIPlayer;
 import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
@@ -46,9 +45,6 @@ public class App extends JFrame {
     public static final Color BG_COLOR = new Color(20, 40, 20);
 
     public static void main(String[] args) {
-        Logger.setGlobalLogger(new Logger(System.out));
-        Logger.getGlobalLogger().setLoggingEnabled(true);
-
         App app = new App(BG_COLOR, LIGHT, DARK, TILE_SIZE);
         app.playGame();
         app.dispose();

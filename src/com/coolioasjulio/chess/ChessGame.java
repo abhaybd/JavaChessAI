@@ -3,6 +3,7 @@ package com.coolioasjulio.chess;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.pieces.Piece;
@@ -89,25 +90,25 @@ public abstract class ChessGame {
 
                 team *= -1;
                 if (board.inCheckMate(team)) {
-                    Logger.getGlobalLogger().log("Checkmate!");
-                    Logger.getGlobalLogger().log(team == Piece.WHITE ? "0-1" : "1-0");
+                    Logger.getLogger("ChessGame").info("Checkmate!");
+                    Logger.getLogger("ChessGame").info(team == Piece.WHITE ? "0-1" : "1-0");
                     winner = -team;
                     break;
                 } else if (board.inStaleMate(team)) {
-                    Logger.getGlobalLogger().log("Stalemate!");
-                    Logger.getGlobalLogger().log("1/2-1/2");
+                    Logger.getLogger("ChessGame").info("Stalemate!");
+                    Logger.getLogger("ChessGame").info("1/2-1/2");
                     winner = 0;
                     break;
                 } else if (board.inCheck(team)) {
                     check = true;
-                    Logger.getGlobalLogger().log("Check!");
+                    Logger.getLogger("ChessGame").info("Check!");
                 }
             } catch (InvalidMoveException e) {
                 if (e.getMessage() == null || e.getMessage().equals("")) {
-                    Logger.getGlobalLogger().logErr("Invalid! Try again!");
+                    Logger.getLogger("ChessGame").warning("Invalid! Try again!");
                     e.printStackTrace();
                 } else {
-                    Logger.getGlobalLogger().logErr("Invalid! Try again! - " + e.getMessage());
+                    Logger.getLogger("ChessGame").warning("Invalid! Try again! - " + e.getMessage());
                 }
                 board.restoreState(beforeState);
             } catch (Exception e) {

@@ -2,15 +2,15 @@ package com.coolioasjulio.chess.players;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
-import com.coolioasjulio.chess.evaluators.PieceEvaluator;
-import com.coolioasjulio.chess.evaluators.PositionalPieceEvaluator;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.heuristics.Heuristic;
-import com.coolioasjulio.chess.heuristics.PositionalHeuristic;
+import com.coolioasjulio.chess.heuristics.MaterialHeuristic;
+import com.coolioasjulio.chess.pieceevaluators.PieceEvaluator;
+import com.coolioasjulio.chess.pieceevaluators.PositionalPieceEvaluator;
 import com.coolioasjulio.chess.pieces.Pawn;
 import com.coolioasjulio.chess.pieces.Piece;
 
@@ -25,7 +25,7 @@ public class PositionalComputerPlayer extends Player {
      */
     public PositionalComputerPlayer(Board board) {
         super(board);
-        heuristic = new PositionalHeuristic(SPACE_SCORE);
+        heuristic = new MaterialHeuristic(SPACE_SCORE);
         pieceEvaluator = new PositionalPieceEvaluator();
     }
 
@@ -107,8 +107,7 @@ public class PositionalComputerPlayer extends Player {
         }
         double bestScore = moves.keySet().stream().reduce(Math::max).get();
         Move bestMove = moves.get(bestScore);
-        Logger.getGlobalLogger().log();
-        Logger.getGlobalLogger().log(bestMove.toString() + " - Score: " + bestScore);
+        Logger.getLogger("PositionalComputerPlayer").info(bestMove.toString() + " - Score: " + bestScore);
         return bestMove;
     }
 }

@@ -1,26 +1,26 @@
 package com.coolioasjulio.chess.heuristics;
 
 import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.evaluators.PieceEvaluator;
-import com.coolioasjulio.chess.evaluators.PositionalPieceEvaluator;
+import com.coolioasjulio.chess.pieceevaluators.PieceEvaluator;
+import com.coolioasjulio.chess.pieceevaluators.PositionalPieceEvaluator;
 
-public class PositionalHeuristic implements Heuristic {
+public class MaterialHeuristic implements Heuristic {
     private double spaceScore;
     private PieceEvaluator pieceEvaluator;
 
-    public PositionalHeuristic(double spaceScore) {
+    public MaterialHeuristic(double spaceScore) {
         this(spaceScore, new PositionalPieceEvaluator());
     }
 
-    public PositionalHeuristic(double spaceScore, PieceEvaluator pieceEvaluator) {
+    public MaterialHeuristic(double spaceScore, PieceEvaluator pieceEvaluator) {
         this.spaceScore = spaceScore;
         this.pieceEvaluator = pieceEvaluator;
     }
 
     public double getScore(Board board, int team) {
         double space = (double) board.getMoves(team).length * (double) spaceScore;
-        double material = board.getMaterialScore(team, pieceEvaluator);
-        double oppMaterial = board.getMaterialScore(-team, pieceEvaluator);
+        double material = pieceEvaluator.getMaterialValue(board, team);
+        double oppMaterial = pieceEvaluator.getMaterialValue(board, -team);
         double checkmateModifier = 0;
         if (board.inCheckMate(-team))
             checkmateModifier = 1000;

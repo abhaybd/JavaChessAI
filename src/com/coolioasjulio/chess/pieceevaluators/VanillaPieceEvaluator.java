@@ -1,4 +1,4 @@
-package com.coolioasjulio.chess.evaluators;
+package com.coolioasjulio.chess.pieceevaluators;
 
 import com.coolioasjulio.chess.pieces.Piece;
 

@@ -1,10 +1,15 @@
-package com.coolioasjulio.chess.evaluators;
+package com.coolioasjulio.chess.pieceevaluators;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.endgameevaluators.EndgameEvaluator;
+import com.coolioasjulio.chess.endgameevaluators.SpeelmanEndgameEvaluator;
 import com.coolioasjulio.chess.pieces.Piece;
 
 public class PositionalPieceEvaluator implements PieceEvaluator {
@@ -18,6 +23,17 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
         {-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1},
         { -0.05, -0.05, -0.05,-0.1,-0.1, -0.05, -0.05, -0.05},
         { 0.2, 0.3, 0.3,  0,  0,  0, 0.3, 0.2}
+    };
+    
+    private static final double[][] kingEndgameTable = new double[][] {
+        {-.50,-.40,-.30,-.20,-.20,-.30,-.40,-.50},
+        {-.30,-.20,-.10,   0,   0,-.10,-.20,-.30},
+        {-.30,-.10, .20, .30, .30, .20,-.10,-.30},
+        {-.30,-.10, .30, .40, .40, .30,-.10,-.30},
+        {-.30,-.10, .30, .40, .40, .30,-.10,-.30},
+        {-.30,-.10, .20, .30, .30, .20,-.10,-.30},
+        {-.30,-.30,   0,   0,   0,   0,-.30,-.30},
+        {-.50,-.30,-.30,-.30,-.30,-.30,-.30,-.50},
     };
     
     private static final double[][] queenTable = new double[][] {
@@ -76,6 +92,7 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
     };
 
     private HashMap<String, double[][]> pieceSquareTables = new HashMap<>();
+    private EndgameEvaluator endgameEvaluator = new SpeelmanEndgameEvaluator();
 
     /**
      * Create a positional piece evaluator using the default piece square tables.
@@ -87,6 +104,7 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
         pieceSquareTables.put("wn", flipTable(knightTable));
         pieceSquareTables.put("wr", flipTable(rookTable));
         pieceSquareTables.put("wp", flipTable(pawnTable));
+        pieceSquareTables.put("wke", flipTable(kingEndgameTable));
 
         pieceSquareTables.put("bk", kingTable);
         pieceSquareTables.put("bq", queenTable);
@@ -94,6 +112,7 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
         pieceSquareTables.put("bn", knightTable);
         pieceSquareTables.put("br", rookTable);
         pieceSquareTables.put("bp", pawnTable);
+        pieceSquareTables.put("bke", kingEndgameTable);
     }
 
     /**
@@ -106,8 +125,8 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
      * @param tables The tables to use. Must be 12 entries in the map, in row x column format.
      */
     public PositionalPieceEvaluator(Map<String, double[][]> tables) {
-        if (tables.size() != 12) {
-            throw new IllegalArgumentException("Must have 12 tables! One per team per piece!");
+        if (tables.size() < 12) {
+            throw new IllegalArgumentException("Must have at least 12 tables! One per team per piece!");
         }
 
         for (String team : Arrays.asList("w", "b")) {
@@ -119,6 +138,10 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
             }
         }
         this.pieceSquareTables = new HashMap<>(tables);
+    }
+    
+    public void setEndgameEvaluator(EndgameEvaluator endgameEvaluator) {
+        this.endgameEvaluator = endgameEvaluator;
     }
 
     @Override
@@ -138,6 +161,22 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
 
         Square square = piece.getSquare();
         return piece.getRawValue() + table[square.getY() - 1][square.getX()]; // it's row col not x y.
+    }
+    
+    @Override
+    public double getMaterialValue(Board board, int team) {
+        List<Piece> pieces = new LinkedList<>(board.getPieces(team));
+        double score = 0;
+        if(endgameEvaluator.inEndgame(board)) {
+            Piece king = board.getKing(team);
+            pieces.remove(king);
+            String name = team == Piece.WHITE ? "wke" : "bke";
+            double[][] table = pieceSquareTables.get(name);
+            if(table != null) {
+                score += king.getRawValue() + table[king.getSquare().getY()-1][king.getSquare().getX()];
+            }
+        }
+        return score + pieces.stream().mapToDouble(this::getValue).sum();
     }
 
     private static double[][] flipTable(double[][] table) {

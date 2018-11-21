@@ -3,9 +3,9 @@ package com.coolioasjulio.chess.players;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.Logger;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Square;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
@@ -25,7 +25,7 @@ public class HumanConsolePlayer extends Player {
     public Move getMove() {
         List<Piece> beforeState = board.saveState();
         try {
-            Logger.getGlobalLogger().log("It is " + ((team == Piece.WHITE) ? "white" : "black")
+            Logger.getLogger("HumanConsolePlayer").info("It is " + ((team == Piece.WHITE) ? "white" : "black")
                     + "'s turn! Input move in long notation. Ex: Nb1-c3");
             String response = input.nextLine();
             Square start = null;
