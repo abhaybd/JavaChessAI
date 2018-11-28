@@ -28,14 +28,17 @@ public class HumanGUIPlayer extends Player implements MouseListener {
 
     @Override
     public Move getMove() {
-        // Wait for the mouse click
         synchronized (lock) {
             try {
                 fromSquare = null;
                 toSquare = null;
+                // Wait for the first mouse click
+                // fromSquare will be set in mouseClicked event
                 lock.wait();
                 chess.addHighlightedSquare(fromSquare);
                 chess.draw();
+                // Wait for the second mouse click
+                // toSquare will be set in mouseClicked event
                 lock.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -98,5 +101,4 @@ public class HumanGUIPlayer extends Player implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
     }
-
 }
