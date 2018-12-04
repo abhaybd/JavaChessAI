@@ -222,7 +222,7 @@ public class App extends JFrame {
         JOptionPane.showMessageDialog(this, message);
     }
 
-    void configConstraints(GridBagConstraints c, int x, int y, int width, int height) {
+    private void configConstraints(GridBagConstraints c, int x, int y, int width, int height) {
         c.gridx = x;
         c.gridy = y;
         c.gridwidth = width;
