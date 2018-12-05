@@ -1,5 +1,5 @@
 # JavaChessAI
-A primitive AI which plays Chess.
+A modular and extensible chess framework.
 
 This was designed modularly, so it should be fairly easy to customize. The Chess class is the main class which creates a Board and then plays the game between the two `Player`s.
 
