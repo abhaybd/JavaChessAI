@@ -105,7 +105,7 @@ public class PositionalComputerPlayer extends Player {
                 }
             }
         }
-        double bestScore = moves.keySet().stream().reduce(Math::max).get();
+        double bestScore = moves.keySet().stream().reduce(Math::max).orElseThrow(IllegalStateException::new);
         Move bestMove = moves.get(bestScore);
         Logger.getLogger("PositionalComputerPlayer").info(bestMove.toString() + " - Score: " + bestScore);
         return bestMove;

@@ -60,7 +60,7 @@ class SettingsFrame extends JDialog {
                 c.fill = GridBagConstraints.BOTH;
                 switch (setting.getInputType()) {
                     case CHOICE:
-                        JComboBox<String> combo = new JComboBox<String>(setting.getChoicesNames());
+                        JComboBox<String> combo = new JComboBox<>(setting.getChoicesNames());
                         this.add(combo, c);
                         combo.setSelectedItem(setting.getCurrentSetting().toString());
                         inputs.add(combo);

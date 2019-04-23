@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="JavaChessAI:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="96cda8eb-3d02-4d99-b0e9-3503d55ff2e8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/coolioasjulio/jchess/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/coolioasjulio/jchess/App.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/JavaChessAI_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/coolioasjulio/chess/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/coolioasjulio/chess/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/HumanConsolePlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/HumanConsolePlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/MinimaxComputerPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/MinimaxComputerPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/PositionalComputerPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/PositionalComputerPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/coolioasjulio/jchess/SettingsFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/coolioasjulio/jchess/SettingsFrame.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,33 +38,33 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="8" />
+          <entry key="java" value="17" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="8" />
+          <entry key="JAVA" value="17" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="114" />
+          <entry key="java" value="212" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="114" />
+          <entry key="JAVA" value="212" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/jchess/App.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="41" column="45" lean-forward="true" selection-start-line="41" selection-start-column="45" selection-end-line="41" selection-end-column="45" />
+            <state relative-caret-position="428">
+              <caret line="50" column="5" lean-forward="true" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -61,29 +72,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/jchess/SettingsFrame.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/pieceevaluators/PositionalPieceEvaluator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="75" selection-start-line="75" selection-end-line="75" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/configuration/Setting.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1472">
-              <caret line="74" column="5" selection-start-line="74" selection-start-column="5" selection-end-line="74" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/configuration/ConfigurationMenu.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="31" selection-start-line="31" selection-end-line="31" />
+            <state relative-caret-position="437">
+              <caret line="184" column="14" selection-start-line="184" selection-start-column="14" selection-end-line="184" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -100,8 +93,13 @@
         <option value="$PROJECT_DIR$/src/com/coolioasjulio/configuration/ConfigurationMenu.java" />
         <option value="$PROJECT_DIR$/src/com/coolioasjulio/jchess/DoubleDocumentFilter.java" />
         <option value="$PROJECT_DIR$/src/com/coolioasjulio/jchess/IntegerDocumentFilter.java" />
-        <option value="$PROJECT_DIR$/src/com/coolioasjulio/jchess/SettingsFrame.java" />
         <option value="$PROJECT_DIR$/src/com/coolioasjulio/jchess/App.java" />
+        <option value="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/MinimaxComputerPlayer.java" />
+        <option value="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/PositionalComputerPlayer.java" />
+        <option value="$PROJECT_DIR$/src/com/coolioasjulio/chess/players/HumanConsolePlayer.java" />
+        <option value="$PROJECT_DIR$/src/com/coolioasjulio/chess/Board.java" />
+        <option value="$PROJECT_DIR$/src/com/coolioasjulio/jchess/SettingsFrame.java" />
+        <option value="$PROJECT_DIR$/src/com/coolioasjulio/chess/pieceevaluators/PositionalPieceEvaluator.java" />
       </list>
     </option>
   </component>
@@ -141,6 +139,11 @@
             <path>
               <item name="JavaChessAI" type="b2602c69:ProjectViewProjectNode" />
               <item name="JavaChessAI" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JavaChessAI" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JavaChessAI" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -148,6 +151,29 @@
               <item name="JavaChessAI" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="coolioasjulio" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JavaChessAI" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JavaChessAI" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="coolioasjulio" type="462c0819:PsiDirectoryNode" />
+              <item name="chess" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JavaChessAI" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JavaChessAI" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="coolioasjulio" type="462c0819:PsiDirectoryNode" />
+              <item name="chess" type="462c0819:PsiDirectoryNode" />
+              <item name="pieceevaluators" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JavaChessAI" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JavaChessAI" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="coolioasjulio" type="462c0819:PsiDirectoryNode" />
+              <item name="chess" type="462c0819:PsiDirectoryNode" />
+              <item name="players" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="JavaChessAI" type="b2602c69:ProjectViewProjectNode" />
@@ -163,12 +189,6 @@
               <item name="coolioasjulio" type="462c0819:PsiDirectoryNode" />
               <item name="jchess" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="JavaChessAI" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JavaChessAI" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="examples" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -178,10 +198,10 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555978750788" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555980069323" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
@@ -281,18 +301,18 @@
       <workItem from="1541573549782" duration="42000" />
       <workItem from="1542775851793" duration="603000" />
       <workItem from="1554784333073" duration="19000" />
-      <workItem from="1555978180681" duration="570000" />
+      <workItem from="1555978180681" duration="1833000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4115000" />
+    <option name="totallyTimeSpent" value="5378000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1705757" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1705757" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -303,7 +323,7 @@
       <window_info anchor="bottom" id="Debug with VisualVM" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3291714" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3291714" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -330,6 +350,10 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/examples/HumanVsMinimaxComputer.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -354,6 +378,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/pieces/Piece.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="121" column="18" selection-start-line="121" selection-start-column="18" selection-end-line="121" selection-end-column="18" />
+          <folding>
+            <element signature="e#3432#3433#0" expanded="true" />
+            <element signature="e#3474#3475#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/ChessGame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/jchess/SettingsFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="989">
+          <caret line="62" column="64" selection-start-line="62" selection-start-column="64" selection-end-line="62" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/configuration/ConfigurationMenu.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
@@ -361,20 +410,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/jchess/SettingsFrame.java">
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/Board.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="75" selection-start-line="75" selection-end-line="75" />
+        <state relative-caret-position="3609">
+          <caret line="186" column="53" lean-forward="true" selection-start-line="186" selection-start-column="53" selection-end-line="186" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/players/HumanConsolePlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" column="32" lean-forward="true" selection-start-line="5" selection-start-column="32" selection-end-line="5" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/players/HumanGUIPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/players/PositionalComputerPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1886">
+          <caret line="106" column="9" lean-forward="true" selection-start-line="106" selection-start-column="9" selection-end-line="106" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/players/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/players/MinimaxComputerPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2093">
+          <caret line="43" column="30" lean-forward="true" selection-start-line="43" selection-start-column="30" selection-end-line="43" selection-end-column="30" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/jchess/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="41" column="45" lean-forward="true" selection-start-line="41" selection-start-column="45" selection-end-line="41" selection-end-column="45" />
+        <state relative-caret-position="428">
+          <caret line="50" column="5" lean-forward="true" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/coolioasjulio/chess/pieceevaluators/PositionalPieceEvaluator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="184" column="14" selection-start-line="184" selection-start-column="14" selection-end-line="184" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -384,10 +475,12 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
+          <last-edited>JavaChessAI:jar</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>

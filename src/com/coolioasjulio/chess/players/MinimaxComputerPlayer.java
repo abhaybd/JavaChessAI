@@ -85,10 +85,10 @@ public class MinimaxComputerPlayer extends Player {
 
     private ConfigurationMenu createConfigurationMenu() {
         return new ConfigurationMenu("BotLvl2",
-                new Setting<Integer>("Keep Moves", InputType.INTEGER, this::setKeepMoves, this::getKeepMoves),
-                new Setting<Selector>("Selector", this::setSelector, this::getSelector,
+                new Setting<>("Keep Moves", InputType.INTEGER, this::setKeepMoves, this::getKeepMoves),
+                new Setting<>("Selector", this::setSelector, this::getSelector,
                         selectors.toArray(new Selector[0])),
-                new Setting<Integer>("Search Depth", InputType.INTEGER, this::setSearchDepth, this::getSearchDepth)
+                new Setting<>("Search Depth", InputType.INTEGER, this::setSearchDepth, this::getSearchDepth)
                         .setValidator(this::validInput));
     }
 

@@ -80,9 +80,7 @@ public class Board {
         if (!(p instanceof Rook) || p.getTeam() != k.getTeam())
             return false;
         Rook r = (Rook) p;
-        if (r.hasMoved() || !freePath(k.getSquare(), r.getSquare(), k.getTeam()))
-            return false;
-        return true;
+        return !r.hasMoved() && freePath(k.getSquare(), r.getSquare(), k.getTeam());
     }
 
     public boolean canQueenSideCastle(King k) {
@@ -93,9 +91,7 @@ public class Board {
         if (!(p instanceof Rook) || p.getTeam() != k.getTeam())
             return false;
         Rook r = (Rook) p;
-        if (r.hasMoved() || !freePath(r.getSquare(), k.getSquare(), k.getTeam()))
-            return false;
-        return true;
+        return !r.hasMoved() && freePath(r.getSquare(), k.getSquare(), k.getTeam());
     }
 
     public boolean inStaleMate(int team) {
@@ -189,7 +185,7 @@ public class Board {
             }
         } else {
             Piece p = this.checkSquare(m.getStart());
-            List<Square> endSquares = Arrays.asList(p.getMoves()).stream().map(Move::getEnd)
+            List<Square> endSquares = Arrays.stream(p.getMoves()).map(Move::getEnd)
                     .collect(Collectors.toList());
             if (!endSquares.contains(m.getEnd())) {
                 throw new InvalidMoveException("Invalid move or end square!");

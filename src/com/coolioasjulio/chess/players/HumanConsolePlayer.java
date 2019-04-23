@@ -28,10 +28,10 @@ public class HumanConsolePlayer extends Player {
             Logger.getLogger("HumanConsolePlayer").info("It is " + ((team == Piece.WHITE) ? "white" : "black")
                     + "'s turn! Input move in long notation. Ex: Nb1-c3");
             String response = input.nextLine();
-            Square start = null;
-            Square end = null;
-            char action = '-';
-            String type = "";
+            Square start;
+            Square end;
+            char action;
+            String type;
 
             if (response.equalsIgnoreCase("o-o")) {
                 return new Move(team, true);
@@ -54,7 +54,8 @@ public class HumanConsolePlayer extends Player {
                 throw new InvalidMoveException();
 
             Piece p = board.checkSquare(start);
-            if (p == null || !Piece.getType(p).equalsIgnoreCase(type) || p.getTeam() != team)
+            String pieceType = Piece.getType(p);
+            if (p == null || pieceType == null || !pieceType.equalsIgnoreCase(type) || p.getTeam() != team)
                 throw new InvalidMoveException();
 
             Move[] possibleMoves = p.getMoves();
