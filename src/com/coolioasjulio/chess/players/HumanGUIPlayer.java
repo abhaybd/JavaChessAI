@@ -1,10 +1,5 @@
 package com.coolioasjulio.chess.players;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.JComponent;
-
 import com.coolioasjulio.chess.ChessGame;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Square;
@@ -12,18 +7,32 @@ import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.pieces.King;
 import com.coolioasjulio.chess.pieces.Piece;
 
+import javax.swing.JComponent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 public class HumanGUIPlayer extends Player implements MouseListener {
 
     private ChessGame chess;
     private JComponent component;
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
+    private boolean clicked = false;
 
     public HumanGUIPlayer(ChessGame chess, JComponent component) {
         super(chess.getBoard());
         this.chess = chess;
         this.component = component;
         component.addMouseListener(this);
+    }
+
+    private void waitForClick() throws InterruptedException{
+        synchronized (lock) {
+            while (!clicked) {
+                lock.wait();
+            }
+            clicked = false;
+        }
     }
 
     @Override
@@ -34,12 +43,12 @@ public class HumanGUIPlayer extends Player implements MouseListener {
                 toSquare = null;
                 // Wait for the first mouse click
                 // fromSquare will be set in mouseClicked event
-                lock.wait();
+                waitForClick();
                 chess.addHighlightedSquare(fromSquare);
                 chess.draw();
                 // Wait for the second mouse click
                 // toSquare will be set in mouseClicked event
-                lock.wait();
+                waitForClick();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -77,11 +86,13 @@ public class HumanGUIPlayer extends Player implements MouseListener {
                 Piece p = board.checkSquare(square);
                 if (p != null && p.getTeam() == team) {
                     fromSquare = square;
+                    clicked = true;
                     lock.notifyAll();
                 }
             } else if (toSquare == null) {
                 toSquare = square;
                 lock.notifyAll();
+                clicked = true;
             }
         }
     }
