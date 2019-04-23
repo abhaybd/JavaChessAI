@@ -35,7 +35,7 @@ import com.coolioasjulio.configuration.Setting.InputType;
 public class App extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    private static enum GameModeOptions {
+    private enum GameModeOptions {
         HumanVsHuman, HumanVsBotLvl1, HumanVsBotLvl2
     }
 
@@ -68,7 +68,7 @@ public class App extends JFrame {
             // If Nimbus is not available, you can set the GUI to another look and feel.
         }
 
-        game = new ChessGameUI(tileSize, LIGHT, DARK);
+        game = new ChessGameUI(tileSize, light, dark);
         this.light = light;
 
         try {
@@ -142,7 +142,7 @@ public class App extends JFrame {
         this.setVisible(true);
 
         ConfigurationMenu.addConfigMenu(new ConfigurationMenu("Board Settings",
-                new Setting<Integer>("Board Size (%)", InputType.INTEGER, this::setTileSize, game::getTileSize)));
+                new Setting<>("Board Size (%)", InputType.INTEGER, this::setTileSize, game::getTileSize)));
     }
 
     private Icon loadIcon(String path, int tileSize) {
