@@ -18,7 +18,7 @@ public class MaterialHeuristic implements Heuristic {
     }
 
     public double getScore(Board board, int team) {
-        double space = (double) board.getMoves(team).length * (double) spaceScore;
+        double space = (double) board.getMoves(team).length * spaceScore;
         double material = pieceEvaluator.getMaterialValue(board, team);
         double oppMaterial = pieceEvaluator.getMaterialValue(board, -team);
         double checkmateModifier = 0;

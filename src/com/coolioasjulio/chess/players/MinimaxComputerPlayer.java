@@ -27,6 +27,7 @@ import com.coolioasjulio.configuration.Setting.InputType;
 public class MinimaxComputerPlayer extends Player {
     private static final int DEFAULT_KEEP_MOVES = 3;
     private static final int DEFAULT_SEARCH_DEPTH = 2;
+    private static final Logger logger = Logger.getLogger("MinimaxComputerPlayer");
 
     private static List<Selector> selectors = new ArrayList<>(
             Arrays.asList(new SoftmaxSelector(), new RandomSelector(), new GreedySelector()));
@@ -89,10 +90,10 @@ public class MinimaxComputerPlayer extends Player {
                 new Setting<>("Selector", this::setSelector, this::getSelector,
                         selectors.toArray(new Selector[0])),
                 new Setting<>("Search Depth", InputType.INTEGER, this::setSearchDepth, this::getSearchDepth)
-                        .setValidator(this::validInput));
+                        .setValidator(this::validSearchDepth));
     }
 
-    private boolean validInput(String text) {
+    private boolean validSearchDepth(String text) {
         try {
             if ("".equals(text)) {
                 return true;
@@ -112,12 +113,12 @@ public class MinimaxComputerPlayer extends Player {
 
         List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
                 .collect(Collectors.toList()).subList(0, toKeep);
-        Logger.getLogger("MinimaxComputerPlayer").info(kept.toString());
+        logger.info(kept.toString());
 
         MoveCandidate bestMove = selector.select(kept,
                 kept.stream().map(e -> -e.getScore()).collect(Collectors.toList()));
 
-        Logger.getLogger("MinimaxComputerPlayer").info(String.format("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore()));
+        logger.info(String.format("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore()));
         return bestMove.getMove();
     }
 

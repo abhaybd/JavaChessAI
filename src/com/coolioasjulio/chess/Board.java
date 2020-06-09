@@ -3,7 +3,6 @@ package com.coolioasjulio.chess;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
@@ -37,7 +36,9 @@ public class Board {
     }
 
     public Move[] getMoves(int team, boolean castleMoves) {
-        List<Move> moves = getPieces(team).stream().flatMap(p -> Arrays.asList(p.getMoves()).stream())
+        List<Move> moves = getPieces(team)
+                .stream()
+                .flatMap(p -> Arrays.stream(p.getMoves()))
                 .collect(Collectors.toList());
         if (castleMoves) {
             King k = getKing(team);
@@ -80,7 +81,7 @@ public class Board {
         if (!(p instanceof Rook) || p.getTeam() != k.getTeam())
             return false;
         Rook r = (Rook) p;
-        return !r.hasMoved() && freePath(k.getSquare(), r.getSquare(), k.getTeam());
+        return !r.hasMoved() && clearCastlePath(k.getSquare(), r.getSquare(), k.getTeam());
     }
 
     public boolean canQueenSideCastle(King k) {
@@ -91,7 +92,7 @@ public class Board {
         if (!(p instanceof Rook) || p.getTeam() != k.getTeam())
             return false;
         Rook r = (Rook) p;
-        return !r.hasMoved() && freePath(r.getSquare(), k.getSquare(), k.getTeam());
+        return !r.hasMoved() && clearCastlePath(r.getSquare(), k.getSquare(), k.getTeam());
     }
 
     public boolean inStaleMate(int team) {
@@ -129,14 +130,13 @@ public class Board {
     }
 
     public King getKing(int team) {
-        Optional<Piece> king = pieces.stream().filter(p -> p instanceof King && p.getTeam() == team).findFirst();
-        if (king.isPresent())
-            return (King) king.get();
-
-        throw new InvalidMoveException("King not present on board!");
+        return (King) pieces.stream()
+                .filter(p -> p instanceof King && p.getTeam() == team)
+                .findFirst()
+                .orElseThrow(() -> new InvalidMoveException("King not present on board!"));
     }
 
-    public boolean freePath(Square start, Square end, int team) {
+    public boolean clearCastlePath(Square start, Square end, int team) {
         if (start.getY() != end.getY())
             throw new InvalidSquareException("Invalid castle path!");
         for (int i = start.getX() + 1; i < end.getX(); i++) {
@@ -191,7 +191,10 @@ public class Board {
                 throw new InvalidMoveException("Invalid move or end square!");
             }
             if (m.doesCapture()) {
-                removePiece(checkSquare(m.getEnd()));
+                Piece toCapture = checkSquare(m.getEnd());
+                if (toCapture.getTeam() != p.getTeam()) {
+                    removePiece(toCapture);
+                }
             }
             p.move(m.getEnd());
         }
@@ -233,7 +236,7 @@ public class Board {
     }
 
     private void knights() {
-        for (int i : new int[] { 1, 6 }) {
+        for (int i : new int[]{1, 6}) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Knight white = new Knight(w, Piece.WHITE, this);
@@ -244,7 +247,7 @@ public class Board {
     }
 
     private void rooks() {
-        for (int i : new int[] { 0, 7 }) {
+        for (int i : new int[]{0, 7}) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Rook white = new Rook(w, Piece.WHITE, this);
@@ -255,7 +258,7 @@ public class Board {
     }
 
     private void bishops() {
-        for (int i : new int[] { 2, 5 }) {
+        for (int i : new int[]{2, 5}) {
             Square w = new Square(i, 1);
             Square b = new Square(i, 8);
             Bishop white = new Bishop(w, Piece.WHITE, this);
