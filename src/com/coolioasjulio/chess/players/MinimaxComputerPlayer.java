@@ -3,13 +3,13 @@ package com.coolioasjulio.chess.players;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Move;
@@ -110,13 +110,10 @@ public class MinimaxComputerPlayer extends Player {
         List<MoveCandidate> bestMoves = ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, depth, team));
 
         int toKeep = Math.min(keepMoves, bestMoves.size());
-
-        List<MoveCandidate> kept = bestMoves.stream().distinct().sorted(Comparator.comparing(MoveCandidate::getScore))
-                .collect(Collectors.toList()).subList(0, toKeep);
+        List<MoveCandidate> kept = bestMoves.subList(0, toKeep);
         logger.info(kept.toString());
 
-        MoveCandidate bestMove = selector.select(kept,
-                kept.stream().map(e -> -e.getScore()).collect(Collectors.toList()));
+        MoveCandidate bestMove = selector.select(kept, MoveCandidate::getScore);
 
         logger.info(String.format("%s - Score: %.2f\n", bestMove.getMove().toString(), bestMove.getScore()));
         return bestMove.getMove();
@@ -145,21 +142,17 @@ public class MinimaxComputerPlayer extends Player {
 
         @Override
         protected List<MoveCandidate> compute() {
-            if (depth <= 1) {
+            if (depth == 0) {
                 return work();
             } else {
                 Collection<MinimaxRecursiveTask> futures = invokeAll(createSubtasks());
                 List<MoveCandidate> candidates = new LinkedList<>();
                 for (MinimaxRecursiveTask future : futures) {
                     List<MoveCandidate> possibleMoves = future.join();
-
-                    // If you detect a checkmate, return it immediately.
-                    if (possibleMoves.size() == 0) {
-                        return Arrays.asList(new MoveCandidate(future.move, team == playerTeam ? -1000 : 1000));
-                    }
-
-                    MoveCandidate mc = possibleMoves.get(0);
-                    candidates.add(new MoveCandidate(future.move, mc.getScore()));
+                    double score = possibleMoves.isEmpty() ?
+                            heuristic.getScore(future.board, team) :
+                            possibleMoves.get(0).getScore();
+                    candidates.add(new MoveCandidate(future.move, score));
                 }
                 return ordered(candidates);
             }
@@ -167,7 +160,7 @@ public class MinimaxComputerPlayer extends Player {
 
         private List<MinimaxRecursiveTask> createSubtasks() {
             Move[] moves = board.getMoves(team);
-            List<MinimaxRecursiveTask> subtasks = new LinkedList<>();
+            List<MinimaxRecursiveTask> subtasks = new ArrayList<>(moves.length);
             for (Move m : moves) {
                 Board boardCopy = board.fork();
                 boardCopy.doMove(m);
@@ -184,7 +177,7 @@ public class MinimaxComputerPlayer extends Player {
 
         private List<MoveCandidate> work() {
             Move[] moves = board.getMoves(team);
-            List<MoveCandidate> candidates = new LinkedList<>();
+            List<MoveCandidate> candidates = new ArrayList<>(moves.length);
             for (Move m : moves) {
                 Board boardCopy = board.fork();
 
@@ -201,14 +194,20 @@ public class MinimaxComputerPlayer extends Player {
         }
 
         private List<MoveCandidate> ordered(List<MoveCandidate> moves) {
+            Comparator<MoveCandidate> comparator;
             if (team == playerTeam) {
-                return moves.stream().sorted(Comparator.comparing(MoveCandidate::getScore))
-                        .collect(Collectors.toList());
+                comparator = Comparator.comparing(MoveCandidate::getScore).reversed();
             } else if (team == -playerTeam) {
-                return moves.stream().sorted(Comparator.comparing(MoveCandidate::getScore).reversed())
-                        .collect(Collectors.toList());
+                comparator = Comparator.comparing(MoveCandidate::getScore);
             } else {
                 throw new IllegalArgumentException("Team must be -1 or 1!");
+            }
+
+            if (move == null) { // this is an identifier of the root node
+                moves.sort(comparator);
+                return moves;
+            } else {
+                return moves.isEmpty() ? moves : Collections.singletonList(moves.stream().min(comparator).get());
             }
         }
     }
