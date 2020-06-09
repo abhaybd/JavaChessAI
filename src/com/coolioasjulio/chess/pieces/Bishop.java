@@ -17,10 +17,6 @@ public class Bishop extends Piece {
         super(square, team, board);
     }
 
-    private boolean between(int toCheck, int bottom, int upper) {
-        return bottom <= toCheck && toCheck <= upper;
-    }
-
     public double getRawValue() {
         return Piece.BISHOP_VALUE;
     }
@@ -35,21 +31,18 @@ public class Bishop extends Piece {
         ArrayList<Move> moves = new ArrayList<Move>();
         for (int x = -1; x <= 1; x += 2) {
             for (int y = -1; y <= 1; y += 2) {
-                try {
-                    int mult = 1;
-                    Piece p = board.checkSquare(new Square(x + square.getX(), y + square.getY()));
-                    while (p == null && between(x * mult + square.getX(), 0, 7)
-                            && between(y * mult + square.getY(), 1, 8)) {
-                        moves.add(
-                                new Move(this, square, new Square(x * mult + square.getX(), y * mult + square.getY())));
-                        mult++;
-                        p = board.checkSquare(new Square(x * mult + square.getX(), y * mult + square.getY()));
-                    }
-                    if (p != null && p.team != team) {
-                        moves.add(new Move(this, square, p.getSquare(), true));
-                    }
-                } catch (InvalidSquareException e) {
-                    continue;
+                if (!Square.validSquare(x + square.getX(), y + square.getY())) continue;
+                int mult = 1;
+                Piece p = board.checkSquare(new Square(x + square.getX(), y + square.getY()));
+                while (p == null) {
+                    moves.add(
+                            new Move(this, square, new Square(x * mult + square.getX(), y * mult + square.getY())));
+                    mult++;
+                    if (!Square.validSquare(x * mult + square.getX(), y * mult + square.getY())) break;
+                    p = board.checkSquare(new Square(x * mult + square.getX(), y * mult + square.getY()));
+                }
+                if (p != null && p.team != team) {
+                    moves.add(new Move(this, square, p.getSquare(), true));
                 }
             }
         }

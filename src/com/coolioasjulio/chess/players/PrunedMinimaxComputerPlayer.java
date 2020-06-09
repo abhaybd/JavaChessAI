@@ -10,7 +10,7 @@ import com.coolioasjulio.configuration.Setting;
 import java.util.logging.Logger;
 
 public class PrunedMinimaxComputerPlayer extends Player {
-    private static final int DEFAULT_SEARCH_DEPTH = 2;
+    private static final int DEFAULT_SEARCH_DEPTH = 4;
 
     private int depth = DEFAULT_SEARCH_DEPTH;
     private Heuristic heuristic = new MaterialHeuristic(0);
@@ -66,7 +66,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 score = heuristic.getScore(b, team);
             } else {
                 MoveCandidate mc = minimax(b, depth-1, -team, alpha, beta);
-                score = mc == null ? 1000 * team : mc.getScore();
+                score = mc == null ? 1000 : mc.getScore();
             }
             MoveCandidate candidate = new MoveCandidate(move, score);
 

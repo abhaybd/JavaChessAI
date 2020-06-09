@@ -22,11 +22,10 @@ public class Queen extends Piece {
 
     @Override
     public Move[] getMoves() {
-        ArrayList<Move> moves = new ArrayList<Move>();
         Square square = super.getSquare();
         int team = super.getTeam();
         Bishop b = new Bishop(square, team, board);
-        moves.addAll(Arrays.asList(b.getMoves()));
+        ArrayList<Move> moves = new ArrayList<>(Arrays.asList(b.getMoves()));
         Rook r = new Rook(square, team, board);
         moves.addAll(Arrays.asList(r.getMoves()));
         for (int i = 0; i < moves.size(); i++) {

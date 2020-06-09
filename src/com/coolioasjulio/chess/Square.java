@@ -9,7 +9,11 @@ public class Square {
     private int x, y;
     private int[] coords;
 
-    private boolean between(int toCheck, int bottom, int upper) {
+    public static boolean validSquare(int x, int y) {
+        return between(x, 0, 7) && between(y, 1, 8);
+    }
+
+    private static boolean between(int toCheck, int bottom, int upper) {
         return bottom <= toCheck && toCheck <= upper;
     }
 
@@ -21,10 +25,10 @@ public class Square {
      * @throws InvalidSquareException
      */
     public Square(int x, int y) throws InvalidSquareException {
-        if (!between(x, 0, 7) || !between(y, 1, 8)) {
+        if (!validSquare(x, y)) {
             throw new InvalidSquareException();
         }
-        char alph = (char) (x + 97);
+        char alph = (char) (x + 'a');
         this.square = String.valueOf(alph) + (y);
         this.coords = new int[] { x, y };
         this.x = x;
@@ -34,11 +38,11 @@ public class Square {
     public static Square parseString(String square) throws InvalidSquareException {
         char alph = square.charAt(0);
         int y = Integer.parseInt(String.valueOf(square.charAt(1)));
-        int x = alph - 97;
-        Square s = new Square(x, y);
-        return s;
+        int x = alph - 'a';
+        return new Square(x, y);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof Square)) {
             return false;
@@ -47,8 +51,9 @@ public class Square {
         return s.getX() == x && s.getY() == y;
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(x, y, square, coords);
+        return Objects.hash(x, y);
     }
 
     @Override

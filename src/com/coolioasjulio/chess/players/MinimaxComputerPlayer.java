@@ -148,6 +148,10 @@ public class MinimaxComputerPlayer extends Player {
                 Collection<MinimaxRecursiveTask> futures = invokeAll(createSubtasks());
                 List<MoveCandidate> candidates = new LinkedList<>();
                 for (MinimaxRecursiveTask future : futures) {
+                    if (future.getException() != null) {
+                        future.getException().printStackTrace();
+                        throw new RuntimeException(future.getException());
+                    }
                     List<MoveCandidate> possibleMoves = future.join();
                     double score = possibleMoves.isEmpty() ?
                             heuristic.getScore(future.board, team) :

@@ -28,24 +28,18 @@ public class Knight extends Piece {
     public Move[] getMoves() {
         int team = super.getTeam();
         Square square = super.getSquare();
-        ArrayList<Move> moves = new ArrayList<Move>();
+        ArrayList<Move> moves = new ArrayList<>();
         for (int i = -2; i <= 2; i++) {
             if (i == 0 || i + square.getX() < 0 || i + square.getX() > 7) {
                 continue;
             }
             for (int j = -2; j <= 2; j++) {
-                if (j == 0 || Math.abs(j) == Math.abs(i) || j + square.getY() < 1 || j + square.getY() > 8) {
-                    continue;
-                } else {
-                    try {
-                        Square toCheck = new Square(i + square.getX(), j + square.getY());
-                        Piece p = board.checkSquare(toCheck);
-                        if (p == null || (p != null && p.team != team)) {
-                            boolean capture = (p != null && p.team != team);
-                            moves.add(new Move(this, square, toCheck, capture));
-                        }
-                    } catch (InvalidSquareException e) {
-                        continue;
+                if (j != 0 && Math.abs(j) != Math.abs(i) && j + square.getY() >= 1 && j + square.getY() <= 8) {
+                    Square toCheck = new Square(i + square.getX(), j + square.getY());
+                    Piece p = board.checkSquare(toCheck);
+                    if (p == null || p.team != team) {
+                        boolean capture = p != null;
+                        moves.add(new Move(this, square, toCheck, capture));
                     }
                 }
             }

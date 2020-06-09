@@ -28,18 +28,14 @@ public class King extends Piece {
         ArrayList<Move> moves = new ArrayList<Move>();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
-                if (x == 0 && y == 0)
+                if ((x == 0 && y == 0) || !Square.validSquare(x + square.getX(), y + square.getY()))
                     continue;
-                try {
-                    Square s = new Square(x + square.getX(), y + square.getY());
-                    Piece p = board.checkSquare(s);
-                    boolean capture = (p != null && p.team != team);
-                    if (p == null || capture) {
-                        Move move = new Move(this, square, s, capture);
-                        moves.add(move);
-                    }
-                } catch (InvalidSquareException e) {
-                    continue;
+                Square s = new Square(x + square.getX(), y + square.getY());
+                Piece p = board.checkSquare(s);
+                boolean capture = (p != null && p.team != team);
+                if (p == null || capture) {
+                    Move move = new Move(this, square, s, capture);
+                    moves.add(move);
                 }
             }
         }

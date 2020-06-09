@@ -2,7 +2,9 @@ package com.coolioasjulio.chess;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
@@ -23,6 +25,7 @@ public class Board {
     private TeamValue<Boolean> cachedCheck = new TeamValue<>();
     private TeamValue<King> cachedKing = new TeamValue<>();
     private TeamValue<Move[]> cachedMoves = new TeamValue<>();
+    private Map<Square, Piece> boardMap = new HashMap<>();
 
     public Board() {
         pieces = new ArrayList<>();
@@ -67,16 +70,12 @@ public class Board {
     }
 
     public Piece checkSquare(Square square) {
-        try {
+        if (boardMap.isEmpty()) {
             for (Piece p : pieces) {
-                if (p.getSquare().equals(square)) {
-                    return p;
-                }
+                boardMap.put(p.getSquare(), p);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return null;
+        return boardMap.get(square);
     }
 
     public boolean canKingSideCastle(King k) {
@@ -253,6 +252,7 @@ public class Board {
         cachedStalemate.clear();
         cachedMoves.clear();
         cachedKing.clear();
+        boardMap.clear();
     }
 
     private void pawns() {
