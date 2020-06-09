@@ -13,10 +13,6 @@ public class Rook extends Piece {
         super(square, team, board);
     }
 
-    private boolean between(int toCheck, int lower, int upper) {
-        return lower <= toCheck && toCheck <= upper;
-    }
-
     public double getRawValue() {
         return Piece.ROOK_VALUE;
     }
