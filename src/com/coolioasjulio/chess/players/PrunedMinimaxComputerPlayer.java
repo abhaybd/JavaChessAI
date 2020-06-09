@@ -3,8 +3,10 @@ package com.coolioasjulio.chess.players;
 import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.MoveCandidate;
+import com.coolioasjulio.chess.Square;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.MaterialHeuristic;
+import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.configuration.ConfigurationMenu;
 import com.coolioasjulio.configuration.Setting;
 import java.util.logging.Logger;
@@ -48,12 +50,12 @@ public class PrunedMinimaxComputerPlayer extends Player {
 
     @Override
     public Move getMove() {
-        Move move = minimax(board, depth, team).getMove();
+        MoveCandidate move = minimax(board, depth, team, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         Logger.getLogger("PrunedMinimaxComputerPlayer").info(move::toString);
-        return move;
+        return move.getMove();
     }
 
-    public MoveCandidate minimax(Board board, int depth, int team) {
+    public MoveCandidate minimax(Board board, int depth, int team, double alpha, double beta) {
         Move[] moves = board.getMoves(team);
         int playerTeam = this.team;
         MoveCandidate bestMove = null;
@@ -65,10 +67,13 @@ public class PrunedMinimaxComputerPlayer extends Player {
             if (depth == 0) {
                 score = heuristic.getScore(b, team);
             } else {
-                MoveCandidate mc = minimax(b, depth-1, -team);
+                MoveCandidate mc = minimax(b, depth-1, -team, alpha, beta);
                 score = mc == null ? 1000 * team : mc.getScore();
             }
             MoveCandidate candidate = new MoveCandidate(move, score);
+
+            if (team == playerTeam) alpha = Math.max(score, alpha);
+            else beta = Math.min(score, beta);
 
             if (bestMove == null) bestMove = candidate;
             else if (team == playerTeam && candidate.getScore() > bestMove.getScore()) {
@@ -76,6 +81,8 @@ public class PrunedMinimaxComputerPlayer extends Player {
             } else if (team != playerTeam && candidate.getScore() < bestMove.getScore()) {
                 bestMove = candidate;
             }
+
+            if (beta <= alpha) break;
         }
         return bestMove;
     }
