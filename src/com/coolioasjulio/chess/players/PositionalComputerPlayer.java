@@ -1,7 +1,6 @@
 package com.coolioasjulio.chess.players;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Logger;
 
 import com.coolioasjulio.chess.Board;
@@ -30,7 +29,7 @@ public class PositionalComputerPlayer extends Player {
     }
 
     private int numAttackers(Move move) {
-        List<Piece> before = board.saveState();
+        Board board = this.board.fork();
         board.doMove(move);
         int attackers = 0;
         for (int i = 0; i < board.getPieces().size(); i++) {
@@ -44,12 +43,11 @@ public class PositionalComputerPlayer extends Player {
                 }
             }
         }
-        board.restoreState(before);
         return attackers;
     }
 
     private int numDefenders(Move move) {
-        List<Piece> before = board.saveState();
+        Board board = this.board.fork();
         board.removePiece(move.getPiece());
         int defenders = 0;
         for (int i = 0; i < board.getPieces().size(); i++) {
@@ -63,7 +61,6 @@ public class PositionalComputerPlayer extends Player {
                 }
             }
         }
-        board.restoreState(before);
         return defenders;
     }
 
@@ -90,7 +87,7 @@ public class PositionalComputerPlayer extends Player {
                 continue;
             Move[] possible = p.getMoves();
             for (Move m : possible) {
-                Board board = this.board.copy();
+                Board board = this.board.fork();
                 double score = 0;
                 if (!safeMove(m)) {
                     score -= pieceEvaluator.getValue(m.getPiece());

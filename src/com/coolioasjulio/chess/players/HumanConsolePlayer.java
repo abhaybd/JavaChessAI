@@ -1,7 +1,6 @@
 package com.coolioasjulio.chess.players;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -23,58 +22,54 @@ public class HumanConsolePlayer extends Player {
 
     @Override
     public Move getMove() {
-        List<Piece> beforeState = board.saveState();
-        try {
-            Logger.getLogger("HumanConsolePlayer").info("It is " + ((team == Piece.WHITE) ? "white" : "black")
-                    + "'s turn! Input move in long notation. Ex: Nb1-c3");
-            String response = input.nextLine();
-            Square start;
-            Square end;
-            char action;
-            String type;
+        Board board = this.board.fork();
+        Logger.getLogger("HumanConsolePlayer").info("It is " + ((team == Piece.WHITE) ? "white" : "black")
+                + "'s turn! Input move in long notation. Ex: Nb1-c3");
+        String response = input.nextLine();
+        Square start;
+        Square end;
+        char action;
+        String type;
 
-            if (response.equalsIgnoreCase("o-o")) {
-                return new Move(team, true);
-            } else if (response.equalsIgnoreCase("o-o-o")) {
-                return new Move(team, false);
-            } else if (response.length() == 5) {
-                start = Square.parseString(response.substring(0, 2));
-                end = Square.parseString(response.substring(3));
-                action = response.charAt(2);
-                type = "";
-            } else if (response.length() == 6) {
-                start = Square.parseString(response.substring(1, 3));
-                end = Square.parseString(response.substring(4));
-                action = response.charAt(3);
-                type = String.valueOf(response.charAt(0));
-            } else
-                throw new InvalidMoveException();
+        if (response.equalsIgnoreCase("o-o")) {
+            return new Move(team, true);
+        } else if (response.equalsIgnoreCase("o-o-o")) {
+            return new Move(team, false);
+        } else if (response.length() == 5) {
+            start = Square.parseString(response.substring(0, 2));
+            end = Square.parseString(response.substring(3));
+            action = response.charAt(2);
+            type = "";
+        } else if (response.length() == 6) {
+            start = Square.parseString(response.substring(1, 3));
+            end = Square.parseString(response.substring(4));
+            action = response.charAt(3);
+            type = String.valueOf(response.charAt(0));
+        } else
+            throw new InvalidMoveException();
 
-            if (action != 'x' && action != '-')
-                throw new InvalidMoveException();
+        if (action != 'x' && action != '-')
+            throw new InvalidMoveException();
 
-            Piece p = board.checkSquare(start);
-            String pieceType = Piece.getType(p);
-            if (p == null || pieceType == null || !pieceType.equalsIgnoreCase(type) || p.getTeam() != team)
-                throw new InvalidMoveException();
+        Piece p = board.checkSquare(start);
+        String pieceType = Piece.getType(p);
+        if (p == null || pieceType == null || !pieceType.equalsIgnoreCase(type) || p.getTeam() != team)
+            throw new InvalidMoveException();
 
-            Move[] possibleMoves = p.getMoves();
-            Move move = new Move(p, start, end, action == 'x');
+        Move[] possibleMoves = p.getMoves();
+        Move move = new Move(p, start, end, action == 'x');
 
-            if (hasMove(possibleMoves, move)) {
-                board.doMove(move);
-            } else {
-                throw new InvalidMoveException();
-            }
-
-            if (board.inCheck(team) || board.inCheckMate(team)) {
-                throw new InvalidMoveException();
-            }
-
-            return move;
-        } finally {
-            board.restoreState(beforeState);
+        if (hasMove(possibleMoves, move)) {
+            board.doMove(move);
+        } else {
+            throw new InvalidMoveException();
         }
+
+        if (board.inCheck(team) || board.inCheckMate(team)) {
+            throw new InvalidMoveException();
+        }
+
+        return move;
     }
 
     private boolean hasMove(Move[] moves, Move move) {

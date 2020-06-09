@@ -169,7 +169,7 @@ public class MinimaxComputerPlayer extends Player {
             Move[] moves = board.getMoves(team);
             List<MinimaxRecursiveTask> subtasks = new LinkedList<>();
             for (Move m : moves) {
-                Board boardCopy = board.copy();
+                Board boardCopy = board.fork();
                 boardCopy.doMove(m);
 
                 if (boardCopy.inCheck(team)) {
@@ -186,7 +186,7 @@ public class MinimaxComputerPlayer extends Player {
             Move[] moves = board.getMoves(team);
             List<MoveCandidate> candidates = new LinkedList<>();
             for (Move m : moves) {
-                Board boardCopy = board.copy();
+                Board boardCopy = board.fork();
 
                 boardCopy.doMove(m);
 

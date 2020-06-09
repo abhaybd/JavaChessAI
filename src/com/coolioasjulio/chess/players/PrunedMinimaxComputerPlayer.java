@@ -3,10 +3,8 @@ package com.coolioasjulio.chess.players;
 import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.MoveCandidate;
-import com.coolioasjulio.chess.Square;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.MaterialHeuristic;
-import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.configuration.ConfigurationMenu;
 import com.coolioasjulio.configuration.Setting;
 import java.util.logging.Logger;
@@ -60,7 +58,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
         int playerTeam = this.team;
         MoveCandidate bestMove = null;
         for (Move move : moves) {
-            Board b = board.copy();
+            Board b = board.fork();
             b.doMove(move);
             if (b.inCheck(team)) continue;
             double score;

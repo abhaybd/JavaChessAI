@@ -101,14 +101,10 @@ public class Board {
         }
         Move[] moves = getMoves(team);
         for (Move move : moves) {
-            List<Piece> before = saveState();
-            try {
-                doMove(move);
-                if (!inCheck(team)) {
-                    return false;
-                }
-            } finally {
-                restoreState(before);
+            Board board = fork();
+            board.doMove(move);
+            if (!board.inCheck(team)) {
+                return false;
             }
         }
         return true;
@@ -118,15 +114,12 @@ public class Board {
         if (!inCheck(team))
             return false;
         Move[] moves = getMoves(team);
-        boolean checkMate = true;
         for (Move move : moves) {
-            List<Piece> before = saveState();
-            doMove(move);
-            if (!inCheck(team))
-                checkMate = false;
-            restoreState(before);
+            Board board = fork();
+            board.doMove(move);
+            if (!board.inCheck(team)) return false;
         }
-        return checkMate;
+        return true;
     }
 
     public King getKing(int team) {
@@ -203,7 +196,7 @@ public class Board {
     /*
      * Deep copy of the board.
      */
-    public Board copy() {
+    public Board fork() {
         Board copy = new Board();
         copy.pieces = saveState();
         copy.pieces.forEach(p -> p.setBoard(copy));
