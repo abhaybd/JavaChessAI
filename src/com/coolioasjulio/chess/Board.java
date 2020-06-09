@@ -18,6 +18,11 @@ import com.coolioasjulio.chess.pieces.Rook;
 
 public class Board {
     private List<Piece> pieces;
+    private TeamValue<Boolean> cachedCheckmate = new TeamValue<>();
+    private TeamValue<Boolean> cachedStalemate = new TeamValue<>();
+    private TeamValue<Boolean> cachedCheck = new TeamValue<>();
+    private TeamValue<King> cachedKing = new TeamValue<>();
+    private TeamValue<Move[]> cachedMoves = new TeamValue<>();
 
     public Board() {
         pieces = new ArrayList<>();
@@ -32,7 +37,10 @@ public class Board {
     }
 
     public Move[] getMoves(int team) {
-        return getMoves(team, true);
+        if (cachedMoves.hasValue(team)) return cachedMoves.get(team);
+
+        Move[] moves = getMoves(team, true);
+        return cachedMoves.set(team, moves);
     }
 
     public Move[] getMoves(int team, boolean castleMoves) {
@@ -52,12 +60,10 @@ public class Board {
         return moves.toArray(new Move[0]);
     }
 
-    public boolean removePiece(int i) {
-        return pieces.remove(i) != null;
-    }
-
     public boolean removePiece(Piece p) {
-        return pieces.remove(p);
+        boolean ret = pieces.remove(p);
+        clearCache();
+        return ret;
     }
 
     public Piece checkSquare(Square square) {
@@ -96,37 +102,53 @@ public class Board {
     }
 
     public boolean inStaleMate(int team) {
+        if (cachedStalemate.hasValue(team)) return cachedStalemate.get(team);
+
+        boolean ret = true;
         if (inCheck(team)) {
-            return false;
-        }
-        Move[] moves = getMoves(team);
-        for (Move move : moves) {
-            Board board = fork();
-            board.doMove(move);
-            if (!board.inCheck(team)) {
-                return false;
+            ret = false;
+        } else {
+            Move[] moves = getMoves(team);
+            for (Move move : moves) {
+                Board board = fork();
+                board.doMove(move);
+                if (!board.inCheck(team)) {
+                    ret = false;
+                    break;
+                }
             }
         }
-        return true;
+
+        return cachedStalemate.set(team, ret);
     }
 
     public boolean inCheckMate(int team) throws InvalidMoveException {
-        if (!inCheck(team))
-            return false;
-        Move[] moves = getMoves(team);
-        for (Move move : moves) {
-            Board board = fork();
-            board.doMove(move);
-            if (!board.inCheck(team)) return false;
+        if (cachedCheckmate.hasValue(team)) return cachedCheckmate.get(team);
+
+        boolean ret = true;
+        if (!inCheck(team)) {
+            ret = false;
+        } else {
+            Move[] moves = getMoves(team);
+            for (Move move : moves) {
+                Board board = fork();
+                board.doMove(move);
+                if (!board.inCheck(team)) {
+                    ret = false;
+                    break;
+                }
+            }
         }
-        return true;
+        return cachedCheckmate.set(team, ret);
     }
 
     public King getKing(int team) {
-        return (King) pieces.stream()
+        if (cachedKing.hasValue(team)) return cachedKing.get(team);
+        King king = (King) pieces.stream()
                 .filter(p -> p instanceof King && p.getTeam() == team)
                 .findFirst()
                 .orElseThrow(() -> new InvalidMoveException("King not present on board!"));
+        return cachedKing.set(team, king);
     }
 
     public boolean clearCastlePath(Square start, Square end, int team) {
@@ -143,19 +165,24 @@ public class Board {
     }
 
     public boolean inCheck(int team) {
-        return inCheck(getKing(team));
+        return cachedCheck.hasValue(team) ? cachedCheck.get(team) : inCheck(getKing(team));
     }
 
     public boolean inCheck(King k) throws InvalidMoveException {
-        if (k == null)
-            throw new InvalidMoveException("Invalid king!");
-        Move[] moves = getMoves(-k.getTeam(), false);
+        if (k == null) throw new InvalidMoveException("Invalid king!");
+
+        int team = k.getTeam();
+        if (cachedCheck.hasValue(team)) return cachedCheck.get(team);
+
+        Move[] moves = getMoves(-team, false);
+        boolean ret = false;
         for (Move m : moves) {
             if (m.getEnd().equals(k.getSquare())) {
-                return true;
+                ret = true;
+                break;
             }
         }
-        return false;
+        return cachedCheck.set(team, ret);
     }
 
     public double getMaterialScore(int team) {
@@ -191,6 +218,8 @@ public class Board {
             }
             p.move(m.getEnd());
         }
+
+        clearCache();
     }
 
     /*
@@ -215,6 +244,15 @@ public class Board {
     public void restoreState(List<Piece> state) {
         pieces.clear();
         pieces.addAll(state.stream().map(Piece::copy).collect(Collectors.toList()));
+        clearCache();
+    }
+
+    private void clearCache() {
+        cachedCheck.clear();
+        cachedCheckmate.clear();
+        cachedStalemate.clear();
+        cachedMoves.clear();
+        cachedKing.clear();
     }
 
     private void pawns() {
