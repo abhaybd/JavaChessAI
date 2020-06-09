@@ -1,5 +1,6 @@
 package com.coolioasjulio.jchess;
 
+import com.coolioasjulio.chess.players.PrunedMinimaxComputerPlayer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,7 +37,7 @@ public class App extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private enum GameModeOptions {
-        HumanVsHuman, HumanVsBotLvl1, HumanVsBotLvl2
+        HumanVsHuman, HumanVsBotLvl1, HumanVsBotLvl2, HumanVsBotLvl2V2
     }
 
     private static final int TILE_SIZE = 100;
@@ -251,6 +252,10 @@ public class App extends JFrame {
 
             case HumanVsBotLvl2:
                 player = new MinimaxComputerPlayer(game.getBoard());
+                break;
+
+            case HumanVsBotLvl2V2:
+                player = new PrunedMinimaxComputerPlayer(game.getBoard());
                 break;
 
             default:
