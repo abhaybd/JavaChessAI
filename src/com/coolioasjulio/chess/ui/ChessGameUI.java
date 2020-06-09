@@ -59,7 +59,7 @@ public class ChessGameUI extends ChessGame {
     }
 
     @Override
-    public void draw(List<Piece> toDraw) {
+    protected void draw(List<Piece> toDraw) {
         this.toDraw = toDraw;
         panel.repaint();
     }

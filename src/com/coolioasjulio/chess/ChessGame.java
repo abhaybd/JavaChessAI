@@ -10,6 +10,7 @@ import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.chess.players.Player;
 
 public abstract class ChessGame {
+    private static final Logger logger = Logger.getLogger("ChessGame");
 
     protected Board board;
     protected ArrayList<Move> moves;
@@ -79,8 +80,6 @@ public abstract class ChessGame {
                 Player toMove = team == white.getTeam() ? white : black;
                 Move m = toMove.getMove();
 
-                board.restoreState(beforeState);
-
                 board.doMove(m);
                 if (board.inCheck(team) || board.inCheckMate(team)) {
                     throw new InvalidMoveException("You are in check or checkmate!");
@@ -90,25 +89,25 @@ public abstract class ChessGame {
 
                 team *= -1;
                 if (board.inCheckMate(team)) {
-                    Logger.getLogger("ChessGame").info("Checkmate!");
-                    Logger.getLogger("ChessGame").info(team == Piece.WHITE ? "0-1" : "1-0");
+                    logger.info("Checkmate!");
+                    logger.info(team == Piece.WHITE ? "0-1" : "1-0");
                     winner = -team;
                     break;
                 } else if (board.inStaleMate(team)) {
-                    Logger.getLogger("ChessGame").info("Stalemate!");
-                    Logger.getLogger("ChessGame").info("1/2-1/2");
+                    logger.info("Stalemate!");
+                    logger.info("1/2-1/2");
                     winner = 0;
                     break;
                 } else if (board.inCheck(team)) {
                     check = true;
-                    Logger.getLogger("ChessGame").info("Check!");
+                    logger.info("Check!");
                 }
             } catch (InvalidMoveException e) {
                 if (e.getMessage() == null || e.getMessage().equals("")) {
-                    Logger.getLogger("ChessGame").warning("Invalid! Try again!");
+                    logger.warning("Invalid! Try again!");
                     e.printStackTrace();
                 } else {
-                    Logger.getLogger("ChessGame").warning("Invalid! Try again! - " + e.getMessage());
+                    logger.warning("Invalid! Try again! - " + e.getMessage());
                 }
                 board.restoreState(beforeState);
             } catch (Exception e) {
@@ -144,7 +143,7 @@ public abstract class ChessGame {
         draw(board.getPieces());
     }
 
-    public abstract void draw(List<Piece> toDraw);
+    protected abstract void draw(List<Piece> toDraw);
 
     public void onTurnStarted(int team) {
         // Empty
