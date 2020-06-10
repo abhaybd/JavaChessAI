@@ -77,6 +77,6 @@ public class Square {
 
     @Override
     public String toString() {
-        return String.valueOf(x + 'a') + y;
+        return String.valueOf((char)(x + 'a')) + y;
     }
 }
