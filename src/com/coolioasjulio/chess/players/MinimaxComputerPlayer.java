@@ -155,7 +155,7 @@ public class MinimaxComputerPlayer extends Player {
                     }
                     List<MoveCandidate> possibleMoves = future.join();
                     double score = possibleMoves.isEmpty() ?
-                            heuristic.getScore(future.board, team) :
+                            heuristic.getScore(future.board, playerTeam) :
                             possibleMoves.get(0).getScore();
                     candidates.add(new MoveCandidate(future.move, score));
                 }

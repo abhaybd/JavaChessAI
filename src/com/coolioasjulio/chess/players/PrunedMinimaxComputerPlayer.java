@@ -66,7 +66,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 score = heuristic.getScore(b, team);
             } else {
                 MoveCandidate mc = minimax(b, depth-1, -team, alpha, beta);
-                score = mc == null ? 1000 : mc.getScore();
+                score = mc == null ? heuristic.getScore(b, playerTeam) : mc.getScore();
             }
             MoveCandidate candidate = new MoveCandidate(move, score);
 
