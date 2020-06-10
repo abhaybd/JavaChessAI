@@ -36,6 +36,7 @@ public class Move {
         this.end = end;
         this.type = Piece.getType(piece);
         this.capture = capture;
+        this.team = piece.getTeam();
     }
 
     public int getTeam() {

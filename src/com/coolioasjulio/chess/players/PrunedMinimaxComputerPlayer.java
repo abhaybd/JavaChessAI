@@ -7,13 +7,19 @@ import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.MaterialHeuristic;
 import com.coolioasjulio.configuration.ConfigurationMenu;
 import com.coolioasjulio.configuration.Setting;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class PrunedMinimaxComputerPlayer extends Player {
     private static final int DEFAULT_SEARCH_DEPTH = 4;
 
     private int depth = DEFAULT_SEARCH_DEPTH;
     private Heuristic heuristic = new MaterialHeuristic(0);
+    private int cutoffs = 0;
 
     public PrunedMinimaxComputerPlayer(Board board) {
         super(board);
@@ -40,7 +46,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 return true;
             }
             int i = Integer.parseInt(text);
-            return i % 2 == 0;
+            return i >= 0;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -48,27 +54,32 @@ public class PrunedMinimaxComputerPlayer extends Player {
 
     @Override
     public Move getMove() {
+        cutoffs = 0;
         MoveCandidate move = minimax(board, depth, team, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        Logger.getLogger("PrunedMinimaxComputerPlayer").info(move::toString);
+        Logger.getLogger("PrunedMinimaxComputerPlayer").info(move.toString());
+        Logger.getLogger("PrunedMinimaxComputerPlayer").info("Cutoffs: " + cutoffs);
         return move.getMove();
     }
 
     public MoveCandidate minimax(Board board, int depth, int team, double alpha, double beta) {
-        Move[] moves = board.getMoves(team);
         int playerTeam = this.team;
+        Move[] allMoves = board.getMoves(team);
+        Comparator<MinimaxTuple> c = Comparator.comparing(MinimaxTuple::getScore);
+        if (team == playerTeam) c = c.reversed();
+        List<MinimaxTuple> tuples = Arrays.stream(allMoves)
+                .map(m -> MinimaxTuple.create(board, m, heuristic, playerTeam))
+                .filter(Objects::nonNull)
+                .sorted(c)
+                .collect(Collectors.toList());
         MoveCandidate bestMove = null;
-        for (Move move : moves) {
-            Board b = board.fork();
-            b.doMove(move);
-            if (b.inCheck(team)) continue;
-            double score;
-            if (depth == 0) {
-                score = heuristic.getScore(b, team);
-            } else {
+        for (MinimaxTuple tuple : tuples) {
+            Board b = tuple.board;
+            double score = tuple.getScore();
+            if (depth != 0) {
                 MoveCandidate mc = minimax(b, depth-1, -team, alpha, beta);
-                score = mc == null ? heuristic.getScore(b, playerTeam) : mc.getScore();
+                if (mc != null) score = mc.getScore();
             }
-            MoveCandidate candidate = new MoveCandidate(move, score);
+            MoveCandidate candidate = new MoveCandidate(tuple.move, score);
 
             if (team == playerTeam) alpha = Math.max(score, alpha);
             else beta = Math.min(score, beta);
@@ -80,8 +91,33 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 bestMove = candidate;
             }
 
-            if (beta <= alpha) break;
+            if (beta <= alpha) {
+                cutoffs++;
+                break;
+            }
         }
         return bestMove;
+    }
+
+    public static class MinimaxTuple {
+        public static MinimaxTuple create(Board board, Move move, Heuristic heuristic, int playerTeam) {
+            Board b = board.fork();
+            b.doMove(move);
+            if (b.inCheck(move.getTeam())) return null;
+            double score = heuristic.getScore(b, playerTeam);
+            MinimaxTuple tuple = new MinimaxTuple();
+            tuple.board = b;
+            tuple.move = move;
+            tuple.score = score;
+            return tuple;
+        }
+
+        private Board board;
+        private Move move;
+        private double score;
+
+        public double getScore() {
+            return score;
+        }
     }
 }

@@ -244,6 +244,7 @@ public class Board {
         clearCache();
     }
 
+    @Override
     public int hashCode() {
         return pieces.hashCode();
     }
