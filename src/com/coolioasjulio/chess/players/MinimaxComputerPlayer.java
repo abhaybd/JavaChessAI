@@ -1,5 +1,6 @@
 package com.coolioasjulio.chess.players;
 
+import com.coolioasjulio.chess.selectors.SoftplusSelector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +20,6 @@ import com.coolioasjulio.chess.heuristics.MaterialHeuristic;
 import com.coolioasjulio.chess.selectors.GreedySelector;
 import com.coolioasjulio.chess.selectors.RandomSelector;
 import com.coolioasjulio.chess.selectors.Selector;
-import com.coolioasjulio.chess.selectors.SoftmaxSelector;
 import com.coolioasjulio.configuration.ConfigurationMenu;
 import com.coolioasjulio.configuration.Setting;
 import com.coolioasjulio.configuration.Setting.InputType;
@@ -30,7 +30,7 @@ public class MinimaxComputerPlayer extends Player {
     private static final Logger logger = Logger.getLogger("MinimaxComputerPlayer");
 
     private static List<Selector> selectors = new ArrayList<>(
-            Arrays.asList(new SoftmaxSelector(), new RandomSelector(), new GreedySelector()));
+            Arrays.asList(new SoftplusSelector(), new RandomSelector(), new GreedySelector()));
 
     public static void addSelectorChoice(Selector selector) {
         selectors.add(selector);
@@ -49,7 +49,7 @@ public class MinimaxComputerPlayer extends Player {
         super(board);
         this.board = board;
         this.depth = DEFAULT_SEARCH_DEPTH;
-        setHeuristic(new MaterialHeuristic(0.0)).setKeepMoves(DEFAULT_KEEP_MOVES).setSelector(new SoftmaxSelector());
+        setHeuristic(new MaterialHeuristic(0.0)).setKeepMoves(DEFAULT_KEEP_MOVES).setSelector(new SoftplusSelector());
         ConfigurationMenu.addConfigMenu(createConfigurationMenu());
     }
 
@@ -99,7 +99,7 @@ public class MinimaxComputerPlayer extends Player {
                 return true;
             }
             int i = Integer.parseInt(text);
-            return i % 2 == 0;
+            return i >= 0;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -110,6 +110,7 @@ public class MinimaxComputerPlayer extends Player {
         List<MoveCandidate> bestMoves = ForkJoinPool.commonPool().invoke(new MinimaxRecursiveTask(board, depth, team));
 
         int toKeep = Math.min(keepMoves, bestMoves.size());
+        logger.info(bestMoves.toString());
         List<MoveCandidate> kept = bestMoves.subList(0, toKeep);
         logger.info(kept.toString());
 
@@ -191,7 +192,7 @@ public class MinimaxComputerPlayer extends Player {
                     continue;
                 }
 
-                candidates.add(new MoveCandidate(m, heuristic.getScore(boardCopy, team)));
+                candidates.add(new MoveCandidate(m, heuristic.getScore(boardCopy, playerTeam)));
             }
 
             return ordered(candidates);

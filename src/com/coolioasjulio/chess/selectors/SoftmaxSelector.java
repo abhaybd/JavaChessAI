@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public class SoftmaxSelector implements Selector {
     @Override
     public <T> T select(List<T> toSelect, List<Double> scores) {
-        if (toSelect.size() != scores.size() || toSelect.size() == 0 || scores.size() == 0) {
+        if (toSelect.size() != scores.size() || toSelect.size() == 0) {
             throw new IllegalArgumentException("Must have equal sizes and nonzero!");
         }
 
