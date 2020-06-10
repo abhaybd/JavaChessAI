@@ -5,41 +5,60 @@ import java.util.Objects;
 import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 
 public class Square {
-    private String square;
-    private int x, y;
-    private int[] coords;
-
+    /**
+     * Checks if the supplied coordinates point to a valid square on a chessboard.
+     *
+     * @param x The x coordinate in range [0,7]
+     * @param y The y coordinate in range [1,8]
+     * @return True if the square is valid, false otherwise.
+     */
     public static boolean validSquare(int x, int y) {
-        return between(x, 0, 7) && between(y, 1, 8);
+        return inRange(x, 0, 7) && inRange(y, 1, 8);
     }
 
-    private static boolean between(int toCheck, int bottom, int upper) {
-        return bottom <= toCheck && toCheck <= upper;
+    /**
+     * Return a Square object representing the given square on a chessboard.
+     *
+     * @param square The string representation of the square.
+     * @return A Square object representing that square.
+     * @throws InvalidSquareException If the notation for the square is incorrect.
+     */
+    public static Square parseString(String square) throws InvalidSquareException {
+        if (square.length() != 2 || !Character.isLowerCase(square.charAt(0)) || !Character.isDigit(square.charAt(1))) {
+            throw new InvalidSquareException("Invalid notation for square: " + square);
+        }
+        int x = square.charAt(0) - 'a';
+        int y = square.charAt(1) - '0';
+        return new Square(x, y);
     }
+
+    private static boolean inRange(int num, int low, int high) {
+        return low <= num && num <= high;
+    }
+
+    private final int x, y;
 
     /**
      * Create a square object for the given coordinates
      *
      * @param x In range [0,7]
      * @param y In range [1,8]. Yeah, ik I hate myself.
-     * @throws InvalidSquareException
+     * @throws InvalidSquareException If the coordinates are invalid.
      */
     public Square(int x, int y) throws InvalidSquareException {
         if (!validSquare(x, y)) {
             throw new InvalidSquareException();
         }
-        char alph = (char) (x + 'a');
-        this.square = String.valueOf(alph) + (y);
-        this.coords = new int[] { x, y };
         this.x = x;
         this.y = y;
     }
 
-    public static Square parseString(String square) throws InvalidSquareException {
-        char alph = square.charAt(0);
-        int y = Integer.parseInt(String.valueOf(square.charAt(1)));
-        int x = alph - 'a';
-        return new Square(x, y);
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     @Override
@@ -58,22 +77,6 @@ public class Square {
 
     @Override
     public String toString() {
-        return square;
-    }
-
-    public int[] getCoords() {
-        return coords;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public String getSquare() {
-        return square;
+        return String.valueOf(x + 'a') + y;
     }
 }

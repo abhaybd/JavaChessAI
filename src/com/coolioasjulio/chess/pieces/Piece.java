@@ -157,7 +157,7 @@ public abstract class Piece {
     }
 
     public String toString() {
-        return Piece.getType(this) + square.getSquare();
+        return Piece.getType(this) + square.toString();
     }
 
     @Override
