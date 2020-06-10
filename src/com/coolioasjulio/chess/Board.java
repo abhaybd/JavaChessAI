@@ -81,8 +81,7 @@ public class Board {
     public boolean canKingSideCastle(King k) {
         if (k.hasMoved() || inCheck(k))
             return false;
-        Board board = k.getBoard();
-        Piece p = board.checkSquare(new Square(7, k.getSquare().getY()));
+        Piece p = checkSquare(new Square(7, k.getSquare().getY()));
         if (!(p instanceof Rook) || p.getTeam() != k.getTeam())
             return false;
         Rook r = (Rook) p;
@@ -92,8 +91,7 @@ public class Board {
     public boolean canQueenSideCastle(King k) {
         if (k.hasMoved() || inCheck(k))
             return false;
-        Board board = k.getBoard();
-        Piece p = board.checkSquare(new Square(0, k.getSquare().getY()));
+        Piece p = checkSquare(new Square(0, k.getSquare().getY()));
         if (!(p instanceof Rook) || p.getTeam() != k.getTeam())
             return false;
         Rook r = (Rook) p;
@@ -244,6 +242,21 @@ public class Board {
         pieces.clear();
         pieces.addAll(state.stream().map(Piece::copy).collect(Collectors.toList()));
         clearCache();
+    }
+
+    public int hashCode() {
+        return pieces.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Board)) return false;
+        Board b = (Board) o;
+        if (b.pieces.size() != pieces.size()) return false;
+        for (int i = 0; i < pieces.size(); i++) {
+            if (!b.pieces.get(i).equals(pieces.get(i))) return false;
+        }
+        return true;
     }
 
     private void clearCache() {

@@ -166,12 +166,11 @@ public abstract class Piece {
             return false;
         }
         Piece p = (Piece) o;
-        return p.square.equals(this.square) && p.getType().equals(this.getType()) && p.team == this.team
-                && p.board == this.board;
+        return p.square.equals(this.square) && p.getType().equals(getType()) && p.team == this.team;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(team, square, board);
+        return Objects.hash(team, square, getType());
     }
 }
