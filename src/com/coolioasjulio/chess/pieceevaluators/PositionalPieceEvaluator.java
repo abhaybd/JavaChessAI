@@ -182,9 +182,7 @@ public class PositionalPieceEvaluator implements PieceEvaluator {
     private static double[][] flipTable(double[][] table) {
         double[][] flipped = new double[table.length][table[0].length];
         for (int row = 0; row < table.length; row++) {
-            for (int col = 0; col < table[row].length; col++) {
-                flipped[row][col] = table[table.length - 1 - row][col];
-            }
+            System.arraycopy(table[table.length - 1 - row], 0, flipped[row], 0, table[row].length);
         }
         return flipped;
     }

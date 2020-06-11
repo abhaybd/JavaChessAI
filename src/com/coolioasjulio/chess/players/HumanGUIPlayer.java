@@ -17,7 +17,7 @@ public class HumanGUIPlayer extends Player implements MouseListener {
     private JComponent component;
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
-    private boolean clicked = false;
+    private volatile boolean clicked = false;
 
     public HumanGUIPlayer(ChessGame chess, JComponent component) {
         super(chess.getBoard());
