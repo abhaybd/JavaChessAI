@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
@@ -25,12 +26,18 @@ public class Board {
     private TeamValue<King> cachedKing = new TeamValue<>();
     private TeamValue<Move[]> cachedMoves = new TeamValue<>();
     private Map<Square, Piece> boardMap = new HashMap<>();
+    private List<Move> moveHistory = new ArrayList<>();
+    private Map<PositionFingerprint, Integer> positionCount = new HashMap<>();
 
     /**
      * Create a new empty board.
      */
     public Board() {
         pieces = new ArrayList<>();
+    }
+
+    public boolean isDrawByThreeFoldRepetition() {
+        return positionCount.getOrDefault(new PositionFingerprint(this), 0) >= 3;
     }
 
     /**
@@ -279,6 +286,9 @@ public class Board {
             p.move(move.getEnd());
         }
 
+        moveHistory.add(move);
+        PositionFingerprint fingerprint = new PositionFingerprint(this);
+        positionCount.put(fingerprint, 1 + positionCount.getOrDefault(fingerprint, 0));
         clearCache();
     }
 
@@ -289,8 +299,7 @@ public class Board {
      */
     public Board fork() {
         Board copy = new Board();
-        copy.pieces = saveState();
-        copy.pieces.forEach(p -> p.setBoard(copy));
+        copy.restoreState(saveState());
         return copy;
     }
 
@@ -299,8 +308,9 @@ public class Board {
      *
      * @return The frozen state of the current state of the board.
      */
-    public List<Piece> saveState() {
-        return pieces.stream().map(Piece::copy).collect(Collectors.toList());
+    public BoardState saveState() {
+        List<Piece> p = pieces.stream().map(Piece::copy).collect(Collectors.toList());
+        return new BoardState(new ArrayList<>(moveHistory), p, new HashMap<>(positionCount));
     }
 
     /**
@@ -308,9 +318,14 @@ public class Board {
      *
      * @param state The sparse piece representation to revert to.
      */
-    public void restoreState(List<Piece> state) {
+    public void restoreState(BoardState state) {
         pieces.clear();
-        pieces.addAll(state.stream().map(Piece::copy).collect(Collectors.toList()));
+        pieces.addAll(state.pieces);
+        pieces.forEach(p -> p.setBoard(this));
+        moveHistory.clear();
+        moveHistory.addAll(state.moveHistory);
+        positionCount.clear();
+        positionCount.putAll(state.positionCount);
         clearCache();
     }
 
@@ -421,5 +436,73 @@ public class Board {
         bishops();
         queens();
         kings();
+    }
+
+    public static class BoardState {
+        public final List<Move> moveHistory;
+        public final Map<PositionFingerprint,Integer> positionCount;
+        public final List<Piece> pieces;
+
+        public BoardState(List<Move> moveHistory, List<Piece> pieces, Map<PositionFingerprint, Integer> positionCount) {
+            this.moveHistory = moveHistory;
+            this.pieces = pieces;
+            this.positionCount = positionCount;
+        }
+    }
+
+    public static class PositionFingerprint {
+        private int teamToMove;
+        private TeamValue<long[]> bitboards;
+
+        public PositionFingerprint(Board board) {
+            if (board.moveHistory.size() == 0) {
+                teamToMove = Piece.WHITE;
+            } else {
+                teamToMove = -board.moveHistory.get(board.moveHistory.size() - 1).getTeam();
+            }
+            bitboards = new TeamValue<>(new long[6], new long[6]);
+            for (Piece piece : board.getPieces()) {
+                int i = pieceIndex(piece.getType());
+                Square square = piece.getSquare();
+                int pos = square.getX() + (square.getY() - 1) * 8;
+                bitboards.get(piece.getTeam())[i] |= 1L << pos;
+            }
+        }
+
+        private int pieceIndex(String type) {
+            switch (type) {
+                case "":
+                    return 0;
+                case "N":
+                    return 1;
+                case "B":
+                    return 2;
+                case "R":
+                    return 3;
+                case "Q":
+                    return 4;
+                case "K":
+                    return 5;
+                default:
+                    return -1;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(teamToMove, Arrays.hashCode(bitboards.get(Piece.WHITE)), Arrays.hashCode(bitboards.get(Piece.BLACK)));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PositionFingerprint other = (PositionFingerprint) o;
+            if (teamToMove != other.teamToMove) return false;
+            for (int team : new int[]{Piece.WHITE,Piece.BLACK}) {
+                if (!Arrays.equals(bitboards.get(team), other.bitboards.get(team))) return false;
+            }
+            return true;
+        }
     }
 }

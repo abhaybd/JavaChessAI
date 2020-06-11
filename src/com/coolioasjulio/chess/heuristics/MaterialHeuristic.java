@@ -22,10 +22,22 @@ public class MaterialHeuristic implements Heuristic {
         double material = pieceEvaluator.getMaterialValue(board, team);
         double oppMaterial = pieceEvaluator.getMaterialValue(board, -team);
         double checkmateModifier = 0;
-        if (board.inCheckMate(-team))
+        if (board.inCheckMate(-team)) {
             checkmateModifier = 1000;
-        else if (board.inCheckMate(team))
+        }
+        else if (board.inCheckMate(team)) {
             checkmateModifier = -1000;
-        return space + material - oppMaterial + checkmateModifier;
+        }
+        double score = space + material - oppMaterial + checkmateModifier;
+        boolean isDraw = board.isDrawByThreeFoldRepetition() || board.inStaleMate(team) || board.inStaleMate(-team);
+        if (isDraw) {
+            if (score <= -4) {
+                score = 100;
+            } else if (score >= 4) {
+                score = -100;
+            }
+        }
+
+        return score;
     }
 }

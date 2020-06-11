@@ -69,11 +69,11 @@ public abstract class ChessGame {
         int winner = 0;
 
         while (!Thread.interrupted()) {
-            List<Piece> beforeState = board.saveState();
+            Board.BoardState beforeState = board.saveState();
 
             onTurnStarted(team);
 
-            draw(beforeState);
+            draw(beforeState.pieces);
 
             boolean check = false;
             try {
