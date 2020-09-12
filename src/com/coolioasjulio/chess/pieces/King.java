@@ -23,8 +23,6 @@ public class King extends Piece {
 
     @Override
     public Move[] getMoves() {
-        Square square = super.getSquare();
-        int team = super.getTeam();
         ArrayList<Move> moves = new ArrayList<>();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -34,7 +32,7 @@ public class King extends Piece {
                 Piece p = board.checkSquare(s);
                 boolean capture = (p != null && p.team != team);
                 if (p == null || capture) {
-                    Move move = new Move(this, square, s, capture);
+                    Move move = new Move(this, s, capture);
                     moves.add(move);
                 }
             }

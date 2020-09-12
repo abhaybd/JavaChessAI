@@ -22,15 +22,13 @@ public class Queen extends Piece {
 
     @Override
     public Move[] getMoves() {
-        Square square = super.getSquare();
-        int team = super.getTeam();
         Bishop b = new Bishop(square, team, board);
         ArrayList<Move> moves = new ArrayList<>(Arrays.asList(b.getMoves()));
         Rook r = new Rook(square, team, board);
         moves.addAll(Arrays.asList(r.getMoves()));
         for (int i = 0; i < moves.size(); i++) {
             Move m = moves.get(i);
-            moves.set(i, new Move(this, m.getStart(), m.getEnd(), m.doesCapture()));
+            moves.set(i, new Move(this, m.getEnd(), m.doesCapture()));
         }
         return moves.toArray(new Move[0]);
     }

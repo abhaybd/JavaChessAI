@@ -18,24 +18,22 @@ public class Move {
      * Create a Move object representing a move that does not capture.
      *
      * @param piece The piece that is making the move.
-     * @param start The starting square of the piece.
      * @param end   The square the piece is moving to.
      */
-    public Move(Piece piece, Square start, Square end) {
-        this(piece, start, end, false);
+    public Move(Piece piece, Square end) {
+        this(piece, end, false);
     }
 
     /**
      * Create a Move object representing a regular move that may or may not capture a piece.
      *
      * @param piece   The piece that is making the move.
-     * @param start   The starting square of the piece.
      * @param end     The square the piece is moving to.
      * @param capture If true, this move is a capture. Standard chess rules apply to captures.
      */
-    public Move(Piece piece, Square start, Square end, boolean capture) {
+    public Move(Piece piece, Square end, boolean capture) {
         this.team = piece.getTeam();
-        this.start = start;
+        this.start = piece.getSquare();
         this.end = end;
         this.type = Piece.getType(piece);
         this.capture = capture;

@@ -22,8 +22,6 @@ public class Knight extends Piece {
     }
 
     public Move[] getMoves() {
-        int team = super.getTeam();
-        Square square = super.getSquare();
         ArrayList<Move> moves = new ArrayList<>();
         for (int i = -2; i <= 2; i++) {
             if (i == 0 || i + square.getX() < 0 || i + square.getX() > 7) {
@@ -35,7 +33,7 @@ public class Knight extends Piece {
                     Piece p = board.checkSquare(toCheck);
                     if (p == null || p.team != team) {
                         boolean capture = p != null;
-                        moves.add(new Move(this, square, toCheck, capture));
+                        moves.add(new Move(this, toCheck, capture));
                     }
                 }
             }

@@ -22,8 +22,6 @@ public class Bishop extends Piece {
     }
 
     public Move[] getMoves() {
-        Square square = super.getSquare();
-        int team = super.getTeam();
         ArrayList<Move> moves = new ArrayList<>();
         for (int x = -1; x <= 1; x += 2) {
             for (int y = -1; y <= 1; y += 2) {
@@ -32,13 +30,13 @@ public class Bishop extends Piece {
                 Piece p = board.checkSquare(new Square(x + square.getX(), y + square.getY()));
                 while (p == null) {
                     moves.add(
-                            new Move(this, square, new Square(x * mult + square.getX(), y * mult + square.getY())));
+                            new Move(this, new Square(x * mult + square.getX(), y * mult + square.getY())));
                     mult++;
                     if (!Square.validSquare(x * mult + square.getX(), y * mult + square.getY())) break;
                     p = board.checkSquare(new Square(x * mult + square.getX(), y * mult + square.getY()));
                 }
                 if (p != null && p.team != team) {
-                    moves.add(new Move(this, square, p.getSquare(), true));
+                    moves.add(new Move(this, p.getSquare(), true));
                 }
             }
         }

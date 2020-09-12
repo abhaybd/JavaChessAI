@@ -55,7 +55,7 @@ public class HumanConsolePlayer extends Player {
             throw new InvalidMoveException();
 
         Move[] possibleMoves = p.getMoves();
-        Move move = new Move(p, start, end, action == 'x');
+        Move move = new Move(p, end, action == 'x');
 
         if (hasMove(possibleMoves, move)) {
             board.doMove(move);

@@ -7,7 +7,7 @@ import com.coolioasjulio.chess.pieces.Rook;
 
 public class KingSideCastle extends Move {
     public KingSideCastle(King king) {
-        super(king, new Square(4, king.getTeam() == Piece.WHITE ? 1 : 8), new Square(6, king.getTeam() == Piece.WHITE ? 1 : 8));
+        super(king, new Square(6, king.getTeam() == Piece.WHITE ? 1 : 8));
     }
 
     @Override

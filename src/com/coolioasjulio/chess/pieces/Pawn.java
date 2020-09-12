@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.KingSideCastle;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Square;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
@@ -29,16 +28,15 @@ public class Pawn extends Piece {
 
     @Override
     public Move[] getMoves() {
-        int team = super.getTeam();
         int x = square.getX();
         int y = square.getY();
         List<Move> moves = new ArrayList<>();
         Square inFront = new Square(x, y + team);
         if (board.checkSquare(inFront) == null) {
             if (y + team < 8) {
-                moves.add(new Move(this, square, inFront));
+                moves.add(new Move(this, inFront));
                 if (!moved && board.checkSquare(new Square(x, y + 2 * team)) == null) {
-                    moves.add(new Move(this, square, new Square(x, y + 2 * team)));
+                    moves.add(new Move(this, new Square(x, y + 2 * team)));
                 }
             } else {
                 // deal with promotion
@@ -53,13 +51,13 @@ public class Pawn extends Piece {
             Square end = new Square(x - 1, y + team);
             Piece p = board.checkSquare(end);
             if (p != null && p.team != team)
-                moves.add(new Move(this, this.square, end, true));
+                moves.add(new Move(this, end, true));
         }
         if (between(x + 1, 0, 7)) {
             Square end = new Square(x + 1, y + team);
             Piece p = board.checkSquare(end);
             if (p != null && p.team != team)
-                moves.add(new Move(this, this.square, end, true));
+                moves.add(new Move(this, end, true));
         }
         return moves.toArray(new Move[0]);
     }
@@ -78,7 +76,7 @@ public class Pawn extends Piece {
         private final String promotion;
 
         public Promotion(Pawn pawn, Square end, String promotion) {
-            super(pawn, pawn.getSquare(), end);
+            super(pawn, end);
             this.promotion = promotion;
         }
 

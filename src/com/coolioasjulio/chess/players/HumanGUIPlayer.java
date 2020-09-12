@@ -65,7 +65,7 @@ public class HumanGUIPlayer extends Player implements MouseListener {
             } else if (toSquare.getX() == 6 && board.canKingSideCastle((King) piece)) {
                 move = new KingSideCastle((King) piece);
             } else {
-                move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
+                move = new Move(piece, toSquare, board.checkSquare(toSquare) != null);
             }
         } else {
             Move[] moves = piece.getMoves();
