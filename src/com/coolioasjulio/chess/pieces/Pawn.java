@@ -7,33 +7,34 @@ import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Square;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
-import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 
 public class Pawn extends Piece {
-
-    public Pawn(String square, int team, Board board) throws InvalidSquareException {
-        super(square, team, board);
-    }
 
     public Pawn(Square square, int team, Board board) {
         super(square, team, board);
     }
 
     public void promote(String type) throws InvalidMoveException {
-        if (type.equals("Queen")) {
-            Queen q = new Queen(square, team, board);
-            board.getPieces().add(q);
-        } else if (type.equals("Rook")) {
-            Rook r = new Rook(square, team, board);
-            board.getPieces().add(r);
-        } else if (type.equals("Bishop")) {
-            Bishop b = new Bishop(square, team, board);
-            board.getPieces().add(b);
-        } else if (type.equals("Knight")) {
-            Knight n = new Knight(square, team, board);
-            board.getPieces().add(n);
-        } else
-            throw new InvalidMoveException("Unrecognized piece!");
+        switch (type) {
+            case "Queen":
+                Queen q = new Queen(square, team, board);
+                board.getPieces().add(q);
+                break;
+            case "Rook":
+                Rook r = new Rook(square, team, board);
+                board.getPieces().add(r);
+                break;
+            case "Bishop":
+                Bishop b = new Bishop(square, team, board);
+                board.getPieces().add(b);
+                break;
+            case "Knight":
+                Knight n = new Knight(square, team, board);
+                board.getPieces().add(n);
+                break;
+            default:
+                throw new InvalidMoveException("Unrecognized piece!");
+        }
         board.removePiece(this);
     }
 

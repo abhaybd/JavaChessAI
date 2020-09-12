@@ -130,11 +130,11 @@ public abstract class ChessGame {
             int moveNum = (i / 2) + 1;
             String whiteMove = moves.get(i).toString();
             if (i == moves.size() - 1) {
-                out.println(String.format("%02d. %2$6s 1-0", moveNum, whiteMove));
+                out.printf("%02d. %2$6s 1-0%n", moveNum, whiteMove);
             } else if (i == moves.size() - 2) {
-                out.println(String.format("%02d. %2$6s, %3$6s 0-1", moveNum, whiteMove, moves.get(i + 1).toString()));
+                out.printf("%02d. %2$6s, %3$6s 0-1%n", moveNum, whiteMove, moves.get(i + 1).toString());
             } else {
-                out.println(String.format("%02d. %2$6s, %3$6s", moveNum, whiteMove, moves.get(i + 1).toString()));
+                out.printf("%02d. %2$6s, %3$6s%n", moveNum, whiteMove, moves.get(i + 1).toString());
             }
         }
     }
