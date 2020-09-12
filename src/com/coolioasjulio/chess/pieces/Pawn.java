@@ -22,7 +22,7 @@ public class Pawn extends Piece {
         return Piece.VANILLA_PAWN_VALUE;
     }
 
-    private boolean between(int a, int min, int max) {
+    private boolean inRange(int a, int min, int max) {
         return min <= a && a <= max;
     }
 
@@ -31,29 +31,31 @@ public class Pawn extends Piece {
         int x = square.getX();
         int y = square.getY();
         List<Move> moves = new ArrayList<>();
-        Square inFront = new Square(x, y + team);
-        if (board.checkSquare(inFront) == null) {
-            if (y + team < 8) {
-                moves.add(new Move(this, inFront));
-                if (!moved && board.checkSquare(new Square(x, y + 2 * team)) == null) {
-                    moves.add(new Move(this, new Square(x, y + 2 * team)));
+        if (inRange(y, 2, 7)) {
+            Square inFront = new Square(x, y + team);
+            if (board.checkSquare(inFront) == null) {
+                if (inRange(inFront.getY(), 2, 7)) {
+                    moves.add(new Move(this, inFront));
+                    if (!moved && board.checkSquare(new Square(x, y + 2 * team)) == null) {
+                        moves.add(new Move(this, new Square(x, y + 2 * team)));
+                    }
+                } else {
+                    // deal with promotion
+                    moves.add(new Promotion(this, inFront, "Queen"));
+                    moves.add(new Promotion(this, inFront, "Rook"));
+                    moves.add(new Promotion(this, inFront, "Bishop"));
+                    moves.add(new Promotion(this, inFront, "Knight"));
                 }
-            } else {
-                // deal with promotion
-                moves.add(new Promotion(this, inFront, "Queen"));
-                moves.add(new Promotion(this, inFront, "Rook"));
-                moves.add(new Promotion(this, inFront, "Bishop"));
-                moves.add(new Promotion(this, inFront, "Knight"));
             }
         }
 
-        if (between(x - 1, 0, 7)) {
+        if (inRange(x - 1, 0, 7)) {
             Square end = new Square(x - 1, y + team);
             Piece p = board.checkSquare(end);
             if (p != null && p.team != team)
                 moves.add(new Move(this, end, true));
         }
-        if (between(x + 1, 0, 7)) {
+        if (inRange(x + 1, 0, 7)) {
             Square end = new Square(x + 1, y + team);
             Piece p = board.checkSquare(end);
             if (p != null && p.team != team)
