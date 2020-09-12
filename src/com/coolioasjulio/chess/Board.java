@@ -100,6 +100,46 @@ public class Board {
         return moves.toArray(new Move[0]);
     }
 
+    public String getFEN() {
+        StringBuilder sb = new StringBuilder();
+        for (int y = 8; y > 0; y--) {
+            int accum = 0;
+            for (int x = 0; x < 8; x++) {
+                Piece p = checkSquare(new Square(x, y));
+                if (p != null) {
+                    if (accum > 0) {
+                        sb.append(accum);
+                        accum = 0;
+                    }
+                    String type = p.getType();
+                    String symbol = type.length() == 0 ? "p" : type;
+                    sb.append(p.getTeam() == Piece.WHITE ? symbol.toUpperCase() : symbol.toLowerCase());
+                } else {
+                    accum++;
+                }
+            }
+            if (accum > 0) {
+                sb.append(accum);
+            }
+            if (y > 1) {
+                sb.append("/");
+            }
+        }
+
+        sb.append(" ");
+
+        if (moveHistory.isEmpty()) {
+            sb.append("w");
+        } else {
+            sb.append(moveHistory.get(moveHistory.size() - 1).team == Piece.WHITE ? "b" : "w");
+        }
+
+        sb.append(" - - 0 ");
+        sb.append((moveHistory.size() / 2) + 1);
+
+        return sb.toString();
+    }
+
     public void addPiece(Piece piece) {
         pieces.add(piece);
         clearCache();

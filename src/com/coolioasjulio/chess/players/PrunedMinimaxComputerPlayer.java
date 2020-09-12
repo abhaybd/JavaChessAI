@@ -68,6 +68,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
         Comparator<MinimaxTuple> c = Comparator.comparing(MinimaxTuple::getScore);
         if (team == playerTeam) c = c.reversed();
         List<MinimaxTuple> tuples = Arrays.stream(allMoves)
+                .parallel()
                 .map(m -> MinimaxTuple.create(board, m, heuristic, playerTeam))
                 .filter(Objects::nonNull)
                 .sorted(c)
