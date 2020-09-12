@@ -91,13 +91,18 @@ public class Board {
         if (castleMoves) {
             King k = getKing(team);
             if (canKingSideCastle(k)) {
-                moves.add(new Move(team, true));
+                moves.add(new KingSideCastle(k));
             }
             if (canQueenSideCastle(k)) {
-                moves.add(new Move(team, false));
+                moves.add(new QueenSideCastle(k));
             }
         }
         return moves.toArray(new Move[0]);
+    }
+
+    public void addPiece(Piece piece) {
+        pieces.add(piece);
+        clearCache();
     }
 
     /**
@@ -132,11 +137,11 @@ public class Board {
      * @return True if the king can make a legal kingside castle, false otherwise.
      */
     public boolean canKingSideCastle(King king) {
-        if (king.hasMoved() || inCheck(king)) return false;
+        if (king.hasMoved()) return false;
         Piece p = checkSquare(new Square(7, king.getSquare().getY()));
         if (!(p instanceof Rook) || p.getTeam() != king.getTeam()) return false;
         Rook r = (Rook) p;
-        return !r.hasMoved() && clearCastlePath(king.getSquare(), r.getSquare(), king.getTeam());
+        return !r.hasMoved() && !inCheck(king) && clearCastlePath(king.getSquare(), r.getSquare(), king.getTeam());
     }
 
     /**
@@ -146,11 +151,11 @@ public class Board {
      * @return True if the king can make a legal queenside castle, false otherwise.
      */
     public boolean canQueenSideCastle(King king) {
-        if (king.hasMoved() || inCheck(king)) return false;
+        if (king.hasMoved()) return false;
         Piece p = checkSquare(new Square(0, king.getSquare().getY()));
         if (!(p instanceof Rook) || p.getTeam() != king.getTeam()) return false;
         Rook r = (Rook) p;
-        return !r.hasMoved() && clearCastlePath(r.getSquare(), king.getSquare(), king.getTeam());
+        return !r.hasMoved() && !inCheck(king) && clearCastlePath(r.getSquare(), king.getSquare(), king.getTeam());
     }
 
     /**
@@ -238,10 +243,14 @@ public class Board {
      * @return True if this king is being attacked by any opponent piece on the board, false otherwise.
      */
     public boolean inCheck(King king) {
+        return inCheck(king, false);
+    }
+
+    public boolean inCheck(King king, boolean ignoreCache) {
         if (king == null) throw new IllegalArgumentException("King must be non-null!");
 
         int team = king.getTeam();
-        if (cachedCheck.hasValue(team)) return cachedCheck.get(team);
+        if (!ignoreCache && cachedCheck.hasValue(team)) return cachedCheck.get(team);
 
         Move[] moves = getMoves(-team, false);
         boolean ret = false;
@@ -251,7 +260,7 @@ public class Board {
                 break;
             }
         }
-        return cachedCheck.set(team, ret);
+        return ignoreCache ? ret : cachedCheck.set(team, ret);
     }
 
     /**
@@ -261,34 +270,8 @@ public class Board {
      * @throws InvalidMoveException If the move is invalid for any reason.
      */
     public void doMove(Move move) {
-        if (move.isCastle()) {
-            King k = getKing(move.getTeam());
-            if (move.isKingSideCastle() && canKingSideCastle(k)) {
-                Rook r = (Rook) checkSquare(new Square(7, k.getSquare().getY()));
-                k.move(new Square(6, k.getSquare().getY()));
-                r.move(new Square(5, r.getSquare().getY()));
-            } else if (move.isQueenSideCastle() && canQueenSideCastle(k)) {
-                Rook r = (Rook) checkSquare(new Square(0, k.getSquare().getY()));
-                k.move(new Square(2, k.getSquare().getY()));
-                r.move(new Square(3, r.getSquare().getY()));
-            } else {
-                throw new InvalidMoveException("Cannot castle!");
-            }
-        } else {
-            Piece p = this.checkSquare(move.getStart());
-            List<Square> endSquares = Arrays.stream(p.getMoves()).map(Move::getEnd)
-                    .collect(Collectors.toList());
-            if (!endSquares.contains(move.getEnd())) {
-                throw new InvalidMoveException("Invalid move or end square!");
-            }
-            if (move.doesCapture()) {
-                Piece toCapture = checkSquare(move.getEnd());
-                if (toCapture.getTeam() != p.getTeam()) {
-                    removePiece(toCapture);
-                }
-            }
-            p.move(move.getEnd());
-        }
+        // This is handled in the move class so special moves can override this behavior
+        move.doMove(this);
 
         moveHistory.add(move);
         PositionFingerprint fingerprint = new PositionFingerprint(this);
@@ -333,6 +316,15 @@ public class Board {
         clearCache();
     }
 
+    public void clearCache() {
+        cachedCheck.clear();
+        cachedCheckmate.clear();
+        cachedStalemate.clear();
+        cachedMoves.clear();
+        cachedKing.clear();
+        boardMap.clear();
+    }
+
     @Override
     public int hashCode() {
         return pieces.hashCode();
@@ -355,20 +347,11 @@ public class Board {
         for (int i = start.getX() + 1; i < end.getX(); i++) {
             Square check = new Square(i, start.getY());
             King k = new King(check, team, this);
-            if (checkSquare(check) != null || inCheck(k)) {
+            if (checkSquare(check) != null || inCheck(k, true)) {
                 return false;
             }
         }
         return true;
-    }
-
-    private void clearCache() {
-        cachedCheck.clear();
-        cachedCheckmate.clear();
-        cachedStalemate.clear();
-        cachedMoves.clear();
-        cachedKing.clear();
-        boardMap.clear();
     }
 
     private void pawns() {

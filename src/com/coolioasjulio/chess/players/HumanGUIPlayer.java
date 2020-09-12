@@ -1,8 +1,6 @@
 package com.coolioasjulio.chess.players;
 
-import com.coolioasjulio.chess.ChessGame;
-import com.coolioasjulio.chess.Move;
-import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.*;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.pieces.King;
 import com.coolioasjulio.chess.pieces.Piece;
@@ -59,18 +57,24 @@ public class HumanGUIPlayer extends Player implements MouseListener {
             throw new InvalidMoveException("Choose your own piece!");
         }
 
-        Move move;
+        Move move = null;
 
         if (piece instanceof King) {
             if (toSquare.getX() == 2 && board.canQueenSideCastle((King) piece)) {
-                move = new Move(team, false);
+                move = new QueenSideCastle((King) piece);
             } else if (toSquare.getX() == 6 && board.canKingSideCastle((King) piece)) {
-                move = new Move(team, true);
+                move = new KingSideCastle((King) piece);
             } else {
                 move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
             }
         } else {
-            move = new Move(piece, fromSquare, toSquare, board.checkSquare(toSquare) != null);
+            Move[] moves = piece.getMoves();
+            for (Move m : moves) {
+                if (m.getStart().equals(fromSquare) && m.getEnd().equals(toSquare)) {
+                    move = m;
+                    break;
+                }
+            }
         }
 
         return move;

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class PrunedMinimaxComputerPlayer extends Player {
-    private static final int DEFAULT_SEARCH_DEPTH = 4;
+    private static final int DEFAULT_SEARCH_DEPTH = 2;
     private static final int MAX_SEARCH_DEPTH = 4;
 
     private int depth = DEFAULT_SEARCH_DEPTH;

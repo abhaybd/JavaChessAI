@@ -36,6 +36,8 @@ public class Queen extends Piece {
     }
 
     public Queen copy() {
-        return new Queen(this.square, this.team, this.board);
+        Queen queen = new Queen(this.square, this.team, this.board);
+        queen.moved = moved;
+        return queen;
     }
 }

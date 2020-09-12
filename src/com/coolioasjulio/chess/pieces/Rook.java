@@ -49,6 +49,8 @@ public class Rook extends Piece {
     }
 
     public Rook copy() {
-        return new Rook(this.square, this.team, this.board);
+        Rook rook = new Rook(this.square, this.team, this.board);
+        rook.moved = moved;
+        return rook;
     }
 }

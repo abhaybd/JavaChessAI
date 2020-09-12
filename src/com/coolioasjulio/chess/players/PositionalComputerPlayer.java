@@ -48,7 +48,7 @@ public class PositionalComputerPlayer extends Player {
 
     private int numDefenders(Move move) {
         Board board = this.board.fork();
-        board.removePiece(move.getPiece());
+        board.removePiece(board.checkSquare(move.getStart()));
         int defenders = 0;
         for (int i = 0; i < board.getPieces().size(); i++) {
             Piece p = board.getPieces().get(i);
@@ -65,11 +65,11 @@ public class PositionalComputerPlayer extends Player {
     }
 
     private boolean safeMove(Move move) throws InvalidMoveException {
-        Piece piece = move.getPiece();
+        Piece piece = board.checkSquare(move.getStart());
         if (piece instanceof Pawn)
             return true;
         if (move.doesCapture()) {
-            if (pieceEvaluator.getValue(board.checkSquare(move.getEnd())) >= pieceEvaluator.getValue(move.getPiece())) {
+            if (pieceEvaluator.getValue(board.checkSquare(move.getEnd())) >= pieceEvaluator.getValue(piece)) {
                 return true;
             }
         }
@@ -90,7 +90,7 @@ public class PositionalComputerPlayer extends Player {
                 Board board = this.board.fork();
                 double score = 0;
                 if (!safeMove(m)) {
-                    score -= pieceEvaluator.getValue(m.getPiece());
+                    score -= pieceEvaluator.getValue(board.checkSquare(m.getStart()));
                 }
                 board.doMove(m);
                 score += heuristic.getScore(board, team);

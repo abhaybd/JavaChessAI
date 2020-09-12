@@ -4,9 +4,7 @@ import java.io.InputStream;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import com.coolioasjulio.chess.Board;
-import com.coolioasjulio.chess.Move;
-import com.coolioasjulio.chess.Square;
+import com.coolioasjulio.chess.*;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.pieces.Piece;
 
@@ -32,9 +30,9 @@ public class HumanConsolePlayer extends Player {
         String type;
 
         if (response.equalsIgnoreCase("o-o")) {
-            return new Move(team, true);
+            return new KingSideCastle(board.getKing(team));
         } else if (response.equalsIgnoreCase("o-o-o")) {
-            return new Move(team, false);
+            return new QueenSideCastle(board.getKing(team));
         } else if (response.length() == 5) {
             start = Square.parseString(response.substring(0, 2));
             end = Square.parseString(response.substring(3));

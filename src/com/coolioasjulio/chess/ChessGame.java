@@ -80,6 +80,10 @@ public abstract class ChessGame {
                 Player toMove = team == white.getTeam() ? white : black;
                 Move m = toMove.getMove();
 
+                if (m == null) {
+                    throw new InvalidMoveException("Please select valid squares!");
+                }
+
                 board.doMove(m);
                 if (board.inCheck(team) || board.inCheckMate(team)) {
                     throw new InvalidMoveException("You are in check or checkmate!");

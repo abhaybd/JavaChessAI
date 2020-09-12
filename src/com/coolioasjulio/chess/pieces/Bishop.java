@@ -13,10 +13,6 @@ public class Bishop extends Piece {
         super(square, team, board);
     }
 
-    public Bishop(String square, int team, Board board) throws InvalidSquareException {
-        super(square, team, board);
-    }
-
     public double getRawValue() {
         return Piece.BISHOP_VALUE;
     }
@@ -28,7 +24,7 @@ public class Bishop extends Piece {
     public Move[] getMoves() {
         Square square = super.getSquare();
         int team = super.getTeam();
-        ArrayList<Move> moves = new ArrayList<Move>();
+        ArrayList<Move> moves = new ArrayList<>();
         for (int x = -1; x <= 1; x += 2) {
             for (int y = -1; y <= 1; y += 2) {
                 if (!Square.validSquare(x + square.getX(), y + square.getY())) continue;
@@ -50,6 +46,8 @@ public class Bishop extends Piece {
     }
 
     public Bishop copy() {
-        return new Bishop(this.square, this.team, this.board);
+        Bishop bishop = new Bishop(this.square, this.team, this.board);
+        bishop.moved = moved;
+        return bishop;
     }
 }

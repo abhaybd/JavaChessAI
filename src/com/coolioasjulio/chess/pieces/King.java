@@ -25,7 +25,7 @@ public class King extends Piece {
     public Move[] getMoves() {
         Square square = super.getSquare();
         int team = super.getTeam();
-        ArrayList<Move> moves = new ArrayList<Move>();
+        ArrayList<Move> moves = new ArrayList<>();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 if ((x == 0 && y == 0) || !Square.validSquare(x + square.getX(), y + square.getY()))
@@ -44,7 +44,7 @@ public class King extends Piece {
 
     public King copy() {
         King k = new King(this.square, this.team, this.board);
-        k.moved = this.moved;
+        k.moved = moved;
         return k;
     }
 }

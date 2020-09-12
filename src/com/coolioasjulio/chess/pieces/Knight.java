@@ -13,10 +13,6 @@ public class Knight extends Piece {
         super(square, team, board);
     }
 
-    public Knight(String square, int team, Board board) throws InvalidSquareException {
-        super(square, team, board);
-    }
-
     public double getRawValue() {
         return Piece.KNIGHT_VALUE;
     }
@@ -48,6 +44,8 @@ public class Knight extends Piece {
     }
 
     public Knight copy() {
-        return new Knight(this.square, this.team, this.board);
+        Knight knight = new Knight(this.square, this.team, this.board);
+        knight.moved = moved;
+        return knight;
     }
 }

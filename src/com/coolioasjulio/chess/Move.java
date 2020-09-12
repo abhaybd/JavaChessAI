@@ -1,29 +1,18 @@
 package com.coolioasjulio.chess;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.pieces.Piece;
 
 public class Move {
-    private Piece piece;
-    private int team;
-    private Square start, end;
-    private String type;
-    private boolean capture;
-    private boolean kingSideCastle;
-    private boolean queenSideCastle;
-
-    /**
-     * Create a Move object representing a castle move.
-     *
-     * @param team           The team that is castling.
-     * @param kingSideCastle If true, castle kingside, else queenside.
-     */
-    public Move(int team, boolean kingSideCastle) {
-        this.kingSideCastle = kingSideCastle;
-        this.queenSideCastle = !kingSideCastle;
-        this.team = team;
-    }
+    protected int team;
+    protected Square start, end;
+    protected String type;
+    protected boolean capture;
 
     /**
      * Create a Move object representing a move that does not capture.
@@ -45,12 +34,27 @@ public class Move {
      * @param capture If true, this move is a capture. Standard chess rules apply to captures.
      */
     public Move(Piece piece, Square start, Square end, boolean capture) {
-        this.piece = piece;
+        this.team = piece.getTeam();
         this.start = start;
         this.end = end;
         this.type = Piece.getType(piece);
         this.capture = capture;
-        this.team = piece.getTeam();
+    }
+
+    public void doMove(Board b) {
+        Piece p = b.checkSquare(getStart());
+        List<Square> endSquares = Arrays.stream(p.getMoves()).map(Move::getEnd)
+                .collect(Collectors.toList());
+        if (!endSquares.contains(getEnd())) {
+            throw new InvalidMoveException("Invalid move or end square!");
+        }
+        if (doesCapture()) {
+            Piece toCapture = b.checkSquare(getEnd());
+            if (toCapture.getTeam() != p.getTeam()) {
+                b.removePiece(toCapture);
+            }
+        }
+        p.move(getEnd());
     }
 
     /**
@@ -60,42 +64,6 @@ public class Move {
      */
     public int getTeam() {
         return team;
-    }
-
-    /**
-     * Get if this move represents either a kingside or queenside castle.
-     *
-     * @return True if this move represents castle move, false otherwise.
-     */
-    public boolean isCastle() {
-        return kingSideCastle || queenSideCastle;
-    }
-
-    /**
-     * Get if this move represents a kingside castle.
-     *
-     * @return True if this move is a kingside castle, false otherwise.
-     */
-    public boolean isKingSideCastle() {
-        return kingSideCastle;
-    }
-
-    /**
-     * Get if this move represents a queenside castle.
-     *
-     * @return True if this move is a queenside castle, false otherwise.
-     */
-    public boolean isQueenSideCastle() {
-        return queenSideCastle;
-    }
-
-    /**
-     * Get the piece doing the move.
-     *
-     * @return The Piece object doing the move.
-     */
-    public Piece getPiece() {
-        return piece;
     }
 
     /**
@@ -125,48 +93,23 @@ public class Move {
         return capture;
     }
 
-    /**
-     * Get the short notation for this move.
-     *
-     * @return The short notation, as defined by standard chess rules.
-     */
-    public String shortNotation() {
-        String aux = "";
-        for (Piece p : piece.getBoard().getPieces()) {
-            Move move = new Move(p, p.getSquare(), end);
-            if (p.hasMove(move)) {
-                if (!p.equals(piece)) {
-                    if (p.getSquare().getY() == piece.getSquare().getY())
-                        aux = String.valueOf(p.getSquare().toString().charAt(0));
-                    else if (p.getSquare().getX() == piece.getSquare().getX())
-                        aux = String.valueOf(p.getSquare().toString().charAt(1));
-                }
-            }
-        }
-        return type + aux + (capture ? "x" : "") + end.toString();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Move)) {
             return false;
         }
         Move move = (Move) o;
-        return this.piece.equals(move.piece) && this.start.equals(move.start) && this.end.equals(move.end)
+        return this.type.equals(move.type) && this.start.equals(move.start) && this.end.equals(move.end)
                 && this.capture == move.capture;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(piece, start, end, capture);
+        return Objects.hash(type, start, end, capture);
     }
 
     @Override
     public String toString() {
-        if (isKingSideCastle())
-            return "o-o";
-        else if (isQueenSideCastle())
-            return "o-o-o";
         String action = capture ? "x" : "-";
         String startSquare = start.toString();
         String endSquare = end.toString();

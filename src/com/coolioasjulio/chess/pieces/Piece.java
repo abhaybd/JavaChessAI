@@ -54,15 +54,6 @@ public abstract class Piece {
     protected Board board;
     protected boolean moved = false;
 
-    public Piece(String square, int team, Board board) throws InvalidSquareException {
-        if (square.length() != 2 || Math.abs(team) != 1) {
-            throw new InvalidSquareException();
-        }
-        this.team = team;
-        this.square = Square.parseString(square);
-        this.board = board;
-    }
-
     public Piece(Square square, int team, Board board) {
         this.square = square;
         this.team = team;
@@ -76,40 +67,30 @@ public abstract class Piece {
     /**
      * Mathematical value of the piece
      *
-     * @return
+     * @return the raw value of the piece
      */
     public abstract double getRawValue();
 
     /**
      * INTERNAL USE ONLY.
      * 
-     * @param move Move to make.
+     * @param move      Move to make.
      * @throws InvalidMoveException If something goes wrong.
      */
     public void move(Square move) throws InvalidMoveException {
-        move(move, null);
-    }
-
-    /**
-     * INTERNAL USE ONLY.
-     * 
-     * @param move      Move to make.
-     * @param promotion Piece to promote to, if applicable.
-     * @throws InvalidMoveException If something goes wrong.
-     */
-    public void move(Square move, String promotion) throws InvalidMoveException {
-        moved = true;
         Piece p = board.checkSquare(move);
         if (p != null && p.team == team) {
             throw new InvalidMoveException("Can't move into your own piece!");
         }
+        moved = true;
         square = move;
+        board.clearCache();
     }
 
     public boolean hasMove(Move move) {
         Move[] moves = getMoves();
         for (Move m : moves) {
-            if (m.toString().equals(move.toString()))
+            if (m.equals(move))
                 return true;
         }
         return false;
@@ -134,7 +115,7 @@ public abstract class Piece {
     /**
      * Chess value of the piece
      *
-     * @return
+     * @return the vanilla value of the piece
      */
     public double getVanillaValue() {
         return -1;
