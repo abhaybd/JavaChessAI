@@ -19,15 +19,15 @@ import com.coolioasjulio.chess.pieces.Queen;
 import com.coolioasjulio.chess.pieces.Rook;
 
 public class Board {
-    private List<Piece> pieces;
-    private TeamValue<Boolean> cachedCheckmate = new TeamValue<>();
-    private TeamValue<Boolean> cachedStalemate = new TeamValue<>();
-    private TeamValue<Boolean> cachedCheck = new TeamValue<>();
-    private TeamValue<King> cachedKing = new TeamValue<>();
-    private TeamValue<Move[]> cachedMoves = new TeamValue<>();
-    private Map<Square, Piece> boardMap = new HashMap<>();
-    private List<Move> moveHistory = new ArrayList<>();
-    private Map<PositionFingerprint, Integer> positionCount = new HashMap<>();
+    private final List<Piece> pieces;
+    private final TeamValue<Boolean> cachedCheckmate = new TeamValue<>();
+    private final TeamValue<Boolean> cachedStalemate = new TeamValue<>();
+    private final TeamValue<Boolean> cachedCheck = new TeamValue<>();
+    private final TeamValue<King> cachedKing = new TeamValue<>();
+    private final TeamValue<Move[]> cachedMoves = new TeamValue<>();
+    private final Map<Square, Piece> boardMap = new HashMap<>();
+    private final List<Move> moveHistory = new ArrayList<>();
+    private final Map<PositionFingerprint, Integer> positionCount = new HashMap<>();
 
     /**
      * Create a new empty board.
@@ -47,6 +47,10 @@ public class Board {
      */
     public List<Piece> getPieces() {
         return pieces;
+    }
+
+    public List<Move> getMoveHistory() {
+        return moveHistory;
     }
 
     /**
@@ -158,22 +162,22 @@ public class Board {
     public boolean inStaleMate(int team) {
         if (cachedStalemate.hasValue(team)) return cachedStalemate.get(team);
 
-        boolean ret = true;
-        if (inCheck(team)) {
-            ret = false;
-        } else {
+        boolean stalemate = isDrawByThreeFoldRepetition();
+
+        if (!stalemate && !inCheck(team)) {
+            stalemate = true;
             Move[] moves = getMoves(team);
             for (Move move : moves) {
                 Board board = fork();
                 board.doMove(move);
                 if (!board.inCheck(team)) {
-                    ret = false;
+                    stalemate = false;
                     break;
                 }
             }
         }
 
-        return cachedStalemate.set(team, ret);
+        return cachedStalemate.set(team, stalemate);
     }
 
     /**
@@ -470,22 +474,7 @@ public class Board {
         }
 
         private int pieceIndex(String type) {
-            switch (type) {
-                case "":
-                    return 0;
-                case "N":
-                    return 1;
-                case "B":
-                    return 2;
-                case "R":
-                    return 3;
-                case "Q":
-                    return 4;
-                case "K":
-                    return 5;
-                default:
-                    return -1;
-            }
+            return "_NBRQK".indexOf(type); // indexOf("") returns 0, _ at beginning so rest of pieces start at 1
         }
 
         @Override

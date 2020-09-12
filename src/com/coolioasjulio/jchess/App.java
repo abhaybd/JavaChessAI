@@ -217,7 +217,7 @@ public class App extends JFrame {
                 break;
 
             default:
-                message = "Stalemate! It's a tie!";
+                message = "Draw! It's a tie!";
         }
 
         JOptionPane.showMessageDialog(this, message);

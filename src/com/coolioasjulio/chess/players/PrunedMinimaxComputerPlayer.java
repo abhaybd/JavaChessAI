@@ -16,9 +16,10 @@ import java.util.stream.Collectors;
 
 public class PrunedMinimaxComputerPlayer extends Player {
     private static final int DEFAULT_SEARCH_DEPTH = 4;
+    private static final int MAX_SEARCH_DEPTH = 4;
 
     private int depth = DEFAULT_SEARCH_DEPTH;
-    private Heuristic heuristic = new MaterialHeuristic(0);
+    private final Heuristic heuristic = new MaterialHeuristic(0);
     private int cutoffs = 0;
 
     public PrunedMinimaxComputerPlayer(Board board) {
@@ -55,13 +56,13 @@ public class PrunedMinimaxComputerPlayer extends Player {
     @Override
     public Move getMove() {
         cutoffs = 0;
-        MoveCandidate move = minimax(board, depth, team, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        MoveCandidate move = minimax(board, depth, team, false, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         Logger.getLogger("PrunedMinimaxComputerPlayer").info(move.toString());
         Logger.getLogger("PrunedMinimaxComputerPlayer").info("Cutoffs: " + cutoffs);
         return move.getMove();
     }
 
-    public MoveCandidate minimax(Board board, int depth, int team, double alpha, double beta) {
+    public MoveCandidate minimax(Board board, int depth, int team, boolean didCapture, double alpha, double beta) {
         int playerTeam = this.team;
         Move[] allMoves = board.getMoves(team);
         Comparator<MinimaxTuple> c = Comparator.comparing(MinimaxTuple::getScore);
@@ -75,8 +76,8 @@ public class PrunedMinimaxComputerPlayer extends Player {
         for (MinimaxTuple tuple : tuples) {
             Board b = tuple.board;
             double score = tuple.getScore();
-            if (depth != 0) {
-                MoveCandidate mc = minimax(b, depth-1, -team, alpha, beta);
+            if (depth > this.depth - MAX_SEARCH_DEPTH && (depth > 0 || didCapture)) {
+                MoveCandidate mc = minimax(b, depth-1, -team, tuple.move.doesCapture(), alpha, beta);
                 if (mc != null) score = mc.getScore();
             }
             MoveCandidate candidate = new MoveCandidate(tuple.move, score);

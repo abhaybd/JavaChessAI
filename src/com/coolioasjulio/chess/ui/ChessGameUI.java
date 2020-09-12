@@ -21,12 +21,17 @@ public class ChessGameUI extends ChessGame {
     private Color light, dark;
     private JLabel label;
     private List<Piece> toDraw;
+    private boolean showPopUps = true;
 
     public ChessGameUI(int tileSize, Color light, Color dark) {
         super(tileSize);
         this.light = light;
         this.dark = dark;
         panel = new ChessGamePanel();
+    }
+
+    public void setShowPopUps(boolean showPopUps) {
+        this.showPopUps = showPopUps;
     }
 
     @Override
@@ -38,7 +43,7 @@ public class ChessGameUI extends ChessGame {
 
     @Override
     public void onTurnEnded(int team, boolean check) {
-        if (check) {
+        if (check && showPopUps) {
             JOptionPane.showMessageDialog(panel, "Check!", "Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }

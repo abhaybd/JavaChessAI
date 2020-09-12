@@ -21,20 +21,20 @@ public class MaterialHeuristic implements Heuristic {
         double space = spaceScore == 0 ? 0 : (double) board.getMoves(team).length * spaceScore;
         double material = pieceEvaluator.getMaterialValue(board, team);
         double oppMaterial = pieceEvaluator.getMaterialValue(board, -team);
-        double checkmateModifier = 0;
         if (board.inCheckMate(-team)) {
-            checkmateModifier = 1000;
+            return 1000;
+        } else if (board.inCheckMate(team)) {
+            return -1000;
         }
-        else if (board.inCheckMate(team)) {
-            checkmateModifier = -1000;
-        }
-        double score = space + material - oppMaterial + checkmateModifier;
+        double score = space + material - oppMaterial;
         boolean isDraw = board.isDrawByThreeFoldRepetition() || board.inStaleMate(team) || board.inStaleMate(-team);
         if (isDraw) {
             if (score <= -4) {
                 score = 100;
             } else if (score >= 4) {
                 score = -100;
+            } else {
+                score = 0;
             }
         }
 
