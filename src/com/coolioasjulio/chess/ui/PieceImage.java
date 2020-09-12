@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
@@ -11,7 +12,7 @@ import com.coolioasjulio.chess.pieces.Piece;
 
 public class PieceImage {
 
-    private static HashMap<String, Image> pieceImages = new HashMap<>();
+    private static final HashMap<String, Image> pieceImages = new HashMap<>();
 
     /**
      * Loads the piece image from disk and cache it in memory. If it's already been
@@ -27,11 +28,11 @@ public class PieceImage {
      * @param p        The piece to load the image of
      * @param tileSize The width and height of the tiles
      * @return An Image, scaled to tileSizextileSize
-     * @throws IOException
+     * @throws IOException If the image retrieval fails
      */
     public static Image getImage(Piece p, int tileSize) throws IOException {
         String name = p.getName();
-        String folder = "";
+        String folder;
         if (p.getTeam() == Piece.WHITE) {
             name = "w" + name;
             folder = "white/";
@@ -45,7 +46,7 @@ public class PieceImage {
         }
 
         InputStream is = PieceImage.class.getClassLoader().getResourceAsStream(folder + name + ".png");
-        Image img = ImageIO.read(is).getScaledInstance(tileSize, tileSize, Image.SCALE_SMOOTH);
+        Image img = ImageIO.read(Objects.requireNonNull(is)).getScaledInstance(tileSize, tileSize, Image.SCALE_SMOOTH);
         pieceImages.put(name, img);
         return img;
     }

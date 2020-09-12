@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Square;
-import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 
 public class Knight extends Piece {
 

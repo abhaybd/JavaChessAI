@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EpsGreedySelector implements Selector {
-    private double epsilon;
-    private Selector greedy, random;
+    private final double epsilon;
+    private final Selector greedy, random;
 
     /**
      * Selector that chooses either the best option or a random option. Best option

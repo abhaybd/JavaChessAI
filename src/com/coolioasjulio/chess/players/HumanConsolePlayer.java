@@ -9,8 +9,8 @@ import com.coolioasjulio.chess.exceptions.InvalidMoveException;
 import com.coolioasjulio.chess.pieces.Piece;
 
 public class HumanConsolePlayer extends Player {
-    private Board board;
-    private Scanner input;
+    private final Board board;
+    private final Scanner input;
 
     public HumanConsolePlayer(Board board, InputStream is) {
         super(board);

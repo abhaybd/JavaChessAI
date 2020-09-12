@@ -24,8 +24,8 @@ import com.coolioasjulio.configuration.Setting;
 class SettingsFrame extends JDialog {
     private static final long serialVersionUID = 1L;
 
-    private List<Object> inputs;
-    private List<Setting<?>> settings;
+    private final List<Object> inputs;
+    private final List<Setting<?>> settings;
 
     public SettingsFrame(JFrame parent) {
         super(parent);

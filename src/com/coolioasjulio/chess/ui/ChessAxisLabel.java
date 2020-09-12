@@ -15,8 +15,8 @@ public class ChessAxisLabel extends JPanel {
         Vertical, Horizontal
     }
 
-    private Axis axis;
-    private Color background, textColor;
+    private final Axis axis;
+    private final Color background, textColor;
 
     public ChessAxisLabel(Axis axis, int tileSize, Color background, Color textColor) {
         this.axis = axis;

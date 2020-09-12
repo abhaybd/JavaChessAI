@@ -5,15 +5,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Setting<T> {
-    public static enum InputType {
+    public enum InputType {
         DOUBLE, INTEGER, STRING, CHOICE
     }
 
-    private String name;
-    private InputType inputType;
+    private final String name;
+    private final InputType inputType;
     private T[] choices;
-    private Consumer<T> callback;
-    private Supplier<T> currentSetting;
+    private final Consumer<T> callback;
+    private final Supplier<T> currentSetting;
     private SettingValidator validator = new DefaultValidator();
 
     public Setting(String key, InputType inputType, Consumer<T> callback, Supplier<T> currentSetting) {

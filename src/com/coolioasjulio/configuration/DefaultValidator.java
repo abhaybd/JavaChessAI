@@ -5,5 +5,4 @@ public class DefaultValidator implements SettingValidator {
     public boolean isValid(String input) {
         return true;
     }
-
 }

@@ -16,8 +16,8 @@ import com.coolioasjulio.chess.pieces.Piece;
 public class PositionalComputerPlayer extends Player {
     private static final double SPACE_SCORE = 0.02;
 
-    private Heuristic heuristic;
-    private PieceEvaluator pieceEvaluator;
+    private final Heuristic heuristic;
+    private final PieceEvaluator pieceEvaluator;
 
     /**
      * @param board the board object that this opponent is playing on

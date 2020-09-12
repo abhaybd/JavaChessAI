@@ -1,7 +1,6 @@
 package com.coolioasjulio.configuration;
 
 public class IntegerValidator implements SettingValidator {
-
     @Override
     public boolean isValid(String text) {
         try {

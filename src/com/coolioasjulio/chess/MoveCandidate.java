@@ -1,7 +1,7 @@
 package com.coolioasjulio.chess;
 
 public class MoveCandidate {
-    private Move move;
+    private final Move move;
     private double score;
 
     public MoveCandidate(Move move, double score) {

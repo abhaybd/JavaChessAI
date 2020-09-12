@@ -1,6 +1,7 @@
 package com.coolioasjulio.jchess;
 
 import com.coolioasjulio.chess.players.PrunedMinimaxComputerPlayer;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -9,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -51,11 +53,11 @@ public class App extends JFrame {
         app.dispose();
     }
 
-    private ChessGameUI game;
-    private JLabel turnIndicator;
-    private ChessAxisLabel top, left, right, bottom;
-    private JButton settingsButton;
-    private Color light;
+    private final ChessGameUI game;
+    private final JLabel turnIndicator;
+    private final ChessAxisLabel top, left, right, bottom;
+    private final JButton settingsButton;
+    private final Color light;
 
     public App(Color bgColor, Color light, Color dark, int tileSize) {
         try {
@@ -73,7 +75,7 @@ public class App extends JFrame {
         this.light = light;
 
         try {
-            this.setIconImage(ImageIO.read(App.class.getClassLoader().getResourceAsStream("icon.png")));
+            this.setIconImage(ImageIO.read(Objects.requireNonNull(App.class.getClassLoader().getResourceAsStream("icon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -149,7 +151,7 @@ public class App extends JFrame {
     private Icon loadIcon(String path, int tileSize) {
         try {
             int size = (int) Math.floor(tileSize * 0.8 + 0.5);
-            return new ImageIcon(ImageIO.read(App.class.getClassLoader().getResourceAsStream(path))
+            return new ImageIcon(ImageIO.read(Objects.requireNonNull(App.class.getClassLoader().getResourceAsStream(path)))
                     .getScaledInstance(size, size, Image.SCALE_SMOOTH));
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,7 +268,7 @@ public class App extends JFrame {
     }
 
     private int getTeamInput() {
-        Object[] options = new Object[] { "Black", "White" };
+        Object[] options = new Object[]{"Black", "White"};
         int choice;
         do {
             choice = JOptionPane.showOptionDialog(this, "What team would you like to play as?", "Pick a team",

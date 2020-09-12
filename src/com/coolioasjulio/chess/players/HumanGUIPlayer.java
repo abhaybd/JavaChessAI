@@ -11,8 +11,8 @@ import java.awt.event.MouseListener;
 
 public class HumanGUIPlayer extends Player implements MouseListener {
 
-    private ChessGame chess;
-    private JComponent component;
+    private final ChessGame chess;
+    private final JComponent component;
     private Square fromSquare, toSquare;
     private final Object lock = new Object();
     private volatile boolean clicked = false;

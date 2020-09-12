@@ -6,7 +6,6 @@ import com.coolioasjulio.chess.Board;
 import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.Square;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
-import com.coolioasjulio.chess.exceptions.InvalidSquareException;
 
 public abstract class Piece {
     public static final double KING_VALUE = 200;

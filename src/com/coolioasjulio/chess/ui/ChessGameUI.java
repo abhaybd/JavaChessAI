@@ -17,8 +17,8 @@ import com.coolioasjulio.chess.pieces.Piece;
 
 public class ChessGameUI extends ChessGame {
 
-    private ChessGamePanel panel;
-    private Color light, dark;
+    private final ChessGamePanel panel;
+    private final Color light, dark;
     private JLabel label;
     private List<Piece> toDraw;
     private boolean showPopUps = true;

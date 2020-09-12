@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class ConfigurationMenu {
 
-    private static Set<ConfigurationMenu> configMenus = new HashSet<>();
+    private static final Set<ConfigurationMenu> configMenus = new HashSet<>();
 
     public static void addConfigMenu(ConfigurationMenu menu) {
         configMenus.add(menu);
@@ -23,8 +23,8 @@ public class ConfigurationMenu {
         return new HashSet<>(configMenus);
     }
 
-    private String name;
-    private List<Setting<?>> settings;
+    private final String name;
+    private final List<Setting<?>> settings;
 
     public ConfigurationMenu(String name, Setting<?>... settings) {
         this(name, Arrays.asList(settings));

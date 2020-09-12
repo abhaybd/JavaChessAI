@@ -9,7 +9,7 @@ import com.coolioasjulio.configuration.SettingValidator;
 
 public class InputFilter extends DocumentFilter {
 
-    private SettingValidator validator;
+    private final SettingValidator validator;
 
     public InputFilter(SettingValidator validator) {
         this.validator = validator;

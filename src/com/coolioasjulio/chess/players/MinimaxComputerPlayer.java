@@ -29,16 +29,8 @@ public class MinimaxComputerPlayer extends Player {
     private static final int DEFAULT_SEARCH_DEPTH = 2;
     private static final Logger logger = Logger.getLogger("MinimaxComputerPlayer");
 
-    private static List<Selector> selectors = new ArrayList<>(
+    private static final List<Selector> selectors = new ArrayList<>(
             Arrays.asList(new SoftplusSelector(), new RandomSelector(), new GreedySelector()));
-
-    public static void addSelectorChoice(Selector selector) {
-        selectors.add(selector);
-    }
-
-    public static void removeSelectorChoice(Selector selector) {
-        selectors.remove(selector);
-    }
 
     private Heuristic heuristic;
     private int keepMoves;
@@ -123,11 +115,11 @@ public class MinimaxComputerPlayer extends Player {
     private class MinimaxRecursiveTask extends RecursiveTask<List<MoveCandidate>> {
         private static final long serialVersionUID = 1L;
 
-        private Board board;
-        private int depth;
-        private int team;
-        private Move move;
-        private int playerTeam;
+        private final Board board;
+        private final int depth;
+        private final int team;
+        private final Move move;
+        private final int playerTeam;
 
         public MinimaxRecursiveTask(Board board, int depth, int team) {
             this(board, depth, team, null);

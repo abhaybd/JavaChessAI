@@ -438,8 +438,8 @@ public class Board {
     }
 
     public static class PositionFingerprint {
-        private int teamToMove;
-        private TeamValue<long[]> bitboards;
+        private final int teamToMove;
+        private final TeamValue<long[]> bitboards;
 
         public PositionFingerprint(Board board) {
             if (board.moveHistory.size() == 0) {
