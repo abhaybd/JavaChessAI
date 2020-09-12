@@ -41,27 +41,36 @@ public class Pawn extends Piece {
                     }
                 } else {
                     // deal with promotion
-                    moves.add(new Promotion(this, inFront, "Queen"));
-                    moves.add(new Promotion(this, inFront, "Rook"));
-                    moves.add(new Promotion(this, inFront, "Bishop"));
-                    moves.add(new Promotion(this, inFront, "Knight"));
+                    moves.add(new Promotion(this, inFront, false, "Queen"));
+                    moves.add(new Promotion(this, inFront, false, "Rook"));
+                    moves.add(new Promotion(this, inFront, false, "Bishop"));
+                    moves.add(new Promotion(this, inFront, false, "Knight"));
+                }
+            }
+
+            addCaptureMoves(moves, -1);
+            addCaptureMoves(moves, +1);
+        }
+
+        return moves.toArray(new Move[0]);
+    }
+
+    private void addCaptureMoves(List<Move> moves, int xDelta) {
+        int x = getSquare().getX() + xDelta;
+        if (inRange(x, 0, 7)) {
+            Square end = new Square(x, getSquare().getY() + team);
+            Piece p = board.checkSquare(end);
+            if (p != null && p.team != team) {
+                if (inRange(end.getY(), 2, 7)) {
+                    moves.add(new Move(this, end, true));
+                } else {
+                    moves.add(new Promotion(this, end, true, "Queen"));
+                    moves.add(new Promotion(this, end, true, "Rook"));
+                    moves.add(new Promotion(this, end, true, "Bishop"));
+                    moves.add(new Promotion(this, end, true, "Knight"));
                 }
             }
         }
-
-        if (inRange(x - 1, 0, 7)) {
-            Square end = new Square(x - 1, y + team);
-            Piece p = board.checkSquare(end);
-            if (p != null && p.team != team)
-                moves.add(new Move(this, end, true));
-        }
-        if (inRange(x + 1, 0, 7)) {
-            Square end = new Square(x + 1, y + team);
-            Piece p = board.checkSquare(end);
-            if (p != null && p.team != team)
-                moves.add(new Move(this, end, true));
-        }
-        return moves.toArray(new Move[0]);
     }
 
     public String toString() {
@@ -77,14 +86,29 @@ public class Pawn extends Piece {
     private static class Promotion extends Move {
         private final String promotion;
 
-        public Promotion(Pawn pawn, Square end, String promotion) {
-            super(pawn, end);
+        public Promotion(Pawn pawn, Square end, boolean capture, String promotion) {
+            super(pawn, end, capture);
             this.promotion = promotion;
         }
 
         @Override
         public void doMove(Board board) {
-            board.removePiece(board.checkSquare(start));
+            if (doesCapture()) {
+                Piece captured = board.checkSquare(end);
+                if (captured != null && captured.team != team) {
+                    board.removePiece(board.checkSquare(end));
+                } else {
+                    throw new InvalidMoveException("Illegal promotion capture move: " + toString());
+                }
+            }
+
+            Piece moved = board.checkSquare(start);
+            if (moved != null) {
+                board.removePiece(moved);
+            } else {
+                throw new InvalidMoveException("No piece to move at " + start);
+            }
+
             Piece p;
             switch (promotion) {
                 case "Queen":
@@ -100,7 +124,7 @@ public class Pawn extends Piece {
                     p = new Knight(end, team, board);
                     break;
                 default:
-                    throw new InvalidMoveException("Unrecognized piece!");
+                    throw new InvalidMoveException("Unrecognized piece: " + promotion);
             }
             p.moved = true;
             board.addPiece(p);
