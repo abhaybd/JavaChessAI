@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
 
 public class PrunedMinimaxComputerPlayer extends Player {
     private static final int DEFAULT_SEARCH_DEPTH = 2;
-    private static final int MAX_SEARCH_DEPTH = 4;
+    private static final int MAX_SEARCH_DEPTH = 6;
 
     private int depth = DEFAULT_SEARCH_DEPTH;
     private final Heuristic heuristic = new MaterialHeuristic(0);
-    private int cutoffs = 0;
+    private int nodes;
+    private int nonTerminalNodes;
 
     public PrunedMinimaxComputerPlayer(Board board) {
         super(board);
@@ -55,10 +56,12 @@ public class PrunedMinimaxComputerPlayer extends Player {
 
     @Override
     public Move getMove() {
-        cutoffs = 0;
+        nonTerminalNodes = 1;
+        nodes = 1;
         MoveCandidate move = minimax(board, depth, team, false, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        Logger.getLogger("PrunedMinimaxComputerPlayer").info(move.toString());
-        Logger.getLogger("PrunedMinimaxComputerPlayer").info("Cutoffs: " + cutoffs);
+        Logger logger = Logger.getLogger("PrunedMinimaxComputerPlayer");
+        logger.info(move.toString());
+        logger.info(String.format("Avg branching factor: %.2f\n", ((double) nodes) / nonTerminalNodes));
         return move.getMove();
     }
 
@@ -75,11 +78,15 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 .collect(Collectors.toList());
         MoveCandidate bestMove = null;
         for (MinimaxTuple tuple : tuples) {
+            nodes++;
             Board b = tuple.board;
             double score = tuple.getScore();
             if (depth > this.depth - MAX_SEARCH_DEPTH && (depth > 0 || didCapture)) {
                 MoveCandidate mc = minimax(b, depth-1, -team, tuple.move.doesCapture(), alpha, beta);
-                if (mc != null) score = mc.getScore();
+                if (mc != null) {
+                    score = mc.getScore();
+                    nonTerminalNodes++;
+                }
             }
             MoveCandidate candidate = new MoveCandidate(tuple.move, score);
 
@@ -94,7 +101,6 @@ public class PrunedMinimaxComputerPlayer extends Player {
             }
 
             if (beta <= alpha) {
-                cutoffs++;
                 break;
             }
         }
