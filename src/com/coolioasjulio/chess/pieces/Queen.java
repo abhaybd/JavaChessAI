@@ -28,7 +28,7 @@ public class Queen extends Piece {
         moves.addAll(Arrays.asList(r.getMoves()));
         for (int i = 0; i < moves.size(); i++) {
             Move m = moves.get(i);
-            moves.set(i, new Move(this, m.getEnd(), m.doesCapture()));
+            moves.set(i, new Move(this, m.getEnd(), m.isCapture()));
         }
         return moves.toArray(new Move[0]);
     }

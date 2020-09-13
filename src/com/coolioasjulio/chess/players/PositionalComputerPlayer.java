@@ -68,7 +68,7 @@ public class PositionalComputerPlayer extends Player {
         Piece piece = board.checkSquare(move.getStart());
         if (piece instanceof Pawn)
             return true;
-        if (move.doesCapture()) {
+        if (move.isCapture()) {
             if (pieceEvaluator.getValue(board.checkSquare(move.getEnd())) >= pieceEvaluator.getValue(piece)) {
                 return true;
             }

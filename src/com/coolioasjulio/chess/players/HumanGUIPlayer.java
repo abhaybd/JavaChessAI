@@ -8,6 +8,7 @@ import com.coolioasjulio.chess.pieces.Piece;
 import javax.swing.JComponent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 
 public class HumanGUIPlayer extends Player implements MouseListener {
 
@@ -24,7 +25,7 @@ public class HumanGUIPlayer extends Player implements MouseListener {
         component.addMouseListener(this);
     }
 
-    private void waitForClick() throws InterruptedException{
+    private void waitForClick() throws InterruptedException {
         synchronized (lock) {
             while (!clicked) {
                 lock.wait();
@@ -57,27 +58,13 @@ public class HumanGUIPlayer extends Player implements MouseListener {
             throw new InvalidMoveException("Choose your own piece!");
         }
 
-        Move move = null;
-
-        if (piece instanceof King) {
-            if (toSquare.getX() == 2 && board.canQueenSideCastle((King) piece)) {
-                move = new QueenSideCastle((King) piece);
-            } else if (toSquare.getX() == 6 && board.canKingSideCastle((King) piece)) {
-                move = new KingSideCastle((King) piece);
-            } else {
-                move = new Move(piece, toSquare, board.checkSquare(toSquare) != null);
-            }
-        } else {
-            Move[] moves = piece.getMoves();
-            for (Move m : moves) {
-                if (m.getStart().equals(fromSquare) && m.getEnd().equals(toSquare)) {
-                    move = m;
-                    break;
-                }
-            }
-        }
-
-        return move;
+        return Arrays.stream(board.getMoves(team))
+                .filter(m ->
+                        m.getType().equals(piece.getType()) &&
+                                m.getStart().equals(fromSquare) &&
+                                m.getEnd().equals(toSquare))
+                .findFirst()
+                .orElseThrow(() -> new InvalidMoveException("Invalid move!"));
     }
 
     @Override

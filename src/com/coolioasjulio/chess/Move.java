@@ -46,7 +46,7 @@ public class Move {
         if (!endSquares.contains(getEnd())) {
             throw new InvalidMoveException("Invalid move or end square!");
         }
-        if (doesCapture()) {
+        if (isCapture()) {
             Piece toCapture = b.checkSquare(getEnd());
             if (toCapture.getTeam() != p.getTeam()) {
                 b.removePiece(toCapture);
@@ -87,8 +87,12 @@ public class Move {
      *
      * @return True if this move captures a piece, false otherwise.
      */
-    public boolean doesCapture() {
+    public boolean isCapture() {
         return capture;
+    }
+
+    public String getType() {
+        return type;
     }
 
     @Override

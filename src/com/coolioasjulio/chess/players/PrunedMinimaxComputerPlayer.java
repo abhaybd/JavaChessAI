@@ -81,9 +81,9 @@ public class PrunedMinimaxComputerPlayer extends Player {
         Comparator<Move> comparator = (m1, m2) -> {
             if (m1.equals(m2)) {
                 return 0;
-            } else if (m1.doesCapture() != m2.doesCapture()) {
-                return m1.doesCapture() ? -1 : 1;
-            } else if (m1.doesCapture()) {
+            } else if (m1.isCapture() != m2.isCapture()) {
+                return m1.isCapture() ? -1 : 1;
+            } else if (m1.isCapture()) {
                 PositionalPieceEvaluator eval = new PositionalPieceEvaluator();
                 double scoreDiff1 = eval.getValue(board.checkSquare(m1.getEnd())) - eval.getValue(board.checkSquare(m1.getStart()));
                 double scoreDiff2 = eval.getValue(board.checkSquare(m2.getEnd())) - eval.getValue(board.checkSquare(m2.getStart()));
@@ -127,7 +127,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
             }
             double score = heuristic.getScore(b, playerTeam);
             if (depth > this.depth - this.maxDepth && (depth > 0 || didCapture)) {
-                MoveCandidate mc = minimax(b, depth - 1, -team, move.doesCapture(), alpha, beta);
+                MoveCandidate mc = minimax(b, depth - 1, -team, move.isCapture(), alpha, beta);
                 if (mc != null) {
                     score = mc.getScore();
                     nonTerminalNodes++;
@@ -146,7 +146,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
             else beta = Math.min(score, beta);
 
             if (beta <= alpha) {
-                if (!move.doesCapture()) {
+                if (!move.isCapture()) {
                     int teamIndex = move.getTeam() == Piece.WHITE ? 0 : 1;
                     int from = (move.getStart().getY() - 1) * 8 + move.getStart().getX();
                     int to = (move.getEnd().getY() - 1) * 8 + move.getEnd().getX();

@@ -93,7 +93,7 @@ public class Pawn extends Piece {
 
         @Override
         public void doMove(Board board) {
-            if (doesCapture()) {
+            if (isCapture()) {
                 Piece captured = board.checkSquare(end);
                 if (captured != null && captured.team != team) {
                     board.removePiece(board.checkSquare(end));
