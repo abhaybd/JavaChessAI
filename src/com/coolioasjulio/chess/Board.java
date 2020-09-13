@@ -292,14 +292,23 @@ public class Board {
         int team = king.getTeam();
         if (!ignoreCache && cachedCheck.hasValue(team)) return cachedCheck.get(team);
 
-        Move[] moves = getMoves(-team, false);
+        Square square = king.getSquare();
+        Piece[] pieces = {
+                new Queen(square, team, this),
+                new Rook(square, team, this),
+                new Bishop(square, team, this),
+                new Knight(square, team, this),
+                new Pawn(square, team, this)
+        };
+
         boolean ret = false;
-        for (Move m : moves) {
-            if (m.getEnd().equals(king.getSquare())) {
+        for (Piece piece : pieces) {
+            if (Arrays.stream(piece.getMoves()).filter(Move::isCapture).anyMatch(m -> checkSquare(m.getEnd()).getType().equals(piece.getType()))) {
                 ret = true;
                 break;
             }
         }
+
         return ignoreCache ? ret : cachedCheck.set(team, ret);
     }
 

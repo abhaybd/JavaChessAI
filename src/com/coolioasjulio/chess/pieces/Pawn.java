@@ -31,10 +31,12 @@ public class Pawn extends Piece {
         int x = square.getX();
         int y = square.getY();
         List<Move> moves = new ArrayList<>();
-        if (inRange(y, 2, 7)) {
+        int minY = team == Piece.WHITE ? 1 : 2;
+        int maxY = team == Piece.WHITE ? 7 : 8;
+        if (inRange(y, minY, maxY)) {
             Square inFront = new Square(x, y + team);
             if (board.checkSquare(inFront) == null) {
-                if (inRange(inFront.getY(), 2, 7)) {
+                if (inRange(inFront.getY(), minY, maxY)) {
                     moves.add(new Move(this, inFront));
                     if (!moved && board.checkSquare(new Square(x, y + 2 * team)) == null) {
                         moves.add(new Move(this, new Square(x, y + 2 * team)));
