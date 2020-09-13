@@ -5,14 +5,13 @@ import com.coolioasjulio.chess.Move;
 import com.coolioasjulio.chess.MoveCandidate;
 import com.coolioasjulio.chess.heuristics.Heuristic;
 import com.coolioasjulio.chess.heuristics.MaterialHeuristic;
+import com.coolioasjulio.chess.pieceevaluators.PositionalPieceEvaluator;
+import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.configuration.ConfigurationMenu;
 import com.coolioasjulio.configuration.Setting;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class PrunedMinimaxComputerPlayer extends Player {
     private static final int DEFAULT_SEARCH_DEPTH = 2;
@@ -22,6 +21,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
     private final Heuristic heuristic = new MaterialHeuristic(0);
     private int nodes;
     private int nonTerminalNodes;
+    private final long[][][] historyScores = new long[2][64][64]; // 0=white, 1=black, a1=0,a2=1,...,h8=63
 
     public PrunedMinimaxComputerPlayer(Board board) {
         super(board);
@@ -65,33 +65,63 @@ public class PrunedMinimaxComputerPlayer extends Player {
         return move.getMove();
     }
 
+    private void sortMoves(Board board, Move[] moves, int team) {
+        Comparator<Move> comparator = (m1, m2) -> {
+            if (m1.equals(m2)) {
+                return 0;
+            } else if (m1.doesCapture() != m2.doesCapture()) {
+                return m1.doesCapture() ? -1 : 1;
+            } else if (m1.doesCapture()) {
+                PositionalPieceEvaluator eval = new PositionalPieceEvaluator();
+                double scoreDiff1 = eval.getValue(board.checkSquare(m1.getEnd())) - eval.getValue(board.checkSquare(m1.getStart()));
+                double scoreDiff2 = eval.getValue(board.checkSquare(m2.getEnd())) - eval.getValue(board.checkSquare(m2.getStart()));
+
+                if (scoreDiff1 > scoreDiff2) return -1;
+                else if (scoreDiff1 < scoreDiff2) return 1;
+            } else {
+                int from1 = (m1.getStart().getY() - 1) * 8 + m1.getStart().getX();
+                int from2 = (m2.getStart().getY() - 1) * 8 + m2.getStart().getX();
+                int to1 = (m1.getEnd().getY() - 1) * 8 + m1.getEnd().getX();
+                int to2 = (m2.getEnd().getY() - 1) * 8 + m2.getEnd().getX();
+                int teamIndex = m1.getTeam() == Piece.WHITE ? 0 : 1;
+
+                long history1 = historyScores[teamIndex][from1][to1];
+                long history2 = historyScores[teamIndex][from2][to2];
+
+                if (history1 > history2) return -1;
+                else if (history1 < history2) return 1;
+            }
+            return m1.toString().compareTo(m2.toString());
+        };
+
+        if (team != this.team) {
+            comparator = comparator.reversed();
+        }
+
+        Arrays.sort(moves, comparator);
+    }
+
     public MoveCandidate minimax(Board board, int depth, int team, boolean didCapture, double alpha, double beta) {
         int playerTeam = this.team;
-        Move[] allMoves = board.getMoves(team);
-        Comparator<MinimaxTuple> c = Comparator.comparing(MinimaxTuple::getScore);
-        if (team == playerTeam) c = c.reversed();
-        List<MinimaxTuple> tuples = Arrays.stream(allMoves)
-                .parallel()
-                .map(m -> MinimaxTuple.create(board, m, heuristic, playerTeam))
-                .filter(Objects::nonNull)
-                .sorted(c)
-                .collect(Collectors.toList());
+        Move[] moves = board.getMoves(team);
+        sortMoves(board, moves, team);
         MoveCandidate bestMove = null;
-        for (MinimaxTuple tuple : tuples) {
+        for (Move move : moves) {
             nodes++;
-            Board b = tuple.board;
-            double score = tuple.getScore();
+            Board b = board.fork();
+            b.doMove(move);
+            if (b.inCheck(move.getTeam())) {
+                continue;
+            }
+            double score = heuristic.getScore(b, playerTeam);
             if (depth > this.depth - MAX_SEARCH_DEPTH && (depth > 0 || didCapture)) {
-                MoveCandidate mc = minimax(b, depth-1, -team, tuple.move.doesCapture(), alpha, beta);
+                MoveCandidate mc = minimax(b, depth-1, -team, move.doesCapture(), alpha, beta);
                 if (mc != null) {
                     score = mc.getScore();
                     nonTerminalNodes++;
                 }
             }
-            MoveCandidate candidate = new MoveCandidate(tuple.move, score);
-
-            if (team == playerTeam) alpha = Math.max(score, alpha);
-            else beta = Math.min(score, beta);
+            MoveCandidate candidate = new MoveCandidate(move, score);
 
             if (bestMove == null) bestMove = candidate;
             else if (team == playerTeam && candidate.getScore() > bestMove.getScore()) {
@@ -100,32 +130,19 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 bestMove = candidate;
             }
 
+            if (team == playerTeam) alpha = Math.max(score, alpha);
+            else beta = Math.min(score, beta);
+
             if (beta <= alpha) {
+                if (!move.doesCapture()) {
+                    int teamIndex = move.getTeam() == Piece.WHITE ? 0 : 1;
+                    int from = (move.getStart().getY() - 1) * 8 + move.getStart().getX();
+                    int to = (move.getEnd().getY() - 1) * 8 + move.getEnd().getX();
+                    historyScores[teamIndex][from][to] += 1 << (this.depth - depth);
+                }
                 break;
             }
         }
         return bestMove;
-    }
-
-    public static class MinimaxTuple {
-        public static MinimaxTuple create(Board board, Move move, Heuristic heuristic, int playerTeam) {
-            Board b = board.fork();
-            b.doMove(move);
-            if (b.inCheck(move.getTeam())) return null;
-            double score = heuristic.getScore(b, playerTeam);
-            MinimaxTuple tuple = new MinimaxTuple();
-            tuple.board = b;
-            tuple.move = move;
-            tuple.score = score;
-            return tuple;
-        }
-
-        private Board board;
-        private Move move;
-        private double score;
-
-        public double getScore() {
-            return score;
-        }
     }
 }
