@@ -9,15 +9,17 @@ import com.coolioasjulio.chess.pieceevaluators.PositionalPieceEvaluator;
 import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.configuration.ConfigurationMenu;
 import com.coolioasjulio.configuration.Setting;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
 public class PrunedMinimaxComputerPlayer extends Player {
     private static final int DEFAULT_SEARCH_DEPTH = 2;
-    private static final int MAX_SEARCH_DEPTH = 6;
+    private static final int DEFAULT_MAX_SEARCH_DEPTH = 6;
 
     private int depth = DEFAULT_SEARCH_DEPTH;
+    private int maxDepth = DEFAULT_MAX_SEARCH_DEPTH;
     private final Heuristic heuristic = new MaterialHeuristic(0);
     private int nodes;
     private int nonTerminalNodes;
@@ -36,9 +38,19 @@ public class PrunedMinimaxComputerPlayer extends Player {
         this.depth = depth;
     }
 
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(int maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
     private ConfigurationMenu createConfigurationMenu() {
         return new ConfigurationMenu("BotLvl2.5",
                 new Setting<>("Search Depth", Setting.InputType.INTEGER, this::setSearchDepth, this::getSearchDepth)
+                        .setValidator(this::validSearchDepth),
+                new Setting<>("Max Search Depth", Setting.InputType.INTEGER, this::setMaxDepth, this::getMaxDepth)
                         .setValidator(this::validSearchDepth));
     }
 
@@ -114,8 +126,8 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 continue;
             }
             double score = heuristic.getScore(b, playerTeam);
-            if (depth > this.depth - MAX_SEARCH_DEPTH && (depth > 0 || didCapture)) {
-                MoveCandidate mc = minimax(b, depth-1, -team, move.doesCapture(), alpha, beta);
+            if (depth > this.depth - this.maxDepth && (depth > 0 || didCapture)) {
+                MoveCandidate mc = minimax(b, depth - 1, -team, move.doesCapture(), alpha, beta);
                 if (mc != null) {
                     score = mc.getScore();
                     nonTerminalNodes++;
