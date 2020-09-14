@@ -70,10 +70,16 @@ public class PrunedMinimaxComputerPlayer extends Player {
     public Move getMove() {
         nonTerminalNodes = 1;
         nodes = 1;
+        long start = System.currentTimeMillis();
         MoveCandidate move = minimax(board, depth, team, false, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        long end = System.currentTimeMillis();
         Logger logger = Logger.getLogger("PrunedMinimaxComputerPlayer");
         logger.info(move.toString());
-        logger.info(String.format("Avg branching factor: %.2f\n", ((double) nodes) / nonTerminalNodes));
+        logger.info(String.format("Avg branching factor: %.2f", ((double) nodes) / nonTerminalNodes));
+        double elapsedSec = (end - start) / 1000.0;
+        double rate = ((double) nodes) / elapsedSec;
+        logger.info(String.format("Evaluated %d nodes in %.3f seconds, %.1f nodes/sec, %.1f leaves/sec",
+                nodes, elapsedSec, rate, (nodes - nonTerminalNodes) / elapsedSec));
         return move.getMove();
     }
 

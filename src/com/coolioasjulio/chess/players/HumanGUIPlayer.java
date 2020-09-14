@@ -2,7 +2,6 @@ package com.coolioasjulio.chess.players;
 
 import com.coolioasjulio.chess.*;
 import com.coolioasjulio.chess.exceptions.InvalidMoveException;
-import com.coolioasjulio.chess.pieces.King;
 import com.coolioasjulio.chess.pieces.Piece;
 
 import javax.swing.JComponent;

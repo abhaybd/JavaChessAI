@@ -298,7 +298,8 @@ public class Board {
                 new Rook(square, team, this),
                 new Bishop(square, team, this),
                 new Knight(square, team, this),
-                new Pawn(square, team, this)
+                new Pawn(square, team, this),
+                new King(square, team, this)
         };
 
         boolean ret = false;
