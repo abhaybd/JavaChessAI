@@ -73,4 +73,12 @@ public class TeamValue<T> {
     public void clear() {
         whiteVal = blackVal = null;
     }
+
+    @Override
+    public String toString() {
+        return "TeamValue{" +
+                "whiteVal=" + whiteVal +
+                ", blackVal=" + blackVal +
+                '}';
+    }
 }

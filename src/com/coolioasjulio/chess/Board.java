@@ -37,7 +37,7 @@ public class Board {
     }
 
     public boolean isDrawByThreeFoldRepetition() {
-        return positionCount.getOrDefault(new PositionFingerprint(this), 0) >= 3;
+        return positionCount.getOrDefault(getFingerprint(), 0) >= 3;
     }
 
     /**
@@ -134,7 +134,16 @@ public class Board {
             sb.append(moveHistory.get(moveHistory.size() - 1).team == Piece.WHITE ? "b" : "w");
         }
 
-        sb.append(" - - 0 ");
+        sb.append(" ");
+        StringBuilder castles = new StringBuilder();
+        PositionFingerprint fingerprint = getFingerprint();
+        if (fingerprint.canCastleKingSide.get(Piece.WHITE)) castles.append('K');
+        if (fingerprint.canCastleQueenSide.get(Piece.WHITE)) castles.append('Q');
+        if (fingerprint.canCastleKingSide.get(Piece.BLACK)) castles.append('k');
+        if (fingerprint.canCastleQueenSide.get(Piece.BLACK)) castles.append('q');
+        sb.append(castles.length() == 0 ? "-" : castles.toString());
+
+        sb.append(" - 0 ");
         sb.append((moveHistory.size() / 2) + 1);
 
         return sb.toString();
@@ -324,9 +333,13 @@ public class Board {
         move.doMove(this);
 
         moveHistory.add(move);
-        PositionFingerprint fingerprint = new PositionFingerprint(this);
+        PositionFingerprint fingerprint = getFingerprint();
         positionCount.put(fingerprint, 1 + positionCount.getOrDefault(fingerprint, 0));
         clearCache();
+    }
+
+    public PositionFingerprint getFingerprint() {
+        return new PositionFingerprint(this);
     }
 
     /**
@@ -490,6 +503,7 @@ public class Board {
     public static class PositionFingerprint {
         private final int teamToMove;
         private final TeamValue<long[]> bitboards;
+        private final TeamValue<Boolean> canCastleKingSide, canCastleQueenSide;
 
         public PositionFingerprint(Board board) {
             if (board.moveHistory.size() == 0) {
@@ -504,6 +518,19 @@ public class Board {
                 int pos = square.getX() + (square.getY() - 1) * 8;
                 bitboards.get(piece.getTeam())[i] |= 1L << pos;
             }
+
+            canCastleKingSide = new TeamValue<>(canCastle(board, Piece.WHITE, Square.parseString("h1")), canCastle(board, Piece.BLACK, Square.parseString("h8")));
+            canCastleQueenSide = new TeamValue<>(canCastle(board, Piece.WHITE, Square.parseString("a1")), canCastle(board, Piece.BLACK, Square.parseString("a8")));
+        }
+
+        private boolean canCastle(Board board, int team, Square rookPos) {
+            Piece p = board.checkSquare(rookPos);
+            if (p != null && p.getTeam() == team && p instanceof Rook) {
+                Rook rook = (Rook) p;
+                King king = board.getKing(team);
+                return !rook.hasMoved() && !king.hasMoved();
+            }
+            return false;
         }
 
         private int pieceIndex(String type) {
@@ -512,7 +539,9 @@ public class Board {
 
         @Override
         public int hashCode() {
-            return Objects.hash(teamToMove, Arrays.hashCode(bitboards.get(Piece.WHITE)), Arrays.hashCode(bitboards.get(Piece.BLACK)));
+            return Objects.hash(teamToMove, Arrays.hashCode(bitboards.get(Piece.WHITE)), Arrays.hashCode(bitboards.get(Piece.BLACK)),
+                    canCastleKingSide.get(Piece.WHITE), canCastleKingSide.get(Piece.BLACK),
+                    canCastleQueenSide.get(Piece.WHITE), canCastleQueenSide.get(Piece.BLACK));
         }
 
         @Override
@@ -523,8 +552,20 @@ public class Board {
             if (teamToMove != other.teamToMove) return false;
             for (int team : new int[]{Piece.WHITE,Piece.BLACK}) {
                 if (!Arrays.equals(bitboards.get(team), other.bitboards.get(team))) return false;
+                if (other.canCastleKingSide.get(team) != canCastleKingSide.get(team)) return false;
+                if (other.canCastleQueenSide.get(team) != canCastleQueenSide.get(team)) return false;
             }
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "PositionFingerprint{" +
+                    "teamToMove=" + teamToMove +
+                    ", bitboards=" + bitboards +
+                    ", canCastleKingSide=" + canCastleKingSide +
+                    ", canCastleQueenSide=" + canCastleQueenSide +
+                    '}';
         }
     }
 }
