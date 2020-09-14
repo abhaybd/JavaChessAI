@@ -37,7 +37,11 @@ public class Board {
     }
 
     public boolean isDrawByThreeFoldRepetition() {
-        return positionCount.getOrDefault(getFingerprint(), 0) >= 3;
+        return getNumOccurrences(getFingerprint()) >= 3;
+    }
+
+    public int getNumOccurrences(PositionFingerprint fingerprint) {
+        return positionCount.getOrDefault(fingerprint, 0);
     }
 
     /**

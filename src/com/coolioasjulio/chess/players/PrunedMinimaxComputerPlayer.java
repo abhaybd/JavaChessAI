@@ -10,12 +10,11 @@ import com.coolioasjulio.chess.pieces.Piece;
 import com.coolioasjulio.configuration.ConfigurationMenu;
 import com.coolioasjulio.configuration.Setting;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class PrunedMinimaxComputerPlayer extends Player {
-    private static final int DEFAULT_SEARCH_DEPTH = 2;
+    private static final int DEFAULT_SEARCH_DEPTH = 4;
     private static final int DEFAULT_MAX_SEARCH_DEPTH = 6;
 
     private int depth = DEFAULT_SEARCH_DEPTH;
@@ -23,7 +22,10 @@ public class PrunedMinimaxComputerPlayer extends Player {
     private final Heuristic heuristic = new MaterialHeuristic(0);
     private int nodes;
     private int nonTerminalNodes;
+    private int cacheHits;
     private final long[][][] historyScores = new long[2][64][64]; // 0=white, 1=black, a1=0,a2=1,...,h8=63
+    private final Map<Transposition, MoveCandidate> transpositionTableW = new LimitedLinkedHashMap<>(16777216);
+    private final Map<Transposition, MoveCandidate> transpositionTableB = new LimitedLinkedHashMap<>(16777216);
 
     public PrunedMinimaxComputerPlayer(Board board) {
         super(board);
@@ -70,16 +72,22 @@ public class PrunedMinimaxComputerPlayer extends Player {
     public Move getMove() {
         nonTerminalNodes = 1;
         nodes = 1;
+        cacheHits = 0;
+        transpositionTableW.clear();
+        transpositionTableB.clear();
         long start = System.currentTimeMillis();
         MoveCandidate move = minimax(board, depth, team, false, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         long end = System.currentTimeMillis();
         Logger logger = Logger.getLogger("PrunedMinimaxComputerPlayer");
         logger.info(move.toString());
         logger.info(String.format("Avg branching factor: %.2f", ((double) nodes) / nonTerminalNodes));
+        logger.info("Cache hits: " + cacheHits);
         double elapsedSec = (end - start) / 1000.0;
         double rate = ((double) nodes) / elapsedSec;
-        logger.info(String.format("Evaluated %d nodes in %.3f seconds, %.1f nodes/sec, %.1f leaves/sec",
+        logger.info(String.format("Evaluated %d nodes in %.3f seconds, %.1f nodes/sec, %.1f leaves/sec\n",
                 nodes, elapsedSec, rate, (nodes - nonTerminalNodes) / elapsedSec));
+        transpositionTableW.clear();
+        transpositionTableB.clear();
         return move.getMove();
     }
 
@@ -120,6 +128,13 @@ public class PrunedMinimaxComputerPlayer extends Player {
     }
 
     public MoveCandidate minimax(Board board, int depth, int team, boolean didCapture, double alpha, double beta) {
+        Transposition transposition = new Transposition(board);
+        Map<Transposition, MoveCandidate> transpositionTable = team == Piece.WHITE ? transpositionTableW : transpositionTableB;
+        if (transpositionTable.containsKey(transposition)) {
+            cacheHits++;
+            return transpositionTable.get(transposition);
+        }
+
         int playerTeam = this.team;
         Move[] moves = board.getMoves(team);
         sortMoves(board, moves, team);
@@ -148,8 +163,8 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 bestMove = candidate;
             }
 
-            if (team == playerTeam) alpha = Math.max(score, alpha);
-            else beta = Math.min(score, beta);
+            if (team == playerTeam) alpha = Math.max(candidate.getScore(), alpha);
+            else beta = Math.min(candidate.getScore(), beta);
 
             if (beta <= alpha) {
                 if (!move.isCapture()) {
@@ -161,6 +176,49 @@ public class PrunedMinimaxComputerPlayer extends Player {
                 break;
             }
         }
+
+        if (bestMove != null) {
+            (team == Piece.WHITE ? transpositionTableW : transpositionTableB).put(new Transposition(board), bestMove);
+        }
+
         return bestMove;
+    }
+
+    private static class LimitedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
+        private final int maxSize;
+
+        public LimitedLinkedHashMap(int maxSize) {
+            super(maxSize);
+            this.maxSize = maxSize;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+            return size() > maxSize;
+        }
+    }
+
+    private static class Transposition {
+        public Board.PositionFingerprint fingerprint;
+        public int occurrences;
+
+        public Transposition(Board board) {
+            this.fingerprint = board.getFingerprint();
+            this.occurrences = board.getNumOccurrences(fingerprint);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Transposition that = (Transposition) o;
+            return occurrences == that.occurrences &&
+                    fingerprint.equals(that.fingerprint);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(fingerprint, occurrences);
+        }
     }
 }
