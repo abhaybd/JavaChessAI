@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class PrunedMinimaxComputerPlayer extends Player {
-    private static final int DEFAULT_SEARCH_DEPTH = 4;
+    private static final int DEFAULT_SEARCH_DEPTH = 2;
     private static final int DEFAULT_MAX_SEARCH_DEPTH = 4;
 
     private int depth = DEFAULT_SEARCH_DEPTH;
@@ -26,7 +26,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
     private final long[][][] historyScores = new long[2][64][64]; // 0=white, 1=black, a1=0,a2=1,...,h8=63
     private final Map<Transposition, TranspositionValue> transpositionTableW = new LimitedLinkedHashMap<>(4194304);
     private final Map<Transposition, TranspositionValue> transpositionTableB = new LimitedLinkedHashMap<>(4194304);
-    private int[] nodesAtDepth = new int[maxDepth+1];
+    private final int[] nodesAtDepth = new int[maxDepth+1];
 
     public PrunedMinimaxComputerPlayer(Board board) {
         super(board);
@@ -76,6 +76,7 @@ public class PrunedMinimaxComputerPlayer extends Player {
         cacheHits = 0;
         transpositionTableW.clear();
         transpositionTableB.clear();
+        Arrays.fill(nodesAtDepth, 0);
         long start = System.currentTimeMillis();
         MoveCandidate move = null;
         for (int d = 2; d <= depth; d++) {

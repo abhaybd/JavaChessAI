@@ -1,5 +1,7 @@
 package examples;
 
+import com.coolioasjulio.chess.players.MinimaxComputerPlayer;
+import com.coolioasjulio.chess.players.Player;
 import com.coolioasjulio.chess.players.PrunedMinimaxComputerPlayer;
 import com.coolioasjulio.chess.ui.ChessGameUI;
 import com.coolioasjulio.jchess.App;
@@ -17,10 +19,8 @@ public class ComputerVsComputer {
         frame.pack();
         frame.setVisible(true);
 
-        PrunedMinimaxComputerPlayer p1 = new PrunedMinimaxComputerPlayer(game.getBoard());
-        PrunedMinimaxComputerPlayer p2 = new PrunedMinimaxComputerPlayer(game.getBoard());
-        p1.setSearchDepth(2);
-        p2.setSearchDepth(2);
+        Player p1 = new PrunedMinimaxComputerPlayer(game.getBoard());
+        Player p2 = new MinimaxComputerPlayer(game.getBoard());
         game.playGame(p1, p2);
     }
 }
